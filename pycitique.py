@@ -1,16 +1,16 @@
 #coding:utf-8
 
 ### Pycitique.py #################################################
-#									  				 #
-#									  				 #
-#Author: Hilami Khaldoune						  		 #
-#Organism: CNRS								  		 #
-#Year: 2020								  			 #
-#License: This script is propriety of CNRS					 #
-#Descriptions: * This module takes a folder in the system and	 # 
-#looks for csv files. If it finds none, it exits. If it finds any #
-#it imports them to the specified schema into the database		 #
-#									  				 #
+#									  				 				#
+#									  								#
+#Author: Hilami Khaldoune						  					#
+#Organism: CNRS								  		 				#
+#Year: 2020								  			 				#
+#License: This script is propriety of CNRS					 		#
+#Descriptions: * This module takes a folder in the system and	 	#
+#looks for csv files. If it finds none, it exits. If it finds any 	#
+#it imports them to the specified schema into the database		 	#
+#									  				 				#
 ##################################################################
 
 ### library IMPORTS csv inserter ###
@@ -46,7 +46,7 @@ class Pycitique:
 		self.count = 0
 		self.APIkey= '865f840cdde4ab359bce9a5adee70f84'
 		self.rglist = ['village','ville','chef_lieu', 'departement', 'departement_code','region','code_postal','pays','code_pays','adresse_complette']
-		
+
 		self.wobjlist = ['timezone','time','summary','icon','sunriseTime','sunsetTime','moonPhase',
 					'precipIntensity','precipIntensityMax','precipIntensityMaxTime','precipAccumulation',
 						'precipProbability','temperatureHigh','temperatureHighTime','temperatureLow','temperatureLowTime',
@@ -102,12 +102,12 @@ class Pycitique:
 	def batchinsertcsvtable(self, inputdir, inputfile, outputschema, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
-		
+
 		for inputfile in inputfilelist:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
 				inputfile=inputfile[0:-4]
 				self.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
-		
+
 		print("\nAll tables written successfully to database. Operation completed.")
 		print("\nA total of ", self.count," rows is inserted to database.")
 		self.count = 0
@@ -157,12 +157,12 @@ class Pycitique:
 					if department_code  == '14': department = 'Calvados'
 					if department_code  == '27': department = 'Eure'
 					if department is not None: department = department.replace( "'" ,'’')
-					
-					field+=[location.village, location.town, location.county, department, department_code, location.state, 
+
+					field+=[location.village, location.town, location.county, department, department_code, location.state,
 													location.postal, location.country, location.country_code, location.address]
 					field = [str(i or '') for i in field]
 					try:
-						streamwriter.writerow(field) 
+						streamwriter.writerow(field)
 						print('Object '+str(loop)+' Written\n')
 					except ValueError:
 						print('Could not convert string to float!')
@@ -181,12 +181,12 @@ class Pycitique:
 	def batchrgeocoderCSV(self, inputdir, inputfile, outputdir, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
-		
+
 		for inputfile in inputfilelist:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
 				inputfile=inputfile[0:-4]
 				self.rgeocoderCSV( inputdir, inputfile, outputdir, delimiter, quotechar )
-		
+
 		print("\nA total of ", self.count," rows is written\n.")
 		self.count = 0
 
@@ -273,12 +273,12 @@ class Pycitique:
 	def batchdarkskyextractorCSV(self, inputdir, inputfile, outputdir, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
-		
+
 		for inputfile in inputfilelist:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
 				inputfile=inputfile[0:-4]
 				self.darkskyextractorCSV( inputdir, inputfile, outputdir, delimiter, quotechar )
-		
+
 		print("\nA total of ", self.count," rows is written\n.")
 		self.count = 0
 
@@ -342,12 +342,12 @@ class Pycitique:
 					elif location.county is None: location.county = ''
 					else: department_code = location.postal[0:-3]
 				else: department_code = ''
-				
+
 				department_geocoded = osm( department_code , url=self.server )
 				department = department_geocoded.county
-				
+
 				rgdict = OrderedDict()
-				
+
 				rgdict['village'] = location.village
 				rgdict['ville'] = location.town
 				rgdict['chef_lieu'] = location.county
@@ -358,11 +358,11 @@ class Pycitique:
 				rgdict['pays'] = location.country
 				rgdict['code_pays'] = location.country_code
 				rgdict['adresse_complette'] =  location.address
-				
+
 				for robj in self.rglist:
 					valdict[robj] = rgdict.get(robj, '')
 					if valdict[robj] is None: valdict[robj] = ''
-				
+
 				row = OrderedDict(row)
 				row.update(valdict)
 				values= ''
@@ -459,9 +459,9 @@ class Pycitique:
 						if search(r'[tT]ime$' , key ) is not None:
 							weatherdict[key] = dt.utcfromtimestamp(value).strftime('%d-%m-%y %H:%M:%S')
 						else: weatherdict[key] = value
-					
+
 					valdict = OrderedDict()
-					
+
 					for wobj in self.wobjlist:
 						valdict[wobj] = weatherdict.get(wobj, '')
 					valdict['timezone']   = location.timezone
@@ -469,11 +469,11 @@ class Pycitique:
 					row = OrderedDict(row)
 					row.update(valdict)
 					values= ''
-					
+
 					for key, value in row.items() :
 						value = str(value)
 						values += "'"+value.replace("'", "’")+"',"
-					
+
 					values = values[:-1]
 					insertintotablesql = 'INSERT INTO {}.{} VALUES ({}) ;'.format(outputschema, outputable, values)
 					curs.execute( insertintotablesql )
@@ -636,9 +636,3 @@ class Pycitique:
 #outputable = 'liste_stations_700_duplicate_todelete'
 #reverser=Pycitique()
 #reverser.reversegeocoderDB(inputschema, inputable, outputschema, outputable)
-
-
-
-
-
-
