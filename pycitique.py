@@ -511,7 +511,7 @@ class Pycitique:
 
 		curs = self.conn.cursor(cursor_factory = DictCursor)
 
-		datesql = "SELECT cast(date as text) as date_releve FROM  meteo.synop_dates_dsk limit 1;"
+		datesql = "SELECT cast(date as text) as date_releve FROM  meteo.synop_dates_dsk;"
 		curs.execute(datesql)
 		ddata = curs.fetchall()
 
@@ -614,12 +614,12 @@ class Pycitique:
 
 
 ############################################## DB darkskyextraction  for synop stations ####################################################
-#inputschema ='meteo'
-#inputable = 'liste_stations_700'
-#outputschema = 'meteo'
-#outputable = 'darksky_maille_700_extraction_test'
-#reverser = Pycitique()
-#reverser.dskstationextractorDB(inputschema, inputable, outputschema, outputable)
+inputschema ='meteo'
+inputable = 'liste_stations_700'
+outputschema = 'meteo'
+outputable = 'darksky_maille_700_extraction'
+reverser = Pycitique()
+reverser.dskstationextractorDB(inputschema, inputable, outputschema, outputable)
 
 ############################################## DB darkskyextraction  ####################################################
 #inputschema = 'citik'
