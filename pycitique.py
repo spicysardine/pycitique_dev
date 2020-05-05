@@ -284,7 +284,7 @@ class Pycitique:
 
 
 
-	def reversegeocoderDB(self, inputschema, inputable, outputschema, outputable):
+	def rgeocoderDB(self, inputschema, inputable, outputschema, outputable):
 
 		missingObjectCount = 0
 		loop = 0
@@ -393,7 +393,7 @@ class Pycitique:
 
 
 
-	def darkskyextractorDB(self, inputschema, inputable, outputschema, outputable):
+	def dskextractorDB(self, inputschema, inputable, outputschema, outputable):
 
 		missingObjectCount=0
 		loop=0
@@ -507,7 +507,7 @@ class Pycitique:
 
 
 
-	def darkskystationextractor(self, inputschema, inputable, outputschema, outputable):
+	def dskstationextractorDB(self, inputschema, inputable, outputschema, outputable):
 
 		curs = self.conn.cursor(cursor_factory = DictCursor)
 
@@ -619,7 +619,7 @@ class Pycitique:
 #outputschema = 'meteo'
 #outputable = 'darksky_maille_700_extraction_test'
 #reverser = Pycitique()
-#reverser.darkskystationextractor(inputschema, inputable, outputschema, outputable)
+#reverser.dskstationextractorDB(inputschema, inputable, outputschema, outputable)
 
 ############################################## DB darkskyextraction  ####################################################
 #inputschema = 'citik'
@@ -627,7 +627,7 @@ class Pycitique:
 #outputschema = 'meteo'
 #outputable = 'testwdsk'
 #reverser=Pycitique()
-#reverser.darkskyextractorDB(inputschema, inputable, outputschema, outputable)
+#reverser.dskextractorDB(inputschema, inputable, outputschema, outputable)
 
 ############################################## DB reversegeocoding  ####################################################
 #inputschema = 'gis'
@@ -635,4 +635,4 @@ class Pycitique:
 #outputschema = 'meteo'
 #outputable = 'liste_stations_700_duplicate_todelete'
 #reverser=Pycitique()
-#reverser.reversegeocoderDB(inputschema, inputable, outputschema, outputable)
+#reverser.rgeocoderDB(inputschema, inputable, outputschema, outputable)
