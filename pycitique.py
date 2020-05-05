@@ -1,16 +1,16 @@
 #coding:utf-8
 
 ### Pycitique.py #################################################
-#									  				 #
-#									  				 #
-#Author: Hilami Khaldoune						  		 #
-#Organism: CNRS								  		 #
-#Year: 2020								  			 #
-#License: This script is propriety of CNRS					 #
-#Descriptions: * This module takes a folder in the system and	 #
-#looks for csv files. If it finds none, it exits. If it finds any #
-#it imports them to the specified schema into the database		 #
-#									  				 #
+#
+#
+#Author: Hilami Khaldoune
+#Organism: CNRS
+#Year: 2020
+#License: This script is propriety of CNRS
+#Descriptions: * This module takes a folder in the system and
+#looks for csv files. If it finds none, it exits. If it finds any
+#it imports them to the specified schema into the database
+#									  				 
 ##################################################################
 
 ### library IMPORTS csv inserter ###
