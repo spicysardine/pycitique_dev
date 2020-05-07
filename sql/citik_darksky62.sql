@@ -181,10 +181,11 @@ order by date_releve asc
 );
 
 select
---*
-date_releve 
+*
+--date_releve 
 from meteo.darksky_maille_700_extraction
 order by date_releve desc
+limit 1000
 ;
 
 -- début de l'extraction de la maille 700 mercredi 06 mai 2020 à 01h07 du matin
