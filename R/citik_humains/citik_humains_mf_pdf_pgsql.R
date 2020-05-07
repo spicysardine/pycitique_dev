@@ -71,7 +71,7 @@ nr <- nrow(wdata)
 
 #@@@@@@@@@@   Camemberts  @@@@@@@@@@@@@@@#
 
-pdf( file = "./citik_humains_DSK_vs_MF_charts.pdf",
+pdf( file = "../../PDF/citik_humains_DSK_vs_MF_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,

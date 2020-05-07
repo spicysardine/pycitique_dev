@@ -71,7 +71,7 @@ nrd <- nrow(dskdata)
 
 ############## Farbrication du PDF ####################
 
-pdf( file = "./citik_humains_DSK_vs_DSK_charts.pdf",
+pdf( file = "../../PDF/citik_humains_DSK_vs_DSK_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,

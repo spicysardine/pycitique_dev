@@ -149,8 +149,6 @@ where nom_station ~* 'abbeville'
 
 
 
-*/
-
 
 ---- darksky 42 stations weather averages table ----
 drop table if exists meteo.darksky_synop42_avg;
@@ -185,8 +183,10 @@ select
 --date_releve 
 from meteo.darksky_maille_700_extraction
 order by date_releve desc
-limit 1000
+limit 100
 ;
+
+*/
 
 -- début de l'extraction de la maille 700 mercredi 06 mai 2020 à 01h07 du matin
 select round(percentage(count(id_station), 864666)::numeric, 2) || ' %' as extraction_progress from meteo.darksky_maille_700_extraction
