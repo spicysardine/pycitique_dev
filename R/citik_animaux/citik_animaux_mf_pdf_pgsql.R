@@ -1,9 +1,9 @@
-############################################## Traitement de la donnée pour les animaux ##############################################
+##################### Traitement de la donnée darksky vs météo-france pour les animaux ################################
 
 setwd("./")
 getwd()
 ########installation et activation des librairies nécessaires à l'importation et l'analyse de la BDD#######
-########Installer puis activer le package de gestion de base de donée postgresql 
+########Installer puis activer le package de gestion de base de donée postgresql
 library (survey)
 
 ######## compilation du code de connexion ####
@@ -21,7 +21,7 @@ con <- dbConnect(PostgreSQL()
 # lisTab
 
 # Donnée darksky
-wadata <- as.data.frame(dbGetQuery(con, 
+wadata <- as.data.frame(dbGetQuery(con,
 "
 SELECT
  id
@@ -164,7 +164,7 @@ HH2 <- hist((mfdata$humidite), breaks = BR2,  plot = F)
 lines(HH2$mids, HH2$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$humidite), na.rm = 1), lwd = 2, col = "red") 
+lines(density((mfdata$humidite), na.rm = 1), lwd = 2, col = "red")
 
 text(90, 0.06, paste("N =",nra," signalements" ), cex = 1,  col = "black")
 text(55, 0.05, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
@@ -369,8 +369,8 @@ Br8 <- seq(from= 0, to= 50 , by=1)
 Br8
 length(Br8)
 
-e<-hist(wadata$windgust, 
-        breaks = Br8, 
+e<-hist(wadata$windgust,
+        breaks = Br8,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par rafale de vent (m/s) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
@@ -408,8 +408,8 @@ Br9 <- seq(from=-1 , to=16 , by=.01)
 Br9
 length(Br9)
 
-f<-hist(wadata$precipintensity, 
-        breaks = Br9, 
+f<-hist(wadata$precipintensity,
+        breaks = Br9,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par intensité de précipitation (mm/h) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
@@ -447,8 +447,8 @@ Br9 <- seq(from=-1 , to=72 , by=.01)
 Br9
 length(Br9)
 
-f<-hist(wadata$precipintensitymax, 
-        breaks = Br9, 
+f<-hist(wadata$precipintensitymax,
+        breaks = Br9,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par intensité de précipitation sur 24 h (mm/h) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
@@ -474,7 +474,7 @@ text(.4, 5, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
 sum(f$density)
 sum(HH9$density)
 
-#################################################### comparatif Température diurne ( de 6 à 21h ) #################################################### 
+#################################################### comparatif Température diurne ( de 6 à 21h ) ####################################################
 length(wadata$temperaturehigh)
 length(mfdata$temperature_diurne)
 
@@ -509,7 +509,7 @@ lines(density(mfdata$temperature_diurne, na.rm = 1), lwd = 2, col = "red")
 
 ### courbe lissée, hyp +2 C°
 HH10hyp <- hist(mfdata$temperature_diurne_offset2, breaks = BR10,  plot=F)
-lines(density(mfdata$temperature_diurne_offset2, na.rm = 1), lwd = 2, col = "blue") 
+lines(density(mfdata$temperature_diurne_offset2, na.rm = 1), lwd = 2, col = "blue")
 
 text(30, 0.08, paste("N = ",nra," signalements" ), cex = 1,  col = "black")
 text(05, 0.08, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
@@ -555,7 +555,7 @@ lines(density(mfdata$temperature_nocturne, na.rm = 1), lwd = 2, col = "red")
 
 ### courbe lissée,  hyp +2 C°
 HH11hyp <- hist(mfdata$temperature_nocturne_offset2, breaks = BR11,  plot=F)
-lines(density(mfdata$temperature_nocturne_offset2, na.rm = 1), lwd = 2, col = "blue") 
+lines(density(mfdata$temperature_nocturne_offset2, na.rm = 1), lwd = 2, col = "blue")
 
 text(23, 0.08, paste("N = ",nra," signalements" ), cex = 1,  col = "black")
 text(03, 0.08, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
@@ -574,23 +574,23 @@ dev.off()
 
 # library(rgdal)
 # library(sp)
-# 
+#
 # dbname = "localbase10"
 # host = "localhost"
 # user = "beetroot"
 # pass = "root"
 # name = "citik.citik_animaux_clean" # Postgis table
-# 
+#
 # dsn = paste0("PG:dbname='",dbname,"' host='",host,"' user='",user,"' password='",pass,"'")
-# 
+#
 # res = readOGR(dsn, name)
 # type(res)
 # library(ggplot2)
 # ggplot2(res)
-# 
+#
 # require(rgeos)
 # require(sf)
 #   poly=readWKT(testwadata)
-# 
+#
 # proj4string(poly) = CRS("+init=epsg:3857")
 # plot(res)
