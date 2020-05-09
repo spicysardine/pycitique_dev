@@ -235,7 +235,7 @@ lines(HH3$mids, HH3$density, lwd = 2, col = "green")
 lines(density((dskdata$dewpoint), na.rm = 1), lwd = 2, col = "red")
 
 text(0.5,0.08, paste("N = ",nra," signalements" ), cex = 1,  col = "black")
-text(-5, 0.04, paste("M = Mesure Nationale (darksky.net)" ), cex = 1 ,  col = "red")
+text(-6, 0.04, paste("M = Mesure Nationale (darksky.net)" ), cex = 1 ,  col = "red")
 
 sum(z$density)
 sum(HH3$density)
@@ -256,8 +256,8 @@ a<-hist(wadata$pressure, breaks = Br4, freq=F,
         col="grey",
         main = paste("Fréquence des morsures par pression athmosphérique (hPa) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
         ylab = "Denisté  (Somme=1)",
-        xlab = "pression athmosphérique (hPa)",
-        ylim = c(0, .08),
+        xlab = "pression athmosphérique au niveau de la mer(hPa)",
+        ylim = c(0, .10),
         xlim = c(950, 1050),
         cex.main = 1.3,
         cex.lab = 1.5,
@@ -368,7 +368,7 @@ b<-hist(wadata$windspeed, breaks = Br5, freq=F,
         main = paste("Fréquence des morsures par vitesse du vent (m/s) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
         ylab = "Denisté  (Somme=10)",
         xlab = "vitesse du vent (m/s)",
-        ylim = c(0,.5),
+        ylim = c(0,.55),
         xlim = c(0,13),
         cex.main = 1.3,
         cex.lab = 1.5,
@@ -485,8 +485,8 @@ f<-hist(wadata$precipintensitymax,
         main = paste("Fréquence des morsures par intensité de précipitation sur 24 h (mm/h) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
         ylab = "Denisté  (Somme=100)",
         xlab = "intensité de précipitation sur 24 h (mm/h)",
-        ylim = c(0,30),
-        xlim = c(0,3),
+        ylim = c(0,35),
+        xlim = c(0,2),
         cex.main = 1.5,
         cex.lab = 1.5,
         cex.axis = 1.5

@@ -61,10 +61,11 @@ where qui_pique = 'Chat'
 ;"
 ))
 
-## données darksky Nationale (darksky.net)
+# Maille 43
+# dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
 
-dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
-
+# Maille 726
+dskdata <- dbGetQuery(con, " SELECT * FROM meteo.darksky_maille_700_avg ; " )
 ##### code de déconnexion ####
 dbDisconnect(con)
 
@@ -75,7 +76,7 @@ dbDisconnect(con)
 nra <- nrow(wadata)
 
 # déput de construction du pdf
-pdf( file = "../../PDF/citik_chat_DSK_vs_DSK_charts.pdf",
+pdf( file = "../../PDF/citik_chat_DSK_vs_DSK_mialle_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,
@@ -554,7 +555,7 @@ length(dskdata$temperaturelow )
 range(wadata$temperaturelow, na.rm = 1)
 range(dskdata$temperaturelow , na.rm = 1 )
 
-BR11 <- seq(from= -9, to= 30, by=1)
+BR11 <- seq(from= -10, to= 30, by=1)
 BR11
 length(BR11)
 

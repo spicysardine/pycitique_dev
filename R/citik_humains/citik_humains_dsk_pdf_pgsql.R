@@ -53,11 +53,12 @@ SELECT
 ,temperaturelow
 
 FROM citik.citik_humains_clean_weather_strict
+
 "
 ) )
 
 
-## données darksky Nationale (dsk.net)
+## données darksky Nationale (darksky.net)
 
 # Maille 43
 # dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
@@ -167,7 +168,7 @@ pie(table(wdata$precision_geo[wdata$precision_geo != '']),
 # lines(density( (dskdata$uvindex), na.rm = 1), lwd = 2, col = "red") 
 # 
 # text(8, .20, paste("N =",nr," signalements" ), col = "black")
-# text(4, .25, paste("M = Mesure Nationale (dsk.net)" ),  col = "red")
+# text(4, .25, paste("M = Mesure Nationale (darksky.net)" ),  col = "red")
 # 
 # 
 # sum(u$density)
@@ -206,7 +207,7 @@ lines(HH2$mids, HH2$density, lwd = 2, col = "green")
 lines(density((dskdata$humidity), na.rm = 1), lwd = 2, col = "red") 
 
 text(.5, 4, paste("N =",nr," signalements" ), col = "black")
-text(.4, 2, paste("M = Mesure Nationale (dsk.net)" ),  col = "red")
+text(.4, 2, paste("M = Mesure Nationale (darksky.net)" ),  col = "red")
 
 
 sum(y$density)
@@ -245,7 +246,7 @@ lines(HH3$mids, HH3$density, lwd = 2, col = "green")
 lines(density((dskdata$dewpoint), na.rm = 1), lwd = 2, col = "red")
 
 text(15, 0.12, paste("N = ",nr," signalements" ), col = "black")
-text(04, 0.08, paste("M = Mesure Nationale (dsk.net)" ),  col = "red")
+text(04, 0.08, paste("M = Mesure Nationale (darksky.net)" ),  col = "red")
 
 sum(z$density)
 sum(HH3$density)
@@ -266,7 +267,7 @@ a<-hist(wdata$pressure, breaks = Br4, freq=F,
         col="grey",
         main = paste("Fréquence des morsures par pression athmosphérique (hPa) \n ",nr," signalements  humains (France HDTOM, 2017-20)"),
         ylab = "Denisté  (Somme=1)",
-        xlab = "pression athmosphérique (hPa)",
+        xlab = "pression athmosphérique au niveau de la mer (hPa)",
         ylim = c(0, .1),
             xlim = c(950, 1050),
         cex.main = 1.3,
@@ -282,7 +283,7 @@ lines(HH4$mids, HH4$density, lwd = 2, col = "green")
 lines(density((dskdata$pressure), na.rm = 1), lwd = 2, col = "red")
 
 text(1030, 0.088, paste("N = ",nr," signalements" ),col = "black")
-text(980, 0.04, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(980, 0.04, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 sum(a$density)
 sum(HH4$density)
@@ -319,7 +320,7 @@ lines(HH6$mids, HH6$density, lwd = 2, col = "green")
 lines(density((dskdata$visibility), na.rm = 1), lwd = 2, col = "red")
 
 text(15, 0.35, paste("N = ",nr," signalements" ),col = "black")
-text(4, 0.2, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(25, 0.2, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 sum(c$density)
 sum(HH6$density)
@@ -356,7 +357,7 @@ lines(HH7$mids, HH7$density, lwd = 2, col = "green")
 lines(density((dskdata$cloudcover), na.rm = 1), lwd = 2, col = "red")
 
 text(0.55, 2.5, paste("N = ",nr," signalements" ),col = "black")
-text(0.2, 1.5, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(0.2, 1.5, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 sum(d$density)
 sum(HH7$density)
@@ -395,7 +396,7 @@ lines(HH5$mids, HH5$density, lwd = 2, col = "green")
 lines(density((dskdata$windspeed), na.rm = 1), lwd = 2, col = "red")
 
 text(6, 0.45, paste("N = ",nr," signalements" ),col = "black")
-text(6, 0.3, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(6, 0.3, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 
 sum(b$density)
@@ -437,7 +438,7 @@ lines(HH8$mids, HH8$density, lwd = 2, col = "green")
 lines(density((dskdata$windgust), na.rm = 1), lwd = 2, col = "red")
 
 text(20, 0.15, paste("N = ",nr," signalements" ),col = "black")
-text(15, 0.10, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(15, 0.10, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 sum(e$density)
 sum(HH8$density)
@@ -478,7 +479,7 @@ HH9 <- hist((dskdata$precipintensity), breaks = Br9,  plot = F)
 lines(HH9$mids, HH9$density, lwd = 2, col = "green")
 
 text(0.8, 15, paste("N = ",nr," signalements" ),col = "black")
-text(.4, 5, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(.4, 5, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 
 
@@ -521,7 +522,7 @@ HH9 <- hist((dskdata$precipintensitymax), breaks = Br9,  plot = F)
 lines(HH9$mids, HH9$density, lwd = 2, col = "green")
 
 text(0.8, 15, paste("N = ",nr," signalements" ),col = "black")
-text(.4, 5, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(.4, 5, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 
 sum(f$density)
 sum(HH9$density)
@@ -564,7 +565,7 @@ HH10hyp <- hist(dskdata$temperaturehighoffset2, breaks = BR10,  plot=F)
 lines(density(dskdata$temperaturehighoffset2, na.rm = 1), lwd = 2, col = "blue") 
 
 text(30, 0.08, paste("N = ",nr," signalements" ),col = "black")
-text(05, 0.07, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(05, 0.07, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 text(0, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
 text(15.3, 0.082, paste("M = Courbe brute" ), cex =1 ,  col = "green")
 
@@ -611,7 +612,7 @@ HH11hyp <- hist(dskdata$temperaturelowoffset2, breaks = BR11,  plot=F)
 lines(density(dskdata$temperaturelowoffset2, na.rm = 1), lwd = 2, col = "blue") 
 
 text(23, 0.08, paste("N = ",nr," signalements" ),col = "black")
-text(04, 0.08, paste("M = Mesure Nationale (dsk.net)" ), col = "red")
+text(04, 0.08, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
 text(06, 0.10, paste("M = Courbe brute" ), cex =1 ,  col = "green")
 text(-5, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
 
