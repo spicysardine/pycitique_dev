@@ -188,10 +188,10 @@ limit 726
 */
 
 -- début de l'extraction de la maille 700 mercredi 06 mai 2020 à 01h07 du matin
-select
+SELECT
 round(percentage(count(id_station), 864666)::numeric, 2) || ' %' as extraction_progress,
 count(id_station) as count
-from meteo.darksky_maille_700_extraction
+FROM meteo.darksky_maille_700_extraction
 ;
 
 
