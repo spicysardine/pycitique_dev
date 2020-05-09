@@ -60,9 +60,13 @@ FROM citik.citik_animaux_clean_weather_strict
 ;"
 ))
 
-## données darksky Nationale (darksky.net)
+## données darksky Nationale (dsk.net)
 
-dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
+# Maille 43
+# dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
+
+# Maille 726
+dskdata <- dbGetQuery(con, " SELECT * FROM meteo.darksky_maille_700_avg ; " )
 
 ##### code de déconnexion ####
 dbDisconnect(con)
@@ -74,7 +78,7 @@ dbDisconnect(con)
 nra <- nrow(wadata)
 
 # déput de construction du pdf
-pdf( file = "../../PDF/citik_animaux_DSK_vs_DSK_charts.pdf",
+pdf( file = "../../PDF/citik_animaux_DSK_vs_DSK_maille_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,
@@ -124,42 +128,42 @@ pie(table(wadata$qui_pique[wadata$qui_pique != '' ] ),
 
 ########################################### comparatif irradiation uv  #########################################
 
-length(wadata$uvindex)
-length(dskdata$uvindex)
-
-range(wadata$uvindex, na.rm = 1)
-range( (dskdata$uvindex), na.rm = 1 )
-
-BR12 <- seq(from= 0, to= 10, by=1)
-BR12
-length(BR12)
-
-u<-hist(wadata$uvindex, breaks = BR12, freq=F,
-        col="grey",
-        main = paste("Fréquence des morsures par rayonnement UV (échelle de l'OMS 1-10) \n ",nra," signalements  humains (France HDTOM, 2017-20)"),
-        ylab = ("Densité (Somme=1)"),
-        xlab = "rayonnement UV (échelle de 1-10) ",
-        ylim = c(0, .25),
-        xlim = c(0, 10),
-        cex.main = 1.3,
-        cex.lab = 1.5,
-        cex.axis = 1.5
-        
-)
-
-### courbe non lissée
-HH12 <- hist(round(dskdata$uvindex), breaks = BR12,  plot = F)
-lines(HH12$mids, HH12$density, lwd = 2, col = "green")
-
-### courbe lissée
-lines(density( round(dskdata$uvindex), na.rm = 1), lwd = 2, col = "red") 
-
-text(6.2, .15, paste("N =",nra," signalements" ), col = "black")
-text(8, .20, paste("M = Mesure Nationale (darksky.net)" ),  col = "red")
-
-
-sum(u$density)
-sum(HH12$density)
+# length(wadata$uvindex)
+# length(dskdata$uvindex)
+# 
+# range(wadata$uvindex, na.rm = 1)
+# range( (dskdata$uvindex), na.rm = 1 )
+# 
+# BR12 <- seq(from= 0, to= 10, by=1)
+# BR12
+# length(BR12)
+# 
+# u<-hist(wadata$uvindex, breaks = BR12, freq=F,
+#         col="grey",
+#         main = paste("Fréquence des morsures par rayonnement UV (échelle de l'OMS 1-10) \n ",nra," signalements  humains (France HDTOM, 2017-20)"),
+#         ylab = ("Densité (Somme=1)"),
+#         xlab = "rayonnement UV (échelle de 1-10) ",
+#         ylim = c(0, .25),
+#         xlim = c(0, 10),
+#         cex.main = 1.3,
+#         cex.lab = 1.5,
+#         cex.axis = 1.5
+#         
+# )
+# 
+# ### courbe non lissée
+# HH12 <- hist(round(dskdata$uvindex), breaks = BR12,  plot = F)
+# lines(HH12$mids, HH12$density, lwd = 2, col = "green")
+# 
+# ### courbe lissée
+# lines(density( round(dskdata$uvindex), na.rm = 1), lwd = 2, col = "red") 
+# 
+# text(6.2, .15, paste("N =",nra," signalements" ), col = "black")
+# text(8, .20, paste("M = Mesure Nationale (darksky.net)" ),  col = "red")
+# 
+# 
+# sum(u$density)
+# sum(HH12$density)
 
 
 ########################################### comparatif Humidité  #########################################
@@ -553,7 +557,7 @@ length(dskdata$temperaturelow )
 range(wadata$temperaturelow, na.rm = 1)
 range(dskdata$temperaturelow , na.rm = 1 )
 
-BR11 <- seq(from= -9, to= 30, by=1)
+BR11 <- seq(from= -10, to= 30, by=1)
 BR11
 length(BR11)
 
