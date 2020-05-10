@@ -77,7 +77,7 @@ dbDisconnect(con)
 nra <- nrow(wadata)
 
 # déput de construction du pdf
-pdf( file = "../../PDF/citik_cheval_DSK_vs_MF_charts.pdf",
+pdf( file = "../../PDF/citik_maille_42/animaux_42/citik_DSK_vs_MF/citik_cheval_DSK_vs_MF_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,

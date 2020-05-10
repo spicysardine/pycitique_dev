@@ -61,7 +61,7 @@ where qui_pique = 'Chat'
 ;"
 ))
 
-# Maille 43
+# Maille 42
 # dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
 
 # Maille 726
@@ -76,7 +76,8 @@ dbDisconnect(con)
 nra <- nrow(wadata)
 
 # déput de construction du pdf
-pdf( file = "../../PDF/citik_chat_DSK_vs_DSK_mialle_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_42/animaux_42/citik_DSK_vs_DSK/citik_chat_DSK_vs_DSK_charts.pdf",
+pdf( file = "../../PDF/citik_maille_700/animaux_700/citik_chat_DSK_vs_DSK_maille_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,

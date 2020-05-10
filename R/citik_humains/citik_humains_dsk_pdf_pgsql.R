@@ -3,15 +3,13 @@
 
 setwd("./")
 getwd()
-########installation et activation des librairies nécessaires à l'importation et l'analyse de la BDD#######
-########Installer puis activer le package de gestion de base de donée postgresql 
-library (survey)
+######## activation des librairies nécessaires à l'importation et l'analyse de la BDD #######
+######## activer le package de gestion de base de donée postgresql 
 
 ######## compilation du code de connexion ####
 
 library("RPostgreSQL")
 
-#drv <-dbDriver("PostgreSQL")
 con <- dbConnect(PostgreSQL()
                  , host="127.0.0.1"
                  , port="5432"
@@ -22,7 +20,7 @@ con <- dbConnect(PostgreSQL()
 ##############################################
 
 wdata <- as.data.frame(dbGetQuery(con, 
-                                  "
+"
 SELECT
  id
 -------------- données générales
@@ -53,14 +51,15 @@ SELECT
 ,temperaturelow
 
 FROM citik.citik_humains_clean_weather_strict
-
+-- where sex_pique = 'Homme'
+-- where sex_pique = 'Femme'
 "
 ) )
 
 
 ## données darksky Nationale (darksky.net)
 
-# Maille 43
+# Maille 42
 # dskdata <-  dbGetQuery(con, "SELECT * FROM meteo.darksky_synop42_avg ; " )
 
 # Maille 726
@@ -75,7 +74,9 @@ nrd <- nrow(dskdata)
 
 ############## Farbrication du PDF ####################
 
-pdf( file = "../../PDF/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
+pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_femme_DSK_vs_DSK_maille_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_homme_DSK_vs_DSK_maille_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,
@@ -85,9 +86,7 @@ pdf( file = "../../PDF/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
 
 #@@@@@@@@@@   Camemberts  @@@@@@@@@@@@@@@#
 
-
-# SEX
-
+    # SEX
 pie(table(wdata$sex_pique[wdata$sex_pique != '']),
     main = 'Sexe',
     cex= 1.5,
@@ -96,7 +95,6 @@ pie(table(wdata$sex_pique[wdata$sex_pique != '']),
     )
 
 # AGE
-
 pie(table(wdata$age[wdata$age != '']),
     cex= 1.5,
     main = 'Âge',
@@ -106,7 +104,6 @@ pie(table(wdata$age[wdata$age != '']),
 )
 
 # Paysage
-
 pie(table(wdata$environnement[wdata$environnement != '']),
     cex= 1.5,
     main = 'Paysages',
@@ -115,7 +112,6 @@ pie(table(wdata$environnement[wdata$environnement != '']),
 )
 
 # Dominante météo
-
 pie(table(wdata$icon[wdata$icon != '']),
     cex= 1.5,
     main = 'Dominante Météo',
@@ -124,7 +120,6 @@ pie(table(wdata$icon[wdata$icon != '']),
 )
 
 # précision géographique:
-
 pie(table(wdata$precision_geo[wdata$precision_geo != '']),
     cex= 1.5,
     main = 'précision géographique de la déclaration',
