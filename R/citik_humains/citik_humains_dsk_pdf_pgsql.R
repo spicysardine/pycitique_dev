@@ -75,8 +75,8 @@ nrd <- nrow(dskdata)
 ############## Farbrication du PDF ####################
 
 pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
-# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_femme_DSK_vs_DSK_maille_700_charts.pdf",
-# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_homme_DSK_vs_DSK_maille_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_femme_DSK_vs_DSK_maille_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_homme_DSK_vs_DSK_maille_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
      width = 11,
