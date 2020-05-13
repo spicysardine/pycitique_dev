@@ -7,7 +7,7 @@ getwd()
 wadata <- read.csv("../../data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
 
 ## donées météo-france de comparaison
-mfdata <- read.csv("../../data/donee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
+mfdata <- read.csv("../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
 
 #inspection des jeux de données darksky
 # ls(wdata)
