@@ -49,10 +49,12 @@ SELECT
 ,precipintensitymax
 ,temperaturehigh
 ,temperaturelow
+,temperature
+,temperatureoffset2
 
 FROM citik.citik_humains_clean_weather_strict
 -- where sex_pique = 'Homme'
--- where sex_pique = 'Femme'
+where sex_pique = 'Femme'
 "
 ) )
 
@@ -74,8 +76,8 @@ nrd <- nrow(dskdata)
 
 ############## Farbrication du PDF ####################
 
-pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
-# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_femme_DSK_vs_DSK_maille_700_charts.pdf",
+# pdf( file = "../../PDF/citik_maille_700/humains_700/citik_humains_DSK_vs_DSK_maille_700_charts.pdf",
+pdf( file = "../../PDF/citik_maille_700/humains_700/citik_femme_DSK_vs_DSK_maille_700_charts.pdf",
 # pdf( file = "../../PDF/citik_maille_700/humains_700/citik_homme_DSK_vs_DSK_maille_700_charts.pdf",
      onefile = TRUE,
      paper="a4r",
@@ -177,7 +179,7 @@ length(dskdata$humidity)
 range(wdata$humidity, na.rm = 1)
 range( (dskdata$humidity), na.rm = 1 )
 
-BR2 <- seq(from= 0, to= 1, by=.01)
+BR2 <- seq(from= 0, to= 100, by=1)
 BR2
 length(BR2)
 
@@ -187,7 +189,7 @@ y<-hist(wdata$humidity, breaks = BR2, freq=F,
         ylab = ("Densité (Somme=100)"),
         xlab = "Humidité (%)",
         ylim = c(0, 6),
-        xlim = c(0, 1),
+        xlim = c(0, 100),
         cex.main = 1.3,
         cex.lab = 1.5,
         cex.axis = 1.5
@@ -328,7 +330,7 @@ length(dskdata$cloudcover)
 range(wdata$cloudcover, na.rm = 1)
 range( (dskdata$cloudcover), na.rm = 1 )
 
-Br7 <- seq(from=0 , to=1 , by=.01)
+Br7 <- seq(from=0 , to=100 , by=1)
 Br7
 length(Br7)
 
@@ -338,7 +340,7 @@ d<-hist((wdata$cloudcover), breaks = Br7, freq=F,
         ylab = "Denisté  (Somme=100)",
         xlab = "couvert nuageux (%)",
         ylim = c(0,3.5),
-        xlim = c(0,1),
+        xlim = c(0,100),
         cex.main = 1.3,
         cex.lab = 1.5,
         cex.axis = 1.5
@@ -614,6 +616,50 @@ text(-5, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
 sum(h$density)
 sum(HH11$density)
 
+
+# #################################################### comparatif Température moyenne #################################################### 
+length(wdata$temperature)
+length(dskdata$temperature)
+
+range(wdata$temperature, na.rm = 1)
+range(dskdata$temperature , na.rm = 1 )
+
+BR15 <- seq(from= -6, to= 35, by=1)
+BR15
+length(BR15)
+
+
+### histogramme de température nocturnes comparé:
+h<-hist(wdata$temperature, breaks = BR15, freq=F,
+        col="grey",
+        main = paste("Fréquence de signalements de piqûres de tiques en fonction de la température \n , ",nr," signalements  humains (France HDTOM, 2017-20)"),
+        ylab = "Denisté  (Somme=1)",
+        xlab = "Température (T°C)",
+        ylim = c(0,.11),
+        xlim = c(-10,30),
+        cex.main = 1.3,
+        cex.lab = 1.5,
+        cex.axis = 1.5
+)
+
+### courbe non lissée
+HH15 <- hist(dskdata$temperature, breaks = BR15,  plot=F)
+lines(HH15$mids, HH15$density, lwd = 2, col = "green")
+
+### courbe lissée, 
+lines(density(dskdata$temperature, na.rm = 1), lwd = 2, col = "red")
+
+### courbe lissée,  hyp +2 C°
+HH15 <- hist(dskdata$temperatureoffset2, breaks = BR15,  plot=F)
+lines(density(dskdata$temperatureoffset2, na.rm = 1), lwd = 2, col = "blue") 
+
+text(27, 0.08, paste("N = ",nr," signalements" ),col = "black")
+text(04, 0.08, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
+text(06, 0.10, paste("M = Courbe brute" ), cex =1 ,  col = "green")
+text(-5, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
+
+sum(h$density)
+sum(HH15$density)
 
 
 ############################################################# EOS ####################################################################

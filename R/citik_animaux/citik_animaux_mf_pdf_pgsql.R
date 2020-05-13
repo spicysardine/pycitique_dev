@@ -55,6 +55,8 @@ SELECT
 ,precipintensitymax
 ,temperaturehigh
 ,temperaturelow
+,temperature
+,temperatureoffset2
 
 FROM citik.citik_animaux_clean_weather_strict
 ;"
@@ -146,7 +148,7 @@ BR2 <- seq(from= 0, to= 100, by=1)
 BR2
 length(BR2)
 
-y<-hist(wadata$humidity*100, breaks = BR2, freq=F,
+y<-hist(wadata$humidity, breaks = BR2, freq=F,
         col="grey",
         cex=10,
         main = paste("Fréquence de signalements de piqûres de tiques en fonction de l'humidité\n (2017-2020),",nra,"  signalements  animaux (France HDTOM, 2017-20)"),
@@ -215,7 +217,7 @@ length(wadata$pressure)
 length(mfdata$press_mer)
 
 range(wadata$pressure, na.rm = TRUE)
-range( (mfdata$press_mer)/100, na.rm = 1 ) # division par 100 pour obtenir la valeur en hPa.
+range( (mfdata$press_mer), na.rm = 1 ) # division par 100 pour obtenir la valeur en hPa.
 
 Br4 <- seq(from=950 , to=1050 , by=1)
 Br4
@@ -234,11 +236,11 @@ a<-hist(wadata$pressure, breaks = Br4, freq=F,
 )
 
 ### courbe non lissée
-HH4 <- hist((mfdata$press_mer)/100, breaks = Br4,  plot = F)
+HH4 <- hist((mfdata$press_mer), breaks = Br4,  plot = F)
 lines(HH4$mids, HH4$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$press_mer)/100, na.rm = 1), lwd = 2, col = "red")
+lines(density((mfdata$press_mer), na.rm = 1), lwd = 2, col = "red")
 
 text(1030, 0.3, paste("N = ",nra," signalements" ), cex = 1,  col = "black")
 text(1010, 0.10, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
@@ -252,7 +254,7 @@ length(wadata$visibility) # en km
 length(mfdata$visibilite) # en m
 
 range((wadata$visibility), na.rm = 1)
-range( (mfdata$visibilite/1000), na.rm = 1 )
+range( (mfdata$visibilite), na.rm = 1 )
 
 Br6 <- seq(from=0 , to=37 , by=1)
 Br6
@@ -271,11 +273,11 @@ c<-hist((wadata$visibility), breaks = Br6, freq=F,
 )
 
 ### courbe non lissée
-HH6 <- hist((mfdata$visibilite)/1000, breaks = Br6,  plot = F)
+HH6 <- hist((mfdata$visibilite), breaks = Br6,  plot = F)
 lines(HH6$mids, HH6$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$visibilite)/1000, na.rm = 1), lwd = 2, col = "red")
+lines(density((mfdata$visibilite), na.rm = 1), lwd = 2, col = "red")
 
 text(22, 0.4, paste("N = ",nra," signalements" ), cex = 1,  col = "black")
 text(25, 0.1, paste("M = Mesure Nationale MF" ), cex = 1 ,  col = "red")
@@ -288,14 +290,14 @@ sum(HH6$density)
 length(wadata$cloudcover)
 length(mfdata$nebulosite)
 
-range(wadata$cloudcover, na.rm = 1)*100
+range(wadata$cloudcover, na.rm = 1)
 range( (mfdata$nebulosite), na.rm = 1 )
 
 Br7 <- seq(from=0 , to=100 , by=1)
 Br7
 length(Br7)
 
-d<-hist((wadata$cloudcover)*100, breaks = Br7, freq=F,
+d<-hist((wadata$cloudcover), breaks = Br7, freq=F,
         col="grey",
         main = paste("Fréquence des morsures par couvert nuageux (%) \n ",nra," signalements  animaux (France HDTOM, 2017-20)"),
         ylab = "Denisté  (Somme=1)",
@@ -564,6 +566,49 @@ text(-1, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
 sum(h$density)
 sum(HH11$density)
 
+# #################################################### comparatif Température moyenne #################################################### 
+length(wadata$temperature)
+length(mfdata$temperature)
+
+range(wadata$temperature, na.rm = 1)
+range(mfdata$temperature , na.rm = 1 )
+
+BR15 <- seq(from= -6, to= 35, by=1)
+BR15
+length(BR15)
+
+
+### histogramme de température nocturnes comparé:
+z<-hist(wadata$temperature, breaks = BR15, freq=F,
+        col="grey",
+        main = paste("Fréquence de signalements de piqûres de tiques en fonction de la température \n , ",nra," signalements  humains (France HDTOM, 2017-20)"),
+        ylab = "Denisté  (Somme=1)",
+        xlab = "Température (T°C)",
+        ylim = c(0,.11),
+        xlim = c(-10,30),
+        cex.main = 1.3,
+        cex.lab = 1.5,
+        cex.axis = 1.5
+)
+
+### courbe non lissée
+HH15 <- hist(mfdata$temperature, breaks = BR15,  plot=F)
+lines(HH15$mids, HH15$density, lwd = 2, col = "green")
+
+### courbe lissée, 
+lines(density(mfdata$temperature, na.rm = 1), lwd = 2, col = "red")
+
+### courbe lissée,  hyp +2 C°
+HH15 <- hist(mfdata$temperatureoffset2, breaks = BR15,  plot=F)
+lines(density(mfdata$temperatureoffset2, na.rm = 1), lwd = 2, col = "blue") 
+
+text(23, 0.08, paste("N = ",nra," signalements" ),col = "black")
+text(04, 0.08, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
+text(06, 0.10, paste("M = Courbe brute" ), cex =1 ,  col = "green")
+text(-5, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
+
+sum(z$density)
+sum(HH15$density)
 
 ############################################################# EOS ####################################################################
 

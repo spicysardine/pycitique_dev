@@ -223,6 +223,9 @@ select * from meteo.mf_synop42_avg
 select * from meteo.darksky_synop42_avg
 ;
 
+select * from meteo.darksky_maille_700_avg
+;
+
 create table meteo.mf_synop42_avg as (
 
 	select * from meteo.mf_synop42_avg_raw
@@ -232,6 +235,24 @@ create table  meteo.darksky_synop42_avg_raw as (
 
 	select * from meteo.darksky_synop42_avg
 );
+
+create table  meteo.darksky_maille_700_avg_raw as (
+
+	select * from meteo.darksky_maille_700_avg
+);
+
+create table  citik.citik_humains_clean_weather_strict_raw as (
+
+	select * from citik.citik_humains_clean_weather_strict
+);
+
+
+create table  citik.citik_animaux_clean_weather_strict_raw as (
+
+	select * from citik.citik_animaux_clean_weather_strict
+);
+
+
 
 ------ Uniformisation des unités avec darksky  --------
 
@@ -257,4 +278,75 @@ create table  meteo.darksky_synop42_avg_raw as (
 -- temperatureoffset2 = temperature+2
 -- temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
 -- ;
+
+
+-- update meteo.darksky_maille_700_avg
+-- set 
+-- humidity = humidity*100,
+-- cloudcover = cloudcover*100
+-- ;
+
+-- alter table meteo.darksky_maille_700_avg
+-- add column temperature numeric,
+-- add column temperatureoffset2 numeric
+-- ;
+
+-- update meteo.darksky_maille_700_avg
+-- set temperature = round(   (temperaturehigh+temperaturelow)/2  ,2),
+
+-- update meteo.darksky_maille_700_avg
+-- temperatureoffset2 = temperature+2
+-- ;
+
+-- température moyenne pour les humains
+
+select * from citik.citik_humains_clean_weather_strict
+limit 100
+;
+
+update meteo.citik_humains_clean_weather_strict
+set 
+humidity = humidity*100,
+cloudcover = cloudcover*100
+;
+
+alter table meteo.citik_humains_clean_weather_strict
+add column temperature numeric,
+add column temperatureoffset2 numeric
+;
+
+update meteo.citik_humains_clean_weather_strict
+set temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
+;
+
+update meteo.citik_humains_clean_weather_strict
+set temperatureoffset2 = temperature+2
+;
+
+-- température moyenne pour les animaux
+select * from citik.citik_animaux_clean_weather_strict
+limit 100
+;
+
+update meteo.citik_animaux_clean_weather_strict
+set 
+humidity = humidity*100,
+cloudcover = cloudcover*100
+;
+
+alter table meteo.citik_animaux_clean_weather_strict
+add column temperature numeric,
+add column temperatureoffset2 numeric
+;
+
+update meteo.citik_animaux_clean_weather_strict
+set temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
+;
+
+update meteo.citik_animaux_clean_weather_strict
+set temperatureoffset2 = temperature+2
+;
+
+
+
 
