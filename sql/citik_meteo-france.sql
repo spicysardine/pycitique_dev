@@ -219,3 +219,31 @@ create table meteo.mf_synop42_avg as (
 
 select * from meteo.mf_synop42_avg
 ;
+
+select * from meteo.darksky_synop42_avg
+;
+
+create table meteo.mf_synop42_avg as (
+
+	select * from meteo.mf_synop42_avg_raw
+);
+
+------ Uniformisation des unités avec darksky  --------
+
+-- update meteo.mf_synop42_avg
+-- set
+-- press_sta = round( (press_sta/100), 2),
+-- press_mer = round( (press_mer/100), 2),
+-- visibilite = round( (visibilite/1000), 2 )
+-- ;
+
+-- update meteo.darksky_synop42_avg
+-- set humidite = humidite*100,
+-- set nebulosite = nebulosite*100
+-- ;
+
+
+
+
+
+

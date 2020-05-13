@@ -146,7 +146,7 @@ barplot(table(wdata$uvindex),
 length(wdata$humidity)
 length(mfdata$humidite)
 
-range(wdata$humidity, na.rm = 1)
+range(wdata$humidity*100, na.rm = 1)
 range( (mfdata$humidite), na.rm = 1 )
 
 BR2 <- seq(from= 0, to= 100, by=1)
@@ -218,13 +218,13 @@ text(04, 0.10, paste("M = Mesure Nationale MF" ),  col = "red")
 sum(z$density)
 sum(HH3$density)
 
-########################################### comparatif pression atmosphérique #########################################
+########################################### comparatif pression atmosphérique au niveau de la mer  #########################################
 
 length(wdata$pressure)
 length(mfdata$press_mer)
 
 range(wdata$pressure, na.rm = TRUE)
-range( (mfdata$press_mer)/100, na.rm = 1 ) # division par 100 pour obtenir la valeur en hPa.
+range( (mfdata$press_mer), na.rm = 1 ) # division par 100 pour obtenir la valeur en hPa.
 
 Br4 <- seq(from=950 , to=1050 , by=1)
 Br4
@@ -243,11 +243,11 @@ a<-hist(wdata$pressure, breaks = Br4, freq=F,
 )
 
 ### courbe non lissée
-HH4 <- hist((mfdata$press_mer)/100, breaks = Br4,  plot = F)
+HH4 <- hist((mfdata$press_mer), breaks = Br4,  plot = F)
 lines(HH4$mids, HH4$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$press_mer)/100, na.rm = 1), lwd = 2, col = "red")
+lines(density((mfdata$press_mer), na.rm = 1), lwd = 2, col = "red")
 
 text(1030, 0.3, paste("N = ",nr," signalements" ),col = "black")
 text(1010, 0.10, paste("M = Mesure Nationale MF" ), col = "red")
@@ -261,7 +261,7 @@ length(wdata$visibility) # en km
 length(mfdata$visibilite) # en m
 
 range((wdata$visibility), na.rm = 1)
-range( (mfdata$visibilite/1000), na.rm = 1 )
+range( (mfdata$visibilite), na.rm = 1 )
 
 Br6 <- seq(from=0 , to=37 , by=1)
 Br6
@@ -280,11 +280,11 @@ c<-hist((wdata$visibility), breaks = Br6, freq=F,
 )
 
 ### courbe non lissée
-HH6 <- hist((mfdata$visibilite)/1000, breaks = Br6,  plot = F)
+HH6 <- hist((mfdata$visibilite), breaks = Br6,  plot = F)
 lines(HH6$mids, HH6$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$visibilite)/1000, na.rm = 1), lwd = 2, col = "red")
+lines(density((mfdata$visibilite), na.rm = 1), lwd = 2, col = "red")
 
 text(22, 0.4, paste("N = ",nr," signalements" ),col = "black")
 text(20, 0.1, paste("M = Mesure Nationale MF" ), col = "red")
