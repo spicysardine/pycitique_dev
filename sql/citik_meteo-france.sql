@@ -228,6 +228,11 @@ create table meteo.mf_synop42_avg as (
 	select * from meteo.mf_synop42_avg_raw
 );
 
+create table  meteo.darksky_synop42_avg_raw as (
+
+	select * from meteo.darksky_synop42_avg
+);
+
 ------ Uniformisation des unités avec darksky  --------
 
 -- update meteo.mf_synop42_avg
@@ -238,12 +243,18 @@ create table meteo.mf_synop42_avg as (
 -- ;
 
 -- update meteo.darksky_synop42_avg
--- set humidite = humidite*100,
--- set nebulosite = nebulosite*100
+-- set 
+-- humidity = humidity*100,
+-- cloudcover = cloudcover*100
 -- ;
 
+-- alter table meteo.darksky_synop42_avg
+-- add column temperatureoffset2 numeric 
+-- ;
 
-
-
-
+-- update meteo.darksky_synop42_avg
+-- set
+-- temperatureoffset2 = temperature+2
+-- temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
+-- ;
 
