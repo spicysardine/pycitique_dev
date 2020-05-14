@@ -304,22 +304,22 @@ select * from citik.citik_humains_clean_weather_strict
 limit 100
 ;
 
-update meteo.citik_humains_clean_weather_strict
+update citik.citik_humains_clean_weather_strict
 set 
 humidity = humidity*100,
 cloudcover = cloudcover*100
 ;
 
-alter table meteo.citik_humains_clean_weather_strict
+alter table citik.citik_humains_clean_weather_strict
 add column temperature numeric,
 add column temperatureoffset2 numeric
 ;
 
-update meteo.citik_humains_clean_weather_strict
-set temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
+update citik.citik_humains_clean_weather_strict
+set temperature = round(   (temperaturehigh::numeric+temperaturelow::numeric)/2  ,2)
 ;
 
-update meteo.citik_humains_clean_weather_strict
+update citik.citik_humains_clean_weather_strict
 set temperatureoffset2 = temperature+2
 ;
 
@@ -328,22 +328,22 @@ select * from citik.citik_animaux_clean_weather_strict
 limit 100
 ;
 
-update meteo.citik_animaux_clean_weather_strict
+update citik.citik_animaux_clean_weather_strict
 set 
 humidity = humidity*100,
 cloudcover = cloudcover*100
 ;
 
-alter table meteo.citik_animaux_clean_weather_strict
+alter table citik.citik_animaux_clean_weather_strict
 add column temperature numeric,
 add column temperatureoffset2 numeric
 ;
 
-update meteo.citik_animaux_clean_weather_strict
-set temperature = round(   (temperaturehigh+temperaturelow)/2  ,2)
+update citik.citik_animaux_clean_weather_strict
+set temperature = round(   (temperaturehigh::numeric+temperaturelow::numeric)/2  ,2)
 ;
 
-update meteo.citik_animaux_clean_weather_strict
+update citik.citik_animaux_clean_weather_strict
 set temperatureoffset2 = temperature+2
 ;
 
