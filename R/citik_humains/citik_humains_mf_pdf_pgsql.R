@@ -4,7 +4,7 @@
 setwd("./")
 getwd()
 ########installation et activation des librairies nécessaires à l'importation et l'analyse de la BDD#######
-########Installer puis activer le package de gestion de base de donée postgresql 
+########Installer puis activer le package de gestion de base de donée postgresql
 
 ######## compilation du code de connexion ####
 
@@ -20,8 +20,8 @@ con <- dbConnect(PostgreSQL()
 
 ##############################################
 
-#la requete a mis 3 min et 28 s pour renvoyer 1 million d'observations. 
-wdata <- as.data.frame(dbGetQuery(con, 
+#la requete a mis 3 min et 28 s pour renvoyer 1 million d'observations.
+wdata <- as.data.frame(dbGetQuery(con,
 "
 SELECT
  id
@@ -70,6 +70,7 @@ mfdata <-  dbGetQuery(con, "select * from meteo.mf_synop42_avg ; " )
 # summary(wdata)
 nr <- nrow(wdata)
 
+# Paramètres d'export du fichier PDF contenant les graphiques
 
 pdf( file = "../../PDF/citik_maille_42/humains_42/citik_humains_DSK_vs_MF_charts.pdf",
      onefile = TRUE,
@@ -166,7 +167,7 @@ y<-hist(wdata$humidity, breaks = BR2, freq=F,
         cex.main = 1.3,
         cex.lab = 1.5,
         cex.axis = 1.5
-        
+
 )
 
 ### courbe non lissée
@@ -174,7 +175,7 @@ HH2 <- hist((mfdata$humidite), breaks = BR2,  plot = F)
 lines(HH2$mids, HH2$density, lwd = 2, col = "green")
 
 ### courbe lissée
-lines(density((mfdata$humidite), na.rm = 1), lwd = 2, col = "red") 
+lines(density((mfdata$humidite), na.rm = 1), lwd = 2, col = "red")
 
 text(90, 0.06, paste("N =",nr," signalements" ), col = "black")
 text(55, 0.05, paste("M = Mesure Nationale MF" ),  col = "red")
@@ -204,7 +205,7 @@ z<-hist(wdata$dewpoint, breaks = Br3, freq=F,
         ylim = c(0,.15),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5      
+        cex.axis = 1.5
 )
 
 
@@ -242,7 +243,7 @@ a<-hist(wdata$pressure, breaks = Br4, freq=F,
             xlim = c(950, 1050),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5       
+        cex.axis = 1.5
 )
 
 ### courbe non lissée
@@ -279,7 +280,7 @@ c<-hist((wdata$visibility), breaks = Br6, freq=F,
         xlim = c(0,40),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5       
+        cex.axis = 1.5
 )
 
 ### courbe non lissée
@@ -316,7 +317,7 @@ d<-hist((wdata$cloudcover), breaks = Br7, freq=F,
         xlim = c(0,100),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5       
+        cex.axis = 1.5
 )
 
 ### courbe non lissée
@@ -355,7 +356,7 @@ b<-hist(wdata$windspeed, breaks = Br5, freq=F,
         xlim = c(0,13),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5       
+        cex.axis = 1.5
 )
 
 ### courbe non lissée
@@ -386,8 +387,8 @@ length(Br8)
 
 
 
-e<-hist(wdata$windgust, 
-        breaks = Br8, 
+e<-hist(wdata$windgust,
+        breaks = Br8,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par rafale de vent (m/s) \n ",nr," signalements  humains (France HDTOM, 2017-20)"),
@@ -397,7 +398,7 @@ e<-hist(wdata$windgust,
         xlim = c(0,30),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5    
+        cex.axis = 1.5
 )
 
 ## courbe non lissée
@@ -427,8 +428,8 @@ length(Br9)
 
 
 
-f<-hist(wdata$precipintensity, 
-        breaks = Br9, 
+f<-hist(wdata$precipintensity,
+        breaks = Br9,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par intensité de précipitation (mm/h) \n ",nr," signalements  humains (France HDTOM, 2017-20)"),
@@ -470,8 +471,8 @@ length(Br9)
 
 
 
-f<-hist(wdata$precipintensitymax, 
-        breaks = Br9, 
+f<-hist(wdata$precipintensitymax,
+        breaks = Br9,
         freq=F,
         col="grey",
         main = paste("Fréquence des morsures par intensité de précipitation sur 24 h (mm/h) \n ",nr," signalements  humains (France HDTOM, 2017-20)"),
@@ -481,7 +482,7 @@ f<-hist(wdata$precipintensitymax,
         xlim = c(0,3),
         cex.main = 1.3,
         cex.lab = 1.5,
-        cex.axis = 1.5       
+        cex.axis = 1.5
 )
 
 ### courbe lissée
@@ -497,7 +498,7 @@ text(.4, 5, paste("M = Mesure Nationale MF" ), col = "red")
 sum(f$density)
 sum(HH9$density)
 
-#################################################### comparatif Température diurne ( de 6 à 21h ) #################################################### 
+#################################################### comparatif Température diurne ( de 6 à 21h ) ####################################################
 length(wdata$temperaturehigh)
 length(mfdata$temperature_diurne)
 
@@ -532,7 +533,7 @@ lines(density(mfdata$temperature_diurne, na.rm = 1), lwd = 2, col = "red")
 
 ### courbe lissée, hyp +2 C°
 HH10hyp <- hist(mfdata$temperature_diurne_offset2, breaks = BR10,  plot=F)
-lines(density(mfdata$temperature_diurne_offset2, na.rm = 1), lwd = 2, col = "blue") 
+lines(density(mfdata$temperature_diurne_offset2, na.rm = 1), lwd = 2, col = "blue")
 
 text(30, 0.08, paste("N = ",nr," signalements" ),col = "black")
 text(05, 0.08, paste("M = Mesure Nationale MF" ), col = "red")
@@ -541,7 +542,7 @@ text(15.3, 0.082, paste("M = Courbe brute" ), cex =1 ,  col = "green")
 sum(g$density)
 sum(HH10$density)
 
-# #################################################### comparatif Température nocturnes (de 21 à 06h) #################################################### 
+# #################################################### comparatif Température nocturnes (de 21 à 06h) ####################################################
 length(wdata$temperaturelow)
 length(mfdata$temperature_nocturne )
 
@@ -574,12 +575,12 @@ HH11 <- hist(mfdata$temperature_nocturne, breaks = BR11,  plot=F)
 
 lines(HH11$mids, HH11$density, lwd = 2, col = "green")
 
-### courbe lissée, 
+### courbe lissée,
 lines(density(mfdata$temperature_nocturne, na.rm = 1), lwd = 2, col = "red")
 
 ### courbe lissée,  hyp +2 C°
 HH11hyp <- hist(mfdata$temperature_nocturne_offset2, breaks = BR11,  plot=F)
-lines(density(mfdata$temperature_nocturne_offset2, na.rm = 1), lwd = 2, col = "blue") 
+lines(density(mfdata$temperature_nocturne_offset2, na.rm = 1), lwd = 2, col = "blue")
 
 text(23, 0.08, paste("N = ",nr," signalements" ),col = "black")
 text(05, 0.08, paste("M = Mesure Nationale MF" ), col = "red")
@@ -589,7 +590,7 @@ text(0, 0.04, paste("M+ = Hypothèse +2 C°" ), cex =1 ,  col = "blue")
 sum(h$density)
 sum(HH11$density)
 
-# #################################################### comparatif Température moyenne #################################################### 
+# #################################################### comparatif Température moyenne ####################################################
 length(wdata$temperature)
 length(mfdata$temperature)
 
@@ -618,12 +619,12 @@ z<-hist(wdata$temperature, breaks = BR15, freq=F,
 HH15 <- hist(mfdata$temperature, breaks = BR15,  plot=F)
 lines(HH15$mids, HH15$density, lwd = 2, col = "green")
 
-### courbe lissée, 
+### courbe lissée,
 lines(density(mfdata$temperature, na.rm = 1), lwd = 2, col = "red")
 
 ### courbe lissée,  hyp +2 C°
 HH15 <- hist(mfdata$temperatureoffset2, breaks = BR15,  plot=F)
-lines(density(mfdata$temperatureoffset2, na.rm = 1), lwd = 2, col = "blue") 
+lines(density(mfdata$temperatureoffset2, na.rm = 1), lwd = 2, col = "blue")
 
 text(27, 0.08, paste("N = ",nr," signalements" ),col = "black")
 text(04, 0.08, paste("M = Mesure Nationale (darksky.net)" ), col = "red")
@@ -638,6 +639,3 @@ dev.off()
 
 ##### code de déconnexion ####
 dbDisconnect(con)
-
-
-    
