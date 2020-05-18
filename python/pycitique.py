@@ -25,12 +25,20 @@ from geocoder		import osm
 from darksky		import forecast
 from datetime		import datetime as dt
 
+### Parallel computing libraries
+from threading import Thread
+from multiprocessing import Process
+
+### Time functions
+from time import perf_counter, sleep
+
 ### other library IMPORTS ###
 from re			import search
 from csv			import reader, writer, QUOTE_ALL, DictReader, DictWriter
 from itertools		import islice
 from os			import chdir, getcwd, listdir
 from collections	import OrderedDict
+
 
 
 
@@ -393,7 +401,7 @@ class Pycitique:
 
 
 
-	def dskextractorDB(self, inputschema, inputable, outputschema, outputable):
+	def dskextractorDB(self, inputschema, inputable, outputschema, outputable, dateOffset):
 
 		missingObjectCount=0
 		loop=0
@@ -401,7 +409,19 @@ class Pycitique:
 		print('Connection to database')
 		curs = self.conn.cursor(cursor_factory = DictCursor)
 		print('Creating DictCursor')
-		inputsql = "select * from {}.{} limit 5;" .format( inputschema, inputable)
+		
+		inputsql = '''
+		SELECT
+			id,
+			lat,
+			lon,
+			date_piqure_saisie - {} as date_piqure_saisie,
+			annee_extract
+		From {}.{}
+		where date_piqure_saisie between '01/01/2017' and '05/04/2020'
+		order by date_piqure_saisie
+		; ''' .format( dateOffset, inputschema, inputable)
+		
 		curs.execute(inputsql)
 		print('Executing query...Data is being fetched...')
 		wdata = curs.fetchall()
@@ -416,10 +436,11 @@ class Pycitique:
 		typetablesql = "select column_name, data_type from information_schema.columns where table_name = '{}';".format(inputable)
 		curs.execute(typetablesql)
 		typetable = curs.fetchall()
-		fieldnames = ''
-		for row in typetable:
-			if row['data_type'] == 'USER-DEFINED' : row['data_type'] = 'geometry'
-			fieldnames += "{} {},".format(row['column_name'], row['data_type'])
+		fieldnames = 'id varchar(6), lat float, lon float, date_piqure_saisie_jm{} date, annee_extract text, '.format( dateOffset )
+#		fieldnames = ''
+#		for row in typetable:
+#			if row['data_type'] == 'USER-DEFINED' : row['data_type'] = 'geometry'
+#			fieldnames += "{} {},".format( row['column_name'], row['data_type'] )
 
 		for field in self.wobjlist:
 			fieldnames += field+' varchar,'
@@ -610,16 +631,16 @@ class Pycitique:
 		curs.close()
 		self.conn.close()
 
-###################################################################   EOS   #######################################################################
+###################################################################   EOS   ################################################################
 
 
 ############################################## DB darkskyextraction  for synop stations ####################################################
-inputschema ='meteo'
-inputable = 'liste_stations_700'
-outputschema = 'meteo'
-outputable = 'darksky_maille_700_extraction'
-reverser = Pycitique()
-reverser.dskstationextractorDB(inputschema, inputable, outputschema, outputable)
+#inputschema ='meteo'
+#inputable = 'liste_stations_700'
+#outputschema = 'meteo'
+#outputable = 'darksky_maille_700_extraction'
+#reverser = Pycitique()
+#reverser.dskstationextractorDB(inputschema, inputable, outputschema, outputable)
 
 ############################################## DB darkskyextraction  ####################################################
 #inputschema = 'citik'
