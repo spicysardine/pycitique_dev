@@ -12,10 +12,10 @@ threadlist = []
 
 for n in range(1,16):
 	try:
-		inputschema  ='citik'
+		inputschema  = 'citik'
 		inputable    = 'citik_animaux_clean'
 		outputschema = 'meteo'
-		outputable   = 'citik_animaux_clean_weather_strict_raw_jm{}'.format( n )
+		outputable   = 'citik_animaux_clean_weather_strict_raw_jm{}'.format(n)
 		dateOffset   = n
 		reverser = Pycitique()
 		t = Thread( target = reverser.dskextractorDB , args=[inputschema, inputable, outputschema, outputable, dateOffset] )
