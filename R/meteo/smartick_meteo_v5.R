@@ -274,8 +274,10 @@ shapiro.test(MFdata$temperature) # W = 0.97696, p-value = 7.649e-13 => p-value s
     
     d1 <- subset(DSKdata, select = c("dewpoint", "origine")) ## création du subset venant de DSK http://larmarange.github.io/analyse-R/fusion-de-tables.html
     dim(d1)
+    head(d1, 3)
     d2 <- subset(MFdata, select = c("point_rose", "origine")) ## création du subset venant de MF
     dim(d2)
+    head(d2, 3)
     
     ## pour utiliser la fusion "rbind" il faut que les champs aient le même nom (c'est le 1er qui pose problème)
     names(d2)[1]
