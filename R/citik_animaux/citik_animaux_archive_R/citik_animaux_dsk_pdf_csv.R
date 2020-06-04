@@ -8,10 +8,10 @@ getwd()
 wadata <- read.csv("../../data/donnee_signalements_avec_meteo_dsk/citik_animaux_clean_weather_strict.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
 
 ## donées météo-france de comparaison
-dskdata <- read.csv("../../data/donee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
+dskdata <- read.csv("../../data/donee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_700.csv", sep = ',', quote = "'", stringsAsFactors = FALSE)
 
 #inspection des jeux de données darksky
-# ls(wadata)
+# ls(wadata)    
 # str(wadata)
 # summary(wadata)
 nra <- nrow(wadata)
