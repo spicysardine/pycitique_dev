@@ -135,7 +135,7 @@ class Pycitique:
 				headerlist=line
 			# Appending reverse geocoding fields to header list
 			headerlist+=self.rglist
-			with open(self.outputdir+inputfile+'_revgeocoded.csv', 'a') as DataOutputFile:
+			with open(outputdir+inputfile+'_revgeocoded.csv', 'a') as DataOutputFile:
 				streamwriter = writer( DataOutputFile, delimiter = delimiter, quotechar = "'", quoting=QUOTE_ALL   )
 				# Header writing to the file
 				streamwriter.writerow(headerlist)
@@ -185,8 +185,8 @@ class Pycitique:
 			print(str(loop)+' Objects Written to the last file\n')
 
 
-
-	def batchrgeocoderCSV(self, inputdir, inputfile, outputdir, delimiter, quotechar):
+#	@static 
+	def batchrgeocoderCSV(self, inputdir, outputdir, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
 
@@ -651,9 +651,22 @@ class Pycitique:
 #reverser.dskextractorDB(inputschema, inputable, outputschema, outputable)
 
 ############################################## DB reversegeocoding  ####################################################
-#inputschema = 'gis'
-#inputable = 'france_maille_700'
-#outputschema = 'meteo'
-#outputable = 'liste_stations_700_duplicate_todelete'
-#reverser=Pycitique()
-#reverser.rgeocoderDB(inputschema, inputable, outputschema, outputable)
+inputschema = 'gis'
+inputable = 'france_maille_700'
+outputschema = 'meteo'
+outputable = 'liste_stations_700_duplicate_youcef'
+reverser=Pycitique()
+reverser.rgeocoderDB(inputschema, inputable, outputschema, outputable)
+
+############################################## csv reversegeocoding  ####################################################
+#inputdir = '/home/beetroot/Developer/python/CNRS/projetCitique/projetNominatim/inputest/'
+#inputfile = 'citik_animaux_2018'
+#outputdir = '/home/beetroot/Developer/python/CNRS/projetCitique/projetNominatim/inputest/'
+#delimiter = ','
+#quotechar = "'"
+#reverser = Pycitique()
+##reverser.rgeocoderCSV(inputdir, inputfile, outputdir, delimiter, quotechar)
+#reverser.batchrgeocoderCSV(inputdir, outputdir, delimiter, quotechar)
+
+
+
