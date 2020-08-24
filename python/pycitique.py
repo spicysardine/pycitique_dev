@@ -54,6 +54,7 @@ class Pycitique:
 		self.count = 0
 		self.APIkey= '865f840cdde4ab359bce9a5adee70f84'
 		self.rglist = ['village','ville','chef_lieu', 'departement', 'departement_code','region','code_postal','pays','code_pays','adresse_complette']
+		self.glist = ['lat', 'lon', 'quartier', 'ville', 'departement', 'departement_code', 'region', 'code_postal', 'pays', 'code_pays', 'adresse_complette']
 
 		self.wobjlist = ['timezone','time','summary','icon','sunriseTime','sunsetTime','moonPhase',
 					'precipIntensity','precipIntensityMax','precipIntensityMaxTime','precipAccumulation',
@@ -135,7 +136,7 @@ class Pycitique:
 				headerlist=line
 			# Appending reverse geocoding fields to header list
 			headerlist+=self.rglist
-			with open(self.outputdir+inputfile+'_revgeocoded.csv', 'a') as DataOutputFile:
+			with open(outputdir+inputfile+'_revgeocoded.csv', 'a') as DataOutputFile:
 				streamwriter = writer( DataOutputFile, delimiter = delimiter, quotechar = "'", quoting=QUOTE_ALL   )
 				# Header writing to the file
 				streamwriter.writerow(headerlist)
@@ -185,8 +186,8 @@ class Pycitique:
 			print(str(loop)+' Objects Written to the last file\n')
 
 
-
-	def batchrgeocoderCSV(self, inputdir, inputfile, outputdir, delimiter, quotechar):
+#	@static 
+	def batchrgeocoderCSV(self, inputdir, outputdir, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
 
@@ -381,6 +382,120 @@ class Pycitique:
 				insertintotablesql = 'INSERT INTO {}.{} VALUES ({}) ;'.format(outputschema, outputable, values)
 				curs.execute( insertintotablesql )
 				self.conn.commit()
+				del values
+				del valdict
+
+				print('Row '+str(loop)+' Written\n')
+
+			except ValueError:
+				print('Could not convert string to float!')
+				missingObjectCount+=1
+				print('The program will continue...')
+
+		if (missingObjectCount>0):
+			print('There was', missingObjectCount, 'missing dataPoint objects during the extraction process.\n')
+		else:
+			print('Congratulations! Reverse-Geocoding finished without missing any dataPoint objects! You may check your table.\n')
+			print(str(loop)+' Objects Written to the table\n')
+		curs.close()
+		self.conn.close()
+
+
+
+	def geocoderDB(self, inputschema, inputable, outputschema, outputable):
+
+		missingObjectCount = 0
+		loop = 0
+
+		print('Connection to database')
+		curs = self.conn.cursor(cursor_factory = DictCursor)
+		print('Creating DictCursor')
+		inputsql = "select * from {}.{};" .format( inputschema, inputable)
+		curs.execute(inputsql)
+		print('Executing query...Data is being fetched...')
+		gdata = curs.fetchall()
+		print('Data dictionary is fetched.')
+		print('File creation is beginning.')
+
+		createschemasql = "CREATE SCHEMA IF NOT EXISTS {}".format(outputschema)
+		curs.execute(createschemasql)
+
+		droptablesql = "DROP TABLE IF EXISTS {}.{} ;".format(outputschema, outputable)
+		curs.execute(droptablesql)
+		typetablesql = "select column_name, data_type from information_schema.columns where table_name = '{}';".format(inputable)
+		curs.execute(typetablesql)
+		typetable = curs.fetchall()
+		fieldnames = ''
+		for row in typetable:
+			if row['data_type'] == 'USER-DEFINED' : row['data_type'] = 'geometry'
+			fieldnames += "{} {},".format(row['column_name'], row['data_type'])
+
+		for field in self.glist:
+			fieldnames += field+' varchar,'
+		fieldnames = fieldnames[:-1]
+
+		createtablesql = "CREATE TABLE {}.{} ({});".format( outputschema, outputable, fieldnames )
+		curs.execute(createtablesql)
+
+		self.conn.commit()
+		print("Table creation is complete. Beginning  data extraction precess...\n")
+		print("...\n")
+
+		for row in gdata:
+
+			try:
+
+				loop+=1
+				valdict = OrderedDict()
+				address = row['adresse']
+				commune = row['commune']
+				query_string = address+", "+commune
+
+				location = osm( query_string, url=self.server)
+
+				if location.address is not None and location.postal is not None:
+					if   search(r',\sLyon,', location.address)    is not None: department_code = '69M'
+					elif search('Corse-du-Sud', location.address) is not None: department_code = '2A'
+					elif search('Haute-Corse' , location.address) is not None: department_code = '2B'
+					elif search('Villefranche-sur-Saône', location.address) is not None: department_code = '69D'
+					elif location.county is None: location.county = ''
+					else: department_code = location.postal[0:-3]
+				else: department_code = ''
+
+				gdict = OrderedDict()
+
+				gdict['lat'] = location.lat
+				gdict['lon'] = location.lng
+				gdict['quartier'] = location.suburb
+				gdict['ville'] = location.city
+				gdict['departement'] = location.county
+				gdict['departement_code'] = department_code
+				gdict['region'] = location.state
+				gdict['code_postal'] = location.postal
+				gdict['pays'] = location.country
+				gdict['code_pays'] = location.country_code
+				gdict['adresse_complette'] =  location.address
+
+				# Here we put the geocoded values into the empty ordered dictionary valdict
+				for gobj in self.glist:
+					valdict[gobj] = gdict.get(gobj, '')
+					if valdict[gobj] is None: valdict[gobj] = ''
+
+				# a recast of the current row dictionary so the update is possible with geocoded values
+				row = OrderedDict(row) 
+				row.update(valdict)
+				values= ''
+				# correction of weired characters
+				for key, value in row.items() :
+					value = str(value)
+					values += "'"+value.replace("'", "’")+"',"
+				# removal of the trailing comma
+				values = values[:-1]
+				# insertion of the table in DB
+				insertintotablesql = 'INSERT INTO {}.{} VALUES ({}) ;'.format(outputschema, outputable, values)
+				curs.execute( insertintotablesql )
+				self.conn.commit()
+				# a little cleanup at the loop end to avoid confusion and memory saturation for large datasets
 				del values
 				del valdict
 
@@ -654,6 +769,51 @@ class Pycitique:
 #inputschema = 'gis'
 #inputable = 'france_maille_700'
 #outputschema = 'meteo'
-#outputable = 'liste_stations_700_duplicate_todelete'
+#outputable = 'liste_stations_700_duplicate_youcef'
 #reverser=Pycitique()
 #reverser.rgeocoderDB(inputschema, inputable, outputschema, outputable)
+
+############################################## csv reversegeocoding  ####################################################
+#inputdir = '/home/beetroot/Developer/python/CNRS/projetCitique/projetNominatim/inputest/'
+#inputfile = 'citik_animaux_2018'
+#outputdir = '/home/beetroot/Developer/python/CNRS/projetCitique/projetNominatim/inputest/'
+#delimiter = ','
+#quotechar = "'"
+#reverser = Pycitique()
+##reverser.rgeocoderCSV(inputdir, inputfile, outputdir, delimiter, quotechar)
+#reverser.batchrgeocoderCSV(inputdir, outputdir, delimiter, quotechar)
+
+########################################### DB insertion ######################
+#inserter = Pycitique()
+#inputdir = '/home/beetroot/Developer/GIS/geoCSV/projetHoussam'
+#inputfile = 'parc_immo_houssam'
+#outputschema = 'gis'
+#delimiter = ';'
+#quotechar = "'"
+#inserter.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
+
+########################################### DB geocodage ######################
+inserter = Pycitique()
+inputschema = 'gis'
+inputable = 'parc_immo_houssam'
+outputschema = 'gis'
+outputable = 'parc_immo_houssam_geocoded'
+inserter.geocoderDB(inputschema, inputable, outputschema, outputable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
