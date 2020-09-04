@@ -108,17 +108,19 @@ class Pycitique:
 
 
 
-	def batchinsertcsvtable(self, inputdir, inputfile, outputschema, delimiter, quotechar):
+	def batchinsertcsvtable(self, inputdir, outputschema, delimiter, quotechar):
 
-		inputfilelist=listdir(inputdir)
+		inputfilelist = listdir(inputdir)
 
 		for inputfile in inputfilelist:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
-				inputfile=inputfile[0:-4]
+				inputfile = inputfile[0:-4]
 				self.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
+     		     print("\nAll tables written successfully to database. Operation completed.")
+     		     print("\nA total of ", self.count," rows is inserted to database.")
+			else:
+			     print("Wrong file type or path.")
 
-		print("\nAll tables written successfully to database. Operation completed.")
-		print("\nA total of ", self.count," rows is inserted to database.")
 		self.count = 0
 		self.conn.close()
 		print("\nPostgreSQL connection is closed.\n")
@@ -792,13 +794,21 @@ class Pycitique:
 #quotechar = "'"
 #inserter.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
 
-########################################### DB geocodage ######################
+########################################### Batch DB insertion ######################
 inserter = Pycitique()
-inputschema = 'gis'
-inputable = 'parc_immo_houssam'
-outputschema = 'gis'
-outputable = 'parc_immo_houssam_geocoded'
-inserter.geocoderDB(inputschema, inputable, outputschema, outputable)
+inputdir = '/home/beetroot/Developer/GIS/geoCSV/france_resencement_historique_1986-2017/france_metro_base_communes_serie_historique_1986_2017/'
+outputschema = 'demography'
+delimiter = ';'
+quotechar = "'"
+inserter.batchinsertcsvtable(inputdir, outputschema, delimiter, quotechar)
+
+########################################### DB geocodage ######################
+#inserter = Pycitique()
+#inputschema = 'gis'
+#inputable = 'parc_immo_houssam'
+#outputschema = 'gis'
+#outputable = 'parc_immo_houssam_geocoded'
+#inserter.geocoderDB(inputschema, inputable, outputschema, outputable)
 
 
 
