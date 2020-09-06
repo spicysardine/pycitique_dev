@@ -10,7 +10,7 @@
 #Descriptions: * This module takes a folder in the system and
 #looks for csv files. If it finds none, it exits. If it finds any
 #it imports them to the specified schema into the database
-#									  				 
+#
 ##################################################################
 
 ### library IMPORTS csv inserter ###
@@ -116,8 +116,8 @@ class Pycitique:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
 				inputfile = inputfile[0:-4]
 				self.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
-     		     print("\nAll tables written successfully to database. Operation completed.")
-     		     print("\nA total of ", self.count," rows is inserted to database.")
+				print("\nAll tables written successfully to database. Operation completed.")
+				print("\nA total of ", self.count," rows is inserted to database.")
 			else:
 			     print("Wrong file type or path.")
 
@@ -188,7 +188,7 @@ class Pycitique:
 			print(str(loop)+' Objects Written to the last file\n')
 
 
-#	@static 
+#	@static
 	def batchrgeocoderCSV(self, inputdir, outputdir, delimiter, quotechar):
 
 		inputfilelist=listdir(inputdir)
@@ -484,7 +484,7 @@ class Pycitique:
 					if valdict[gobj] is None: valdict[gobj] = ''
 
 				# a recast of the current row dictionary so the update is possible with geocoded values
-				row = OrderedDict(row) 
+				row = OrderedDict(row)
 				row.update(valdict)
 				values= ''
 				# correction of weired characters
@@ -526,7 +526,7 @@ class Pycitique:
 		print('Connection to database')
 		curs = self.conn.cursor(cursor_factory = DictCursor)
 		print('Creating DictCursor')
-		
+
 		inputsql = '''
 		SELECT
 			id,
@@ -538,7 +538,7 @@ class Pycitique:
 		where date_piqure_saisie between '01/01/2017' and '05/04/2020'
 		order by date_piqure_saisie
 		; ''' .format( dateOffset, inputschema, inputable)
-		
+
 		curs.execute(inputsql)
 		print('Executing query...Data is being fetched...')
 		wdata = curs.fetchall()
@@ -809,21 +809,3 @@ inserter.batchinsertcsvtable(inputdir, outputschema, delimiter, quotechar)
 #outputschema = 'gis'
 #outputable = 'parc_immo_houssam_geocoded'
 #inserter.geocoderDB(inputschema, inputable, outputschema, outputable)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
