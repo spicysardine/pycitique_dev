@@ -22,7 +22,7 @@ from psycopg2			import errors as PgError
 from geocoder		import osm
 
 ### library IMPORTS darkskyextractorCSV ###
-from darksky		import forecast
+from darksky		import forecast # This package is the official darkskylib library installed with pip, it is not available in apt repos.
 from datetime		import datetime as dt
 
 ### Parallel computing libraries
@@ -115,12 +115,14 @@ class Pycitique:
 		for inputfile in inputfilelist:
 			if search(r'\.[cC][sS][vV]$', inputfile) is not None :
 				inputfile = inputfile[0:-4]
+				print("\nThe table ",inputfile," is being written to the specified schema of the database.")
 				self.insertcsvtable(inputdir, inputfile, outputschema, delimiter, quotechar)
-				print("\nAll tables written successfully to database. Operation completed.")
-				print("\nA total of ", self.count," rows is inserted to database.")
-			else:
-			     print("Wrong file type or path.")
+				print("\nThe table was inserted successfully to database. Operation completed.")
+#			else:
+#			     print("Wrong file type or path.")
 
+		print("\nAll tables written successfully to database. Operation completed.")
+		print("\nA total of ", self.count," rows is inserted to database.")
 		self.count = 0
 		self.conn.close()
 		print("\nPostgreSQL connection is closed.\n")
