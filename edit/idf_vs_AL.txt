@@ -1,0 +1,150 @@
+[1] "temperature"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2598996, p-value = 2.961e-06
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 379925734, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "temperaturehigh"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2435211, p-value = 0.5591
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 370580538, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "humidity"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2174735, p-value = 3.039e-08
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 336827725, p-value = 0.0004611
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "dewpoint"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2477674, p-value = 0.1137
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 379560865, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "pressure"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 1041542, p-value = 0.1589
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 258078631, p-value = 5.087e-09
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "windspeed"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2706084, p-value = 2.664e-12
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 391350535, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "visibility"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2317339, p-value = 0.1067
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 341019786, p-value = 6.375e-08
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "cloudcover"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 1668495, p-value = 0.2013
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 285336909, p-value = 0.103
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "windgust"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 981523, p-value = 0.6916
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 257452682, p-value = 5.417e-11
+alternative hypothesis: true location shift is not equal to 0
+
+[1] "uvindex"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table351 and table353
+W = 2133691, p-value = 0.8911
+alternative hypothesis: true location shift is not equal to 0
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  table352 and table354
+W = 339682373, p-value = 1.057e-09
+alternative hypothesis: true location shift is not equal to 0
+
