@@ -149,7 +149,7 @@ set temperature_nocturne = temperature
 where substring(date, 9, 2) !~ '(06|09|12|15|18)' -- nocturn
 ;
 
--- Création d'une vue contenant les moyennes par quart
+-- Création d'une vue contenant les moyennes par quart groupés par date
 
 -- drop view if exists meteo.synop_meteo_france_celsius_avg;
 
