@@ -60,6 +60,28 @@ select * from  meteo.darksky_maille_700_idf_alsace_avg_raw
 
 
 
+create table meteo.darksky_maille_700_idf_alsace_avg as 
+select * from  meteo.darksky_maille_700_idf_alsace_avg_raw
+order by date_releve
+;
+
+
+alter table meteo.darksky_maille_700_idf_alsace_avg
+add column temperature numeric;
+
+alter table meteo.darksky_maille_700_idf_alsace_avg
+add column temperatureoffset2 numeric;
+
+update  meteo.darksky_maille_700_idf_alsace_avg
+set temperature =  round( ((temperaturehigh+temperaturelow) / 2 ), 2)
+;
+
+update  meteo.darksky_maille_700_idf_alsace_avg
+set temperatureoffset2 = round((((temperaturehigh+temperaturelow)/2)+2), 2)
+;
+
+select * from  meteo.darksky_maille_700_idf_alsace_avg
+order by date_releve
 
 
 
