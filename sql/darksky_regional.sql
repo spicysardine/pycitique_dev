@@ -58,8 +58,6 @@ create table meteo.darksky_maille_700_idf_alsace_avg as
 select * from  meteo.darksky_maille_700_idf_alsace_avg_raw
 ;
 
-
-
 create table meteo.darksky_maille_700_idf_alsace_avg as 
 select * from  meteo.darksky_maille_700_idf_alsace_avg_raw
 order by date_releve

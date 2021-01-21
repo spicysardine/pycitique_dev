@@ -40,29 +40,27 @@ range(mfdatavg$temperature, na.rm = TRUE)
 #### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= -5, to= 30, by=2) ## tient compte des deux distributions
 
-#### puis on fait l'histo en utilisant 
-
 ### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$temperature, breaks = BRt,
      freq=F, # fréquences
      col="grey",
-     main = "Mean Temperatures for 42 Météo France Synoptic Stations \n (France, july 2017 - february 2020), 1 191 days",
-     ylab = "Densities",
-     xlab = "Mean Temperatures (T°C)"
+     main = "Moyenne des températures entre 1/1/2017 et 5/4/2020 sur 1191 jours",
+     ylab = "densités",
+     xlab = "Moyenne des temperatures (°C)"
 )
 
 ### calcul des paramètres pour la fonction lines() à superposer à l'histo
 
-HH2 <- hist(mfdatavg$temperature, breaks = BRt,  plot=F)
+HHt <- hist(mfdatavg$temperature, breaks = BRt,  plot=F)
 
-#lines(HH2$mids, HH2$density, lwd = 2, col = "orange") ### courbe non lissée  ## SO
+lines(HHt$mids, HHt$density, lwd = 2, col = "green") ### courbe non lissée  ## SO
 lines(density(mfdatavg$temperature, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
 
 text(03, 0.07, paste("Darksky"), cex = 1.2,  col = "black")
 text(02, 0.06, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements tudiés à la place du texte "Darksky" ou MF, il faudrait :
+## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
 ### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$temperature))), cex = 1.2,  col = "black")
 ### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$temperature))), cex = 1.2,  col = "blue")
 
@@ -118,13 +116,13 @@ range(dskdatavg$humidity, na.rm = TRUE)
 range(mfdatavg$humidite, na.rm = TRUE)
 
 #### on définit les breaks pour l'abscisse commune
-BRt <- seq(from= 45, to= 100, by=2) ## tient compte des deux distributions
+BRh <- seq(from= 0, to= 100, by=2) ## tient compte des deux distributions
 
 #### puis on fait l'histo en utilisant 
 
 ### freq=F => des fréquences relatives et pas des effectifs
 
-hist(dskdatavg$humidity, breaks = BRt,
+hist(dskdatavg$humidity, breaks = BRh,
      freq=F, # fréquences
      col="grey",
      main = "Mean Humidity for 42 Météo France Synoptic Stations \n (France, july 2017 - february 2020), 1 191 days",
@@ -134,9 +132,9 @@ hist(dskdatavg$humidity, breaks = BRt,
 
 ### calcul des paramètres pour la fonction lines() à superposer à l'histo
 
-HH2 <- hist(mfdatavg$humidite, breaks = BRt,  plot=F)
+HHh <- hist(mfdatavg$humidite, breaks = BRh,  plot=F)
 
-#lines(HH2$mids, HH2$density, lwd = 2, col = "orange") ### courbe non lissée  ## SO
+lines(HHh$mids, HHh$density, lwd = 2, col = "orange") ### courbe non lissée  ## SO
 lines(density(mfdatavg$humidite, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
 
 text(60, 0.04, paste("Darksky"), cex = 1.2,  col = "black")
@@ -160,7 +158,7 @@ shapiro.test(dskdatavg$humidity) # W = 0.97679, p-value = 6.718e-13 => p-value s
 shapiro.test(mfdatavg$humidite) # W = 0.97952, p-value = 6.121e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
 
 
-### t.test entre les différentes températures
+### t.test entre les différentes humidités
 t.test(mfdatavg$humidite,dskdatavg$humidity) # t = 2.9604, df = 2370.3, p-value = 0.003103 => p-value significative, les 2 échantillons sont significativement différents !
 
 # t.test(mfdatavg$humidite_p1D,dskdatavg$humidity) ## SO

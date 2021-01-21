@@ -86,3 +86,21 @@ order by date_releve desc
 limit 42
 ;
 
+
+alter table meteo.darksky_synop42_avg
+add column temperature numeric;
+
+alter table meteo.darksky_synop42_avg
+add column temperatureoffset2 numeric;
+
+update  meteo.darksky_synop42_avg
+set temperature =  round( ((temperaturehigh+temperaturelow) / 2 ), 2)
+;
+
+update  meteo.darksky_synop42_avg
+set temperatureoffset2 = round((((temperaturehigh+temperaturelow)/2)+2), 2)
+;
+
+select * from  meteo.darksky_synop42_avg
+order by date_releve
+
