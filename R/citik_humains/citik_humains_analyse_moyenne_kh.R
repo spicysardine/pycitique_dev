@@ -10,7 +10,7 @@ setwd("./")
 # La donnée DSK est issue de la même coordonnée de station mais avec des extractoins issues des dépôt de darksky
 
 dskdatavg<- read.csv("../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", header = TRUE, sep = ",", dec = ".")
-mfdatavgvg <- read.csv("../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv", header = TRUE, sep = ",", dec = ".")
+mfdatavg <- read.csv("../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv", header = TRUE, sep = ",", dec = ".")
 
 ## vérification des jeux de donnée
 ## liste les variables
@@ -22,26 +22,30 @@ summary(dskdatavg)
 summary(mfdatavg)
 
 
-## 2.2 Analyse des Températures moyennes DSK vs MF (méthode Alice Favre)
+############################## Analyse des Températures moyennes ########################################
+# qqnorm(dskdatavg$temperature, pch = 1, frame = TRUE, ylab = "température moyenne DSK")
+# qqline(dskdatavg$temperature, col = "steelblue", lwd = 2)
+# 
+# qqnorm(mfdatavg$temperature, pch = 1, frame = TRUE, ylab = "température moyenne MF")
+# qqline(mfdatavg$temperature, col = "steelblue", lwd = 2)
+qqPlot(dskdatavg$temperature, ylab = "température moyenne DSK")
+qqPlot(mfdatavg$temperature, ylab = "température moyenne MF")
+### Histogramme des Températures moyennes
 
-### 2.2.1. Histogramme des Températures moyennes "temperature" pour MF et "temperature" pour DSK = (tempHigh + tempLow)/2 pour 42 stations Météo France
-
-####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
+#### Vérifications
 length(dskdatavg$temperature)
 length(na.omit(dskdatavg$temperature)) ## pour tester si NA
 length(mfdatavg$temperature)
 length(na.omit(mfdatavg$temperature)) ## pour tester si NA
 
-
-##### et que l'étendue n'est pas la même
+##### vérification de l'étendue de la distribution
 range(dskdatavg$temperature, na.rm = TRUE)
 range(mfdatavg$temperature, na.rm = TRUE)
 
-#### on définit les breaks pour l'abscisse commune
+#### définition des intervalles
 BRt <- seq(from= -5, to= 30, by=2) ## tient compte des deux distributions
 
 ### freq=F => des fréquences relatives et pas des effectifs
-
 hist(dskdatavg$temperature, breaks = BRt,
      freq=F, # fréquences
      col="grey",
@@ -51,145 +55,122 @@ hist(dskdatavg$temperature, breaks = BRt,
 )
 
 ### calcul des paramètres pour la fonction lines() à superposer à l'histo
-
 HHt <- hist(mfdatavg$temperature, breaks = BRt,  plot=F)
-
 lines(HHt$mids, HHt$density, lwd = 2, col = "green") ### courbe non lissée  ## SO
 lines(density(mfdatavg$temperature, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
-
+## labels
 text(03, 0.07, paste("Darksky"), cex = 1.2,  col = "black")
 text(02, 0.06, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$temperature))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$temperature))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$temperature_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$temperature_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
-### 2.2.2. Test des distributions
+######### Test des distributions statistiques
 ## References :
 ## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
-
-shapiro.test(dskdatavg$temperature) # W = 0.97673, p-value = 6.398e-13 => p-value significative, l'échantillon ne suit pas une loi normale.
-
-shapiro.test(mfdatavg$temperature) # W = 0.97696, p-value = 7.649e-13 => p-value significative, l'échantillon ne suit pas une loi normale.
-
+shapiro.test(dskdatavg$temperature) 
+shapiro.test(mfdatavg$temperature) 
 
 ### t.test entre les différentes températures
-t.test(mfdatavg$temperature,dskdatavg$temperature) # t = -1.6278, df = 2379.9, p-value = 0.1037 => dommage, p-value non significative, les 2 échantillons ne sont pas significativement différents !
-
-# t.test(mfdatavg$temperature_p1D,dskdatavg$temperature) ## SO
-# t.test(mfdatavg$temperature_p15D,dskdatavg$temperature) ## SO
-# t.test(mfdatavg$temperature_p2D,dskdatavg$temperature) ## SO
+t.test(mfdatavg$temperature,dskdatavg$temperature)
 
 ## References :
 ## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
 ## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
+ 
+#### fabrication des données pour le test kruskal.test() sur données de températures des deux extractions
+type <- "dsk"
+dsktmp <- data.frame(temp=dskdatavg$temperature, type)
 
-### Import des données pour le test kruskal.test() sur données mfdatavg$temperature, dskdatavg$temperature in : KW_temp_maille_42.csv
-kwtempdata <- read.csv("../../data/donnee_meteo_nationale_comparative/comparaison/KW_temp_maille_42.csv", header = TRUE, sep = ";", dec = ".")
-summary(kwtempdata)
+type <- "mf"
+mftmp <- data.frame(temp=mfdatavg$temperature, type)
 
+kwtempdata <- rbind(dsktmp,mftmp)
+
+## Kruskal-Wallis 
 kruskal.test(temp ~ type, data = kwtempdata) ## ~ signifie : "en fonction de"
+summary(kwtempdata)
+kwtempdata %>% kruskal_effsize(temp ~ type)
 
-## Kruskal-Wallis chi-squared = 2.5559, df = 1, p-value = 0.1099 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
+# Test de wilcoxon, plus adéquat pour deux groupes de comparaisons:
+wilcox.test(temp ~ type, data = kwtempdata)
 
 
-## 2.3. Analyse de l'humidité moyenne DSK vs MF (méthode Alice Favre)
 
+############################## Analyse de l'humidité moyenne DSK vs MF ############################## 
 
-### 2.3.1. Histogramme de l'humidité moyenne "humidite" pour MF et "humidity" pour DSK pour 42 stations Météo France
+## TEST de normatlité graphique QQ plot
+# qqplot(norm, dskdatavg$humidity, plot.it = TRUE)
+# qqplot(norm, trunc(mfdatavg$humidite), plot.it = TRUE)
+# 
+# qqnorm(dskdatavg$humidity, pch = 1, frame = TRUE, ylab = "humidité DSK")
+# qqline(dskdatavg$humidity, col = "steelblue", lwd = 2)
+# 
+# qqnorm(trunc(mfdatavg$humidite), pch = 1, frame = TRUE, ylab = "humidité MF")
+# qqline(trunc(mfdatavg$humidite), col = "steelblue", lwd = 2)
 
-####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
+qqPlot(dskdatavg$humidity, ylab = "humidité moyenne DSK")
+qqPlot(mfdatavg$humidite, ylab = "humidité moyenne MF")
+
+###Histogramme de l'humidité moyenne "humidite" pour MF et "humidity" pour DSK 
+
 length(dskdatavg$humidity)
 length(na.omit(dskdatavg$humidity)) ## pour tester si NA
 length(mfdatavg$humidite)
 length(na.omit(mfdatavg$humidite)) ## pour tester si NA
 
-
-##### et que l'étendue n'est pas la même
 range(dskdatavg$humidity, na.rm = TRUE)
 range(mfdatavg$humidite, na.rm = TRUE)
 
-#### on définit les breaks pour l'abscisse commune
 BRh <- seq(from= 0, to= 100, by=2) ## tient compte des deux distributions
 
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
-
 hist(dskdatavg$humidity, breaks = BRh,
-     freq=F, # fréquences
+     freq=F,
      col="grey",
-     main = "Mean Humidity for 42 Météo France Synoptic Stations \n (France, july 2017 - february 2020), 1 191 days",
+     main = "Moyenne de l'humidité entre 1/1/2017 et 5/4/2020 sur 1191 jours",
      ylab = "Densities",
      xlab = "Mean Humidity (%)"
 )
 
-### calcul des paramètres pour la fonction lines() à superposer à l'histo
-
-HHh <- hist(mfdatavg$humidite, breaks = BRh,  plot=F)
-
+HHh <- hist(trunc(mfdatavg$humidite), breaks = BRh,  plot=F)
 lines(HHh$mids, HHh$density, lwd = 2, col = "orange") ### courbe non lissée  ## SO
-lines(density(mfdatavg$humidite, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
+lines(density(trunc(mfdatavg$humidite), na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
 
 text(60, 0.04, paste("Darksky"), cex = 1.2,  col = "black")
 text(55, 0.03, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements tudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$humidity))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$humidite))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$humidite_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$humidite_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
-### 2.3.2. Test des distributions
-## References :
-## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
-
-shapiro.test(dskdatavg$humidity) # W = 0.97679, p-value = 6.718e-13 => p-value significative, l'échantillon ne suit pas une loi normale.
-
-shapiro.test(mfdatavg$humidite) # W = 0.97952, p-value = 6.121e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
-
+#DSK
+shapiro.test(dskdatavg$humidity) 
+#MF
+shapiro.test(trunc(mfdatavg$humidite))
 
 ### t.test entre les différentes humidités
-t.test(mfdatavg$humidite,dskdatavg$humidity) # t = 2.9604, df = 2370.3, p-value = 0.003103 => p-value significative, les 2 échantillons sont significativement différents !
+t.test(trunc(mfdatavg$humidite),dskdatavg$humidity) 
 
-# t.test(mfdatavg$humidite_p1D,dskdatavg$humidity) ## SO
-# t.test(mfdatavg$humidite_p15D,dskdatavg$humidity) ## SO
-# t.test(mfdatavg$humidite_p2D,dskdatavg$humidity) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
-
-### Import des données pour le test kruskal.test() sur données mfdatavg$humidite, dskdatavg$humidity in : KW_temp_maille_42.csv
-kwhumdata <- read.csv("../../data/donnee_meteo_nationale_comparative/comparaison/KW_hum_maille_42.csv", header = TRUE, sep = ";", dec = ".")
+# construction du jeu de donnée pour le test Kurskal-Willis:
+type <- "dsk"
+dskhum <- data.frame(hum=dskdatavg$humidity, type)
+type <- 'mf'
+mfhum <- data.frame(hum=trunc(mfdatavg$humidite),type)
+kwhumdata <- rbind(dskhum,mfhum)
+kwhumdata
 summary(kwhumdata)
 
-kruskal.test(temp ~ type, data = kwhumdata) ## ~ signifie : "en fonction de"
+?kruskal.test
+kruskal.test(hum ~ type, data = kwhumdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 9.2389, df = 1, p-value = 0.002369 => p-value significative, les 2 échantillons sont significativement différents !
+# Test de l'effet de taille: résultat: effet= 0.00346 sur une échelle de 0 à 1, donc très petit.
+kwhumdata %>% kruskal_effsize(hum ~ type)
+
+# Test de wilcoxon, plus adéquat pour deux groupes de comparaisons:
+wilcox.test(hum ~ type, data = kwhumdata)
+
+######################################## Analyse du point de rosé moyen ############################## 
 
 
-## 2.4. Analyse du point de rosé moyen DSK vs MF (méthode Alice Favre)
+############# Histogramme du point de rosé moyen 
 
-
-### 2.4.1. Histogramme du point de rosé moyen "point_rose" pour MF et "dewpoint" pour DSK pour 42 stations Météo France
-
-####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$dewpoint)
 length(na.omit(dskdatavg$dewpoint)) ## pour tester si NA
 length(mfdatavg$point_rose)
 length(na.omit(mfdatavg$point_rose)) ## pour tester si NA
-
 
 ##### et que l'étendue n'est pas la même
 range(dskdatavg$dewpoint, na.rm = TRUE)
@@ -197,10 +178,6 @@ range(mfdatavg$point_rose, na.rm = TRUE)
 
 #### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= -15, to= 20, by=2) ## tient compte des deux distributions
-
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$dewpoint, breaks = BRt,
      freq=F, # fréquences
@@ -220,18 +197,7 @@ lines(density(mfdatavg$point_rose, na.rm = TRUE), lwd = 2, col = "blue") ### cou
 text(-5, 0.05, paste("Darksky"), cex = 1.2,  col = "black")
 text(-10, 0.03, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$dewpoint))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$point_rose))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$point_rose_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$point_rose_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.4.2. Test des distributions
-## References :
-## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
 
 shapiro.test(dskdatavg$dewpoint) # W = 0.97812, p-value = 1.924e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
 
@@ -240,17 +206,6 @@ shapiro.test(mfdatavg$point_rose) # W = 0.97813, p-value = 1.932e-12 => p-value 
 
 ### t.test entre les différentes températures
 t.test(mfdatavg$point_rose,dskdatavg$dewpoint) # t = 0.063932, df = 2378.9, p-value = 0.949 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
-
-# t.test(mfdatavg$point_rose_p1D,dskdatavg$dewpoint) ## SO
-# t.test(mfdatavg$point_rose_p15D,dskdatavg$dewpoint) ## SO
-# t.test(mfdatavg$point_rose_p2D,dskdatavg$dewpoint) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
-
-### Import des données pour le test kruskal.test() sur données mfdatavg$point_rose, dskdatavg$dewpoint
 
 ## création de deux sous-ensembles "subset"s" avec juste les variables à comparer et l'origine de l'éditeur 
 
@@ -271,33 +226,24 @@ head(kwptrosdata)
 
 summary(kwptrosdata)
 
+## Kruskal-Wallis chi-squared = 0.0024133, df = 1, p-value = 0.9608 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
 kruskal.test(dewpoint ~ origine, data = kwptrosdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 0.0024133, df = 1, p-value = 0.9608 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
 
+##############################  Analyse de la pression moyenne au niveau de la mer ############################## 
 
+############ Histogramme de la pression moyenne au niveau de la mer "press_mer" pour MF et "pressure" pour DSK 
 
-## 2.5. Analyse de la pression moyenne au niveau de la mer DSK vs MF (méthode Alice Favre)
-
-
-### 2.5.1. Histogramme de la pression moyenne au niveau de la mer "press_mer" pour MF et "pressure" pour DSK pour 42 stations Météo France
-
-####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$pressure)
 length(na.omit(dskdatavg$pressure))
 length(mfdatavg$press_mer)
 length(na.omit(mfdatavg$press_mer))
 
-##### et que l'étendue n'est pas la même
 range(dskdatavg$pressure, na.rm = TRUE)
 range(mfdatavg$press_mer, na.rm = TRUE)
 
 #### on définit les breaks pour l'abscisse commune
-BRt <- seq(from= 980, to= 1045, by=2) ## tient compte des deux distributions
-
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
+BRp <- seq(from= 980, to= 1045, by=2) ## tient compte des deux distributions
 
 hist(dskdatavg$pressure, breaks = BRt,
      freq=F, # fréquences
@@ -317,35 +263,14 @@ lines(density(mfdatavg$press_mer, na.rm = TRUE), lwd = 2, col = "blue") ### cour
 text(1000, 0.05, paste("Darksky"), cex = 1.2,  col = "black")
 text(990, 0.03, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$pressure))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$press_mer))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$press_mer_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$press_mer_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.5.2. Test des distributions
-## References :
-## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
 
 shapiro.test(dskdatavg$pressure) # W = 0.98046, p-value = 6.908e-11 => p-value significative, l'échantillon ne suit pas une loi normale.
 
 shapiro.test(mfdatavg$press_mer) # W = 0.9784, p-value = 2.414e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
 
-
 ### t.test entre les différentes températures
 t.test(mfdatavg$press_mer,dskdatavg$pressure) # t = -0.34466, df = 2233.7, p-value = 0.7304 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
-
-# t.test(mfdatavg$press_mer_p1D,dskdatavg$pressure) ## SO
-# t.test(mfdatavg$press_mer_p15D,dskdatavg$pressure) ## SO
-# t.test(mfdatavg$press_mer_p2D,dskdatavg$pressure) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
 ### Import des données pour le test kruskal.test() sur données mfdatavg$press_mer, dskdatavg$pressure
 
@@ -366,33 +291,22 @@ head(kwptrosdata)
 
 summary(kwptrosdata)
 
+## Kruskal-Wallis chi-squared = 0.43237, df = 1, p-value = 0.5108 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
 kruskal.test(pressure ~ origine, data = kwptrosdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 0.43237, df = 1, p-value = 0.5108 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
+##############################  Analyse de la vitesse moyenne du vent ################################################# 
 
+### 2.6.1. Histogramme de la vitesse moyenne du vent "vvent" pour MF et "windspeed" pour DSK 
 
-
-## 2.6. Analyse de la vitesse moyenne du vent DSK vs MF (méthode Alice Favre)
-
-
-### 2.6.1. Histogramme de la vitesse moyenne du vent "vvent" pour MF et "windspeed" pour DSK pour 42 stations Météo France
-
-####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$windspeed)
 length(na.omit(dskdatavg$windspeed)) ## pour tester si NA
 length(mfdatavg$vvent)
 length(na.omit(mfdatavg$vvent)) ## pour tester si NA
 
-##### et que l'étendue n'est pas la même
 range(dskdatavg$windspeed, na.rm = TRUE)
 range(mfdatavg$vvent, na.rm = TRUE)
 
-#### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= 0, to= 10, by=1) ## tient compte des deux distributions
-
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$windspeed, breaks = BRt,
      freq=F, # fréquences
@@ -412,18 +326,7 @@ lines(density(mfdatavg$vvent, na.rm = TRUE), lwd = 2, col = "blue") ### courbe l
 text(6, 0.20, paste("Darksky"), cex = 1.2,  col = "black")
 text(6, 0.30, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$windspeed))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$vvent))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$vvent_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$vvent_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.6.2. Test des distributions
-## References :
-## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
 
 shapiro.test(dskdatavg$windspeed) # W = 0.93208, p-value < 2.2e-16 => p-value significative, l'échantillon ne suit pas une loi normale.
 
@@ -432,17 +335,6 @@ shapiro.test(mfdatavg$vvent) # W = 0.93244, p-value < 2.2e-16 => p-value signifi
 
 ### t.test entre les différentes températures
 t.test(mfdatavg$vvent,dskdatavg$windspeed) # t = -0.73363, df = 2378.3, p-value = 0.4632 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
-
-# t.test(mfdatavg$vvent_p1D,dskdatavg$windspeed) ## SO
-# t.test(mfdatavg$vvent_p15D,dskdatavg$windspeed) ## SO
-# t.test(mfdatavg$vvent_p2D,dskdatavg$windspeed) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
-
-### Import des données pour le test kruskal.test() sur données mfdatavg$vvent, dskdatavg$windspeed
 
 ## création de deux sous-ensembles "subset"s" avec juste les variables à comparer et l'origine de l'éditeur 
 
@@ -461,16 +353,12 @@ head(kwptrosdata)
 
 summary(kwptrosdata)
 
+## Kruskal-Wallis chi-squared = 0.36632, df = 1, p-value = 0.545 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
 kruskal.test(windspeed ~ origine, data = kwptrosdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 0.36632, df = 1, p-value = 0.545 => p-value non significative, les 2 échantillons ne sont pas significativement différents !
+##############################  Analyse de la visibilite moyenne ############################## 
 
-
-
-## 2.7. Analyse de la visibilite moyenne DSK vs MF (méthode Alice Favre)
-
-
-### 2.7.1. Histogramme de la visibilite moyenne "visibilite" pour MF et "visibility" pour DSK pour 42 stations Météo France
+################ Histogramme de la visibilite moyenne "visibilite" pour MF et "visibility" 
 
 ####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$visibility)
@@ -484,10 +372,6 @@ range(mfdatavg$visibilite, na.rm = TRUE)
 
 #### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= 5, to= 40, by=2) ## tient compte des deux distributions
-
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$visibility, breaks = BRt,
      freq=F, # fréquences
@@ -507,14 +391,6 @@ lines(density(mfdatavg$visibilite, na.rm = TRUE), lwd = 2, col = "blue") ### cou
 text(17, 0.20, paste("Darksky"), cex = 1.2,  col = "black")
 text(32, 0.102, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$visibility))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$visibilite))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$visibilite_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$visibilite_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
 
 ### 2.7.2. Test des distributions
 ## References :
@@ -524,18 +400,8 @@ shapiro.test(dskdatavg$visibility) # W = 0.93231, p-value < 2.2e-16 => p-value s
 
 shapiro.test(mfdatavg$visibilite) # W = W = 0.97402, p-value = 8.433e-14 => p-value significative, l'échantillon ne suit pas une loi normale.
 
-
 ### t.test entre les différentes températures
 t.test(mfdatavg$visibilite,dskdatavg$visibility) # t = 92.446, df = 1369.9, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
-
-# t.test(mfdatavg$visibilite_p1D,dskdatavg$visibility) ## SO
-# t.test(mfdatavg$visibilite_p15D,dskdatavg$visibility) ## SO
-# t.test(mfdatavg$visibilite_p2D,dskdatavg$visibility) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
 ### Import des données pour le test kruskal.test() sur données mfdatavg$visibilite, dskdatavg$visibility
 
@@ -560,10 +426,9 @@ kruskal.test(visibility ~ origine, data = kwptrosdata) ## ~ signifie : "en fonct
 
 ## Kruskal-Wallis chi-squared = 1746.4, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 
-## 2.8. Analyse de la nebulosité moyenne DSK vs MF (méthode Alice Favre)
+##############################  Analyse de la nebulosité moyenne ############################## 
 
-
-### 2.8.1. Histogramme de la nebulosité moyenne "nebulosite" pour MF et "cloudcover" pour DSK pour 42 stations Météo France
+### 2.8.1. Histogramme de la nebulosité moyenne "nebulosite" pour MF et "cloudcover" pour DSK 
 
 ####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$cloudcover)
@@ -577,10 +442,6 @@ range(mfdatavg$nebulosite, na.rm = TRUE)
 
 #### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= 5, to= 100, by=2) ## tient compte des deux distributions
-
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$cloudcover, breaks = BRt,
      freq=F, # fréquences
@@ -600,15 +461,6 @@ lines(density(mfdatavg$nebulosite, na.rm = TRUE), lwd = 2, col = "blue") ### cou
 text(40, 0.015, paste("Darksky"), cex = 1.2,  col = "black")
 text(55, 0.030, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$cloudcover))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$nebulosite))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$nebulosite_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$nebulosite_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.8.2. Test des distributions
 ## References :
 ## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
@@ -620,15 +472,6 @@ shapiro.test(mfdatavg$nebulosite) # W = 0.82479, p-value < 2.2e-16 => p-value si
 
 ### t.test entre les différentes températures
 t.test(mfdatavg$nebulosite,dskdatavg$cloudcover) # t = 19.15, df = 2349.5, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
-
-# t.test(mfdatavg$nebulosite_p1D,dskdatavg$cloudcover) ## SO
-# t.test(mfdatavg$nebulosite_p15D,dskdatavg$cloudcover) ## SO
-# t.test(mfdatavg$nebulosite_p2D,dskdatavg$cloudcover) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
 ### Import des données pour le test kruskal.test() sur données mfdatavg$nebulosite, dskdatavg$cloudcover
 
@@ -649,15 +492,13 @@ head(kwptrosdata)
 
 summary(kwptrosdata)
 
+## Kruskal-Wallis chi-squared = 474.52, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 kruskal.test(cloudcover ~ origine, data = kwptrosdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 474.52, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
+##############################  Analyse de la rafale_10min moyenne############################## 
 
 
-## 2.9. Analyse de la rafale_10min moyenne DSK vs MF (méthode Alice Favre)
-
-
-### 2.9.1. Histogramme de la rafale_10min moyenne "rafale_10min" pour MF et "windgust" pour DSK pour 42 stations Météo France
+### 2.9.1. Histogramme de la rafale_10min moyenne "rafale_10min" pour MF et "windgust" pour DSK 
 
 ####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$windgust)
@@ -672,9 +513,6 @@ range(mfdatavg$rafale_10min, na.rm = TRUE)
 #### on définit les breaks pour l'abscisse commune
 BRt <- seq(from= 2, to= 25, by=1) ## tient compte des deux distributions
 
-#### puis on fait l'histo en utilisant 
-
-### freq=F => des fréquences relatives et pas des effectifs
 
 hist(dskdatavg$windgust, breaks = BRt,
      freq=F, # fréquences
@@ -694,15 +532,6 @@ lines(density(mfdatavg$rafale_10min, na.rm = TRUE), lwd = 2, col = "blue") ### c
 text(16, 0.05, paste("Darksky"), cex = 1.2,  col = "black")
 text(13, 0.12, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$windgust))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$rafale_10min))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$rafale_10min_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$rafale_10min_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.9.2. Test des distributions
 ## References :
 ## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
@@ -714,15 +543,6 @@ shapiro.test(mfdatavg$rafale_10min) # W = 0.92202, p-value < 2.2e-16 => p-value 
 
 ### t.test entre les différentes températures
 t.test(mfdatavg$rafale_10min,dskdatavg$windgust) # t = -29.089, df = 1644.3, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
-
-# t.test(mfdatavg$rafale_10min_p1D,dskdatavg$windgust) ## SO
-# t.test(mfdatavg$rafale_10min_p15D,dskdatavg$windgust) ## SO
-# t.test(mfdatavg$rafale_10min_p2D,dskdatavg$windgust) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
 ### Import des données pour le test kruskal.test() sur données mfdatavg$rafale_10min, dskdatavg$windgust
 
@@ -748,10 +568,10 @@ kruskal.test(windgust ~ origine, data = kwptrosdata) ## ~ signifie : "en fonctio
 ## Kruskal-Wallis chi-squared = 742.22, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 
 
-## 2.10. Analyse de la quantité moyenne de précipitation par heure DSK vs MF (méthode Alice Favre)
+##############################  Analyse de la quantité moyenne de précipitation par heure ############################## 
 
 
-### 2.10.1. Histogramme de la precip_24h moyenne "precip_24h" pour MF et "precipintensity" pour DSK pour 42 stations Météo France
+### 2.10.1. Histogramme de la precip_24h moyenne "precip_24h" pour MF et "precipintensity" pour DSK 
 
 ####Après avoir vérifié que le nombre d'obs n'est pas égal avec 
 length(dskdatavg$precipintensity)
@@ -788,35 +608,15 @@ lines(density(mfdatavg$precip_24h, na.rm = TRUE), lwd = 2, col = "blue") ### cou
 text(3, 3, paste("Darksky"), cex = 1.2,  col = "black")
 text(3, 1, paste("Météo France"), cex = 1.2,  col = "blue")
 
-## Si on voulait le nb d'enregistrements étudiés à la place du texte "Darksky" ou MF, il faudrait :
-### text(03, 0.07, paste("N =", sum(complete.cases(dskdatavg$precipintensity))), cex = 1.2,  col = "black")
-### text(02, 0.06, paste("N =", sum(complete.cases(mfdatavg$precip_24h))), cex = 1.2,  col = "blue")
-
-## Si on voulait les courbes à +1.5°C ou +2°C, il faudrait fabriquer et afficher :
-### lines(density(mfdatavg$precip_24h_p15D, na.rm = TRUE), lwd = 2, col = "green") ### courbe liss?e, kernel
-### lines(density(mfdatavg$precip_24h_p2D, na.rm = TRUE), lwd = 2, col = "blue") ### courbe liss?e, kernel
-
-
 ### 2.10.2. Test des distributions
-## References :
-## Patrick Royston (1982). An extension of Shapiro and Wilk's W test for normality to large samples. Applied Statistics, 31, 115–124. doi: 10.2307/2347973.
 
 shapiro.test(dskdatavg$precipintensity) # W = 0.41001, p-value < 2.2e-16 => p-value significative, l'échantillon ne suit pas une loi normale.
 
 shapiro.test(mfdatavg$precip_24h) # W = 0.80774, p-value < 2.2e-16 => p-value significative, l'échantillon ne suit pas une loi normale.
 
-
 ### t.test entre les différentes températures
 t.test(mfdatavg$precip_24h,dskdatavg$precipintensity) # t = 28.767, df = 1199.6, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 
-# t.test(mfdatavg$precip_24h_p1D,dskdatavg$precipintensity) ## SO
-# t.test(mfdatavg$precip_24h_p15D,dskdatavg$precipintensity) ## SO
-# t.test(mfdatavg$precip_24h_p2D,dskdatavg$precipintensity) ## SO
-
-## References :
-## Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley & Sons. Pages 115–120.
-
-## http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
 ### Import des données pour le test kruskal.test() sur données mfdatavg$precip_24h, dskdatavg$precipintensity
 
@@ -837,7 +637,7 @@ head(kwptrosdata)
 
 summary(kwptrosdata)
 
+## Kruskal-Wallis chi-squared = 1128.4, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 kruskal.test(precipintensity ~ origine, data = kwptrosdata) ## ~ signifie : "en fonction de"
 
-## Kruskal-Wallis chi-squared = 1128.4, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
 

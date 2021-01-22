@@ -173,11 +173,11 @@ shapiro.test(MFdata$temperature) # W = 0.97696, p-value = 7.649e-13 => p-value s
     
     shapiro.test(DSKdata$humidity) # W = 0.97679, p-value = 6.718e-13 => p-value significative, l'échantillon ne suit pas une loi normale.
     
-    shapiro.test(MFdata$humidite) # W = 0.97952, p-value = 6.121e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
+    shapiro.test(trunc(MFdata$humidite)) # W = 0.97952, p-value = 6.121e-12 => p-value significative, l'échantillon ne suit pas une loi normale.
     
-    
+qqplot(trunc(MFdata$humidite),DSKdata$humidity)    
 ### t.test entre les différentes températures
-    t.test(MFdata$humidite,DSKdata$humidity) # t = 2.9604, df = 2370.3, p-value = 0.003103 => p-value significative, les 2 échantillons sont significativement différents !
+    t.test(trunc(MFdata$humidite),DSKdata$humidity) # t = 2.9604, df = 2370.3, p-value = 0.003103 => p-value significative, les 2 échantillons sont significativement différents !
     
     # t.test(MFdata$humidite_p1D,DSKdata$humidity) ## SO
     # t.test(MFdata$humidite_p15D,DSKdata$humidity) ## SO
