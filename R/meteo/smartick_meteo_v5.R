@@ -859,11 +859,3 @@ qqplot(trunc(MFdata$humidite),DSKdata$humidity)
     
     ## Kruskal-Wallis chi-squared = 1128.4, df = 1, p-value < 2.2e-16 => p-value significative, les 2 échantillons sont significativement différents !
     
-    
-    
-    
-    
-    
-    
-    
-    
