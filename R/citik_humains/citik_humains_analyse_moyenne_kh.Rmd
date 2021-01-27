@@ -1,28 +1,57 @@
-###### Comparaison des données Météo MF et DSK smartick_meteo_v5
+---
+title: "citik_humains_analyse_moyenne_kh"
+author: "khaldoune hilami"
+date: "1/27/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
 
-# Définition du répertoire de travail. NB: Il n'y null besoin de préciser le chemin absolu.
-# "./" signifie répertoire courant, soit pycitique/R/citik_humains
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Comparaison des données Météo MF et DSK
+
+
+```{r include=FALSE}
+### Définition du répertoire de travail. NB: Il n'y null besoin de préciser le chemin absolu.
+### "./" signifie répertoire courant, soit pycitique/R/citik_humains
 getwd()
 setwd("./")
+```
 
-## Pour la fonction qqPlot()
+```{r include=FALSE}
+### Pour la fonction qqPlot()
 require(car)
+require(knitr)
+```
 
-# Import de la donnée comparative météo-France (MF) et darksky (DSK)
-# La donnée MF est issue de 42 stations synoptiques réparties sur le territoire nationale
-dskdatavg<- read.csv("../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
-                     header = TRUE, sep = ",", dec = ".")
-mfdatavg <- read.csv("../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
-                     header = TRUE, sep = ",", dec = ".")
+```{r include=FALSE}
+## Import de la donnée comparative météo-France (MF) et darksky (DSK)
+### La donnée MF est issue de 42 stations synoptiques réparties sur le territoire nationale
+dskdatavg<- read.csv(
+  "../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
+   header = TRUE, sep = ",", dec = ".")
+mfdatavg <- read.csv(
+  "../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
+   header = TRUE, sep = ",", dec = ".")
+```
 
 ## vérification des jeux de donnée
+```{r}
 ls(dskdatavg)
 ls(mfdatavg)
+```
 
-##sommaire de la donnée et analyse primaire
-summary(dskdatavg)
-summary(mfdatavg)
-
+## sommaire de la donnée et analyse primaire
+```{r}
+kable(summary(dskdatavg[c(17,3:10)]))
+kable(summary(mfdatavg[c(13,3:4,6:12)]))
+```
+```{r echo=FALSE}
 ### Création du template pour la fonction de génération de l'histogramme
 weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         
@@ -60,40 +89,44 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         
 }
 
+```
+
+```{r echo=FALSE}
 ### Création du template pour la fonction des tests statistiques
 weatherStats <- function(paramDSK, paramMF, paramName, SIunit){
         
-        ######### Test des distributions statistiques
-        cat("\n####### Test de normalité ",paramName," ",SIunit,"#######\n")
+        #cat("Test de normalité ",paramName," ",SIunit)
         qqPlot(paramDSK, ylab = paramName)
         qqPlot(paramMF, ylab = paramName)
-        cat("\n Fait: voir les grahiques dans la case des Plots de Rstudio \n")
+        # cat("Tests Faits: voir les grahiques dans la case des Plots de Rstudio")
         
-        cat("\n####### Shapiro test #######\n")
+        # cat("Shapiro test")
         print( shapiro.test(paramDSK) ) 
         print( shapiro.test(paramMF) ) 
         
-        cat("\n#######  t.test entre les différentes DSK et MF ",paramName," ",SIunit,"#######\n")
+        # cat("t.test entre les différentes DSK et MF ",paramName," ",SIunit)
         print(t.test(paramDSK, paramMF))
         
-        cat("\n####### fabrication des données pour le test KW ",paramName," ",SIunit,"#######\n")
+        # cat("fabrication des données pour le test KW ",paramName," ",SIunit)
         dskdf <- data.frame(param=paramDSK, type='dsk')
         mfdf <- data.frame(param=paramMF, type='mf')
         kwdata <- rbind(dskdf,mfdf)
-        cat("Objet de donnée pour KW Fabriqué:\n")
-        cat("Sommaire de la donnée:\n")
+        # cat("Objet de donnée pour KW Fabriqué:\n")
+        # cat("Sommaire de la donnée:\n")
         print( summary(kwdata) )
         
-        cat("\n####### Kruskal-Wallis test ",paramName," ",SIunit,"#######\n")
+        # cat("Kruskal-Wallis test ",paramName," ",SIunit)
         ## ~ signifie : "en fonction de"
         print( kruskal.test(param ~ type, data = kwdata) ) 
         
-        cat("\n####### Test de wilcoxon ",paramName," ",SIunit,"#######\n")
+        # cat("Test de wilcoxon ",paramName," ",SIunit)
         print( wilcox.test(param ~ type, data = kwdata) )
 }
 
-####### boucle de calcul itératif
+```
 
+
+```{r echo=FALSE}
 ### Définition des listes des paramètres
 templist <- list(dskParam=dskdatavg$temperature, mfParam=mfdatavg$temperature, Breaks=1, paramName='Température', SIunit='C°')
 humlist <- list(dskParam=dskdatavg$humidity, mfParam=trunc(mfdatavg$humidite), Breaks=1, paramName='Humidité', SIunit='%')
@@ -109,13 +142,20 @@ preciplist24 <- list(dskParam=dskdatavg$precipintensitymax, mfParam=mfdatavg$pre
 paramlist <- list(templist, humlist, ptrlist, presslist, vvlist, visiblist, neblist, raflist, preciplist01, preciplist24)
 length(paramlist)
 
+```
+
+```{r echo=FALSE}
+####### boucle de calcul itératif
+### Boucle Principale:
+
 for( param in paramlist) {
         
-        print(param$paramName)
-        
-        ### Histogramme du paramètres moyennes
+        #print(param$paramName)
+        #'Histogramme du paramètre météo'
         weatherHistogram(param$dskParam, param$mfParam, param$Breaks, param$paramName, param$SIunit)
         
-        ### Test des distributions statistiques
+        #'Test des distributions statistiques'
         weatherStats(param$dskParam, param$mfParam, param$paramName, param$SIunit)
 }
+```
+
