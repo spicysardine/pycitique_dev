@@ -73,7 +73,7 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         hist(paramDSK, breaks=Brx,
              freq=F, # fréquences
              col="grey",
-             main = paste("Moyenne de ",paramName,SIunit," \n entre 1/1/2017 et 5/4/2020 soit 1191 jours"),
+             main = paste("Average",paramName,"(", SIunit, ")"," \n between 1/1/2017 and 5/4/2020, i.e. 1191 days"),
              ylab = "densités",
              xlab = paste("Moyenne de ",paramName,SIunit),
              ylim = c(HHylimin+(HHylimin*25),HHylimax+(HHylimax*.25)),
@@ -86,6 +86,9 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         HHx <- hist(paramMF, breaks = Brx,  plot=F)
         lines(HHx$mids, HHx$density, lwd = 2, col = "green") ### courbe non lissée 
         lines(density(paramMF, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
+        
+        # text(01, 0.1, paste("Darksky"), cex = 1.2,  col = "black") ## légende difficile à caler pour tous les graphiques !
+        # text(01, 0.2, paste("Météo France"), cex = 1.2,  col = "blue") ## légende difficile à caler pour tous les graphiques !
         
 }
 

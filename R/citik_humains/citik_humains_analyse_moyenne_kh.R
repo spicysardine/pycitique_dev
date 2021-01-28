@@ -48,7 +48,7 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         hist(paramDSK, breaks=Brx,
              freq=F, # fréquences
              col="grey",
-             main = paste("Moyenne de ",paramName,SIunit," \n entre 1/1/2017 et 5/4/2020 soit 1191 jours"),
+             main = paste("Average",paramName,"(", SIunit, ")"," \n between 1/1/2017 and 5/4/2020, i.e. 1191 days"),
              ylab = "densités",
              xlab = paste("Moyenne de ",paramName,SIunit),
              ylim = c(HHylimin+(HHylimin*25),HHylimax+(HHylimax*.25)),
@@ -61,6 +61,9 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         HHx <- hist(paramMF, breaks = Brx,  plot=F)
         lines(HHx$mids, HHx$density, lwd = 2, col = "green") ### courbe non lissée 
         lines(density(paramMF, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
+        
+        # text(01, 0.1, paste("Darksky"), cex = 1.2,  col = "black") ## légende difficile à caler pour tous les graphiques !
+        # text(01, 0.2, paste("Météo France"), cex = 1.2,  col = "blue") ## légende difficile à caler pour tous les graphiques !
         
 }
 
@@ -110,9 +113,11 @@ raflist <- list(dskParam=dskdatavg$windgust, mfParam=mfdatavg$rafale_10min, Brea
 preciplist01 <- list(dskParam=dskdatavg$precipintensity, mfParam=mfdatavg$precip_01h, Breaks=0.1, paramName='Intensité de précipitation 1h', SIunit='%')
 preciplist24 <- list(dskParam=dskdatavg$precipintensitymax, mfParam=mfdatavg$precip_24h, Breaks=0.1, paramName='Intensité de précipitation 24h', SIunit='%')
 
+## Liste nichée principale, contenant les listes de paramètres
 paramlist <- list(templist, humlist, ptrlist, presslist, vvlist, visiblist, neblist, raflist, preciplist01, preciplist24)
 length(paramlist)
 
+## Boucle principale de fabrication des graphiques et calcules statistics
 for( param in paramlist) {
         
         print(param$paramName)
