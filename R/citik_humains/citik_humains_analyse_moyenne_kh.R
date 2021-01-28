@@ -1,4 +1,6 @@
 ###### Comparaison des données Météo MF et DSK smartick_meteo_v5
+###### Réalisation <V.godard@univ-paris8.fr> & khaldoune Hilami <khaldoune.hilami@yandex.com>
+
 
 # Définition du répertoire de travail. NB: Il n'y null besoin de préciser le chemin absolu.
 # "./" signifie répertoire courant, soit pycitique/R/citik_humains
@@ -10,10 +12,12 @@ require(car)
 
 # Import de la donnée comparative météo-France (MF) et darksky (DSK)
 # La donnée MF est issue de 42 stations synoptiques réparties sur le territoire nationale
-dskdatavg<- read.csv("../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
-                     header = TRUE, sep = ",", dec = ".")
-mfdatavg <- read.csv("../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
-                     header = TRUE, sep = ",", dec = ".")
+dskdatavg<- read.csv(
+        "../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
+        header = TRUE, sep = ",", dec = ".")
+mfdatavg <- read.csv(
+        "../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
+        header = TRUE, sep = ",", dec = ".")
 
 ## vérification des jeux de donnée
 ls(dskdatavg)
@@ -112,10 +116,8 @@ length(paramlist)
 for( param in paramlist) {
         
         print(param$paramName)
-        
-        ### Histogramme du paramètres moyennes
+        ## Histogramme du paramètres moyennes
         weatherHistogram(param$dskParam, param$mfParam, param$Breaks, param$paramName, param$SIunit)
-        
-        ### Test des distributions statistiques
+        ## Test des distributions statistiques
         weatherStats(param$dskParam, param$mfParam, param$paramName, param$SIunit)
 }
