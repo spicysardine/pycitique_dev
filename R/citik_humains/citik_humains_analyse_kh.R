@@ -3,7 +3,7 @@
 ###### Analyse des signalements et des données Météo DSK  France_v9_BS_def
 ######(non plus moyennées mais DSK brutes) pour la France entière
 ###### D1, Moy, D9 et leurs IC
-###### Réalisation khaldoune Hilami <khaldoune.hilami@yandex.com>
+###### Réalisation <V.godard@univ-paris8.fr>
 
 getwd()
 setwd("./")
@@ -17,9 +17,17 @@ setwd("./")
 ## DataHum <- read.csv('D:\\MediaCours\\AM2Cours\\SIG_analyse\\analysePT\\PrTutoreVG\\humdata.csv',sep='\t') version Jude
 
 
-humdata <- read.csv("../../pycitique/data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv", sep = ",", dec = ".", quote = "'", stringsAsFactors = FALSE)
+humdata <- read.csv(  "../../pycitique/data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv",
+                    sep = ",",
+                    dec = ".",
+                    quote = "'",
+                    stringsAsFactors = FALSE)
 
-DSKdata <- read.csv("../../pycitique/data/donnee_meteo_nationale_comparative/darksky/darksky_donnee_brute_700_def3.csv", sep = ",", dec = ".", quote = "'", stringsAsFactors = FALSE)
+DSKdata <- read.csv("../../pycitique/data/donnee_meteo_nationale_comparative/darksky/darksky_donnee_brute_700_def3.csv",
+                    sep = ",",
+                    dec = ".",
+                    quote = "'",
+                    stringsAsFactors = FALSE)
 
 ### Création des subset pour l'IDF
 
@@ -1290,99 +1298,5 @@ output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
 write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
