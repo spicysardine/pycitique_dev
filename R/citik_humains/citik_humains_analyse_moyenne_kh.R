@@ -102,16 +102,16 @@ weatherStats <- function(paramDSK, paramMF, paramName, SIunit){
 ####### boucle de calcul itératif
 
 ### Définition des listes des paramètres
-templist <- list(dskParam=dskdatavg$temperature, mfParam=mfdatavg$temperature, Breaks=1, paramName='Température', SIunit='C°')
-humlist <- list(dskParam=dskdatavg$humidity, mfParam=trunc(mfdatavg$humidite), Breaks=1, paramName='Humidité', SIunit='%')
-ptrlist <- list(dskParam=dskdatavg$dewpoint, mfParam=mfdatavg$point_rose, Breaks=1, paramName='Point de rosée', SIunit='C°')
-presslist <- list(dskParam=dskdatavg$pressure, mfParam=mfdatavg$press_mer, Breaks=1, paramName='Pression', SIunit='hPa')
-vvlist <- list(dskParam=dskdatavg$windspeed, mfParam=mfdatavg$vvent, Breaks=0.5, paramName='Vitesse du vent', SIunit='m/s')
-visiblist <- list(dskParam=dskdatavg$visibility, mfParam=mfdatavg$visibilite, Breaks=1, paramName='Visibilité', SIunit='%')
-neblist <-list(dskParam=dskdatavg$cloudcover, mfParam=trunc(mfdatavg$nebulosite), Breaks=2, paramName='Nébulosité', SIunit='%')
-raflist <- list(dskParam=dskdatavg$windgust, mfParam=mfdatavg$rafale_10min, Breaks=0.5, paramName='rafale de vent sur 10 min', SIunit='m/s')
-preciplist01 <- list(dskParam=dskdatavg$precipintensity, mfParam=mfdatavg$precip_01h, Breaks=0.1, paramName='Intensité de précipitation 1h', SIunit='%')
-preciplist24 <- list(dskParam=dskdatavg$precipintensitymax, mfParam=mfdatavg$precip_24h, Breaks=0.1, paramName='Intensité de précipitation 24h', SIunit='%')
+templist     <- list(dskParam=dskdatavg$temperature,        mfParam=mfdatavg$temperature,       Breaks=1,   paramName='Température',                    SIunit='C°' )
+humlist      <- list(dskParam=dskdatavg$humidity,           mfParam=trunc(mfdatavg$humidite),   Breaks=1,   paramName='Humidité',                       SIunit='%'  )
+ptrlist      <- list(dskParam=dskdatavg$dewpoint,           mfParam=mfdatavg$point_rose,        Breaks=1,   paramName='Point de rosée',                 SIunit='C°' )
+presslist    <- list(dskParam=dskdatavg$pressure,           mfParam=mfdatavg$press_mer,         Breaks=1,   paramName='Pression',                       SIunit='hPa')
+vvlist       <- list(dskParam=dskdatavg$windspeed,          mfParam=mfdatavg$vvent,             Breaks=0.5, paramName='Vitesse du vent',                SIunit='m/s')
+visiblist    <- list(dskParam=dskdatavg$visibility,         mfParam=mfdatavg$visibilite,        Breaks=1,   paramName='Visibilité',                     SIunit='%'  )
+neblist      <- list(dskParam=dskdatavg$cloudcover,         mfParam=trunc(mfdatavg$nebulosite), Breaks=2,   paramName='Nébulosité',                     SIunit='%'  )
+raflist      <- list(dskParam=dskdatavg$windgust,           mfParam=mfdatavg$rafale_10min,      Breaks=0.5, paramName='rafale de vent sur 10 min',      SIunit='m/s')
+preciplist01 <- list(dskParam=dskdatavg$precipintensity,    mfParam=mfdatavg$precip_01h,        Breaks=0.1, paramName='Intensité de précipitation 1h',  SIunit='%'  )
+preciplist24 <- list(dskParam=dskdatavg$precipintensitymax, mfParam=mfdatavg$precip_24h,        Breaks=0.1, paramName='Intensité de précipitation 24h', SIunit='%'  )
 
 ## Liste nichée principale, contenant les listes de paramètres
 paramlist <- list(templist, humlist, ptrlist, presslist, vvlist, visiblist, neblist, raflist, preciplist01, preciplist24)
