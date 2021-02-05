@@ -55,11 +55,11 @@ range(humdatatot$datenum, na.rm = TRUE)
 
 ## création d'un champ date "datepiq_YMD" où "humdatatot$date_piqure_saisie" de char devient date
 humdatatot$datepiq_YMD <- ymd(humdatatot$date_piqure_saisie)
-
+class(humdatatot$datepiq_YMD)
 ##  conversion du chmap "humdatatot$date_piqure_saisie" de char à date
-#humdatatot$date_piqure_saisie <- as.Date(humdatatot$date_piqure_saisie)
-# typeof(humdatatot$date_piqure_saisie)
-
+humdatatot$date_piqure_saisie <- as.Date(humdatatot$date_piqure_saisie)
+class(humdatatot$date_piqure_saisie)
+typeof(humdatatot$date_piqure_saisie)
 ## création d'un champ nbr = effectif par jour (numérique remlie de 0)
 humdatatot$nbr <- 0  ##
 
