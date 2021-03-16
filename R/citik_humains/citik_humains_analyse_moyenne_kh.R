@@ -62,6 +62,14 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
         lines(HHx$mids, HHx$density, lwd = 2, col = "green") ### courbe non lissée 
         lines(density(paramMF, na.rm = TRUE), lwd = 2, col = "blue") ### courbe lissée, kernel
         
+        legend(
+                "topright",
+                legend=c("Darksky","MF lissée", "MF brute"),
+                col = c("grey","blue", "green"),
+                lty=c(1,1,1),
+                cex=c(.75,.75,.75)
+               )
+        
         # text(01, 0.1, paste("Darksky"), cex = 1.2,  col = "black") ## légende difficile à caler pour tous les graphiques !
         # text(01, 0.2, paste("Météo France"), cex = 1.2,  col = "blue") ## légende difficile à caler pour tous les graphiques !
         
@@ -115,7 +123,6 @@ preciplist24 <- list(dskParam=dskdatavg$precipintensitymax, mfParam=mfdatavg$pre
 
 ## Liste nichée principale, contenant les listes de paramètres
 paramlist <- list(templist, humlist, ptrlist, presslist, vvlist, visiblist, neblist, raflist, preciplist01, preciplist24)
-length(paramlist)
 
 ## Boucle principale de fabrication des graphiques et calcules statistics
 for( param in paramlist) {
