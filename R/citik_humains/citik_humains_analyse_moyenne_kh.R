@@ -128,8 +128,10 @@ paramlist <- list(templist, humlist, ptrlist, presslist, vvlist, visiblist, nebl
 for( param in paramlist) {
         
         print(param$paramName)
-        ## Histogramme du paramètres moyennes
+  
+        ## Histogramme des paramètres moyennes
         weatherHistogram(param$dskParam, param$mfParam, param$Breaks, param$paramName, param$SIunit)
+        
         ## Test des distributions statistiques
         weatherStats(param$dskParam, param$mfParam, param$paramName, param$SIunit)
 }
