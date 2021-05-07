@@ -12,7 +12,7 @@ library(mgcv)
 
 plotsave <- function(plotname){
   
-    ggsave(filename = paste(plotname,'.png', sep = ''), path = plotpath, dpi = 'retina')
+    ggsave(filename = paste(plotname,'.png', sep = ''), path = plotpath, width=16, height =9  , units = 'in', dpi = 182)
   
 }
 
@@ -401,8 +401,9 @@ for ( i in 37:length(datasubset) ){
       theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
       theme(axis.title.x = element_text(face = 'bold', size = 12))+
       theme(axis.title.y = element_text(face = 'bold', size = 12))
-    
-    print(plot)
+      plotname <- paste(param,'no_jitter', sep = '_')
+      plotsave(plotname)  
+      # print(plot)
   }
   
 }
@@ -428,8 +429,9 @@ for ( i in 37:length(datasubset) ){
       theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
       theme(axis.title.x = element_text(face = 'bold', size = 12))+
       theme(axis.title.y = element_text(face = 'bold', size = 12))
-    
-    print(plot)
+      plotname <- paste(param,'by_sex_jitter_proportional', sep = '_')
+      plotsave(plotname)    
+      # print(plot)
   }
   
 }
@@ -457,8 +459,9 @@ for ( i in 37:length(datasubset) ){
         theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
         theme(axis.title.x = element_text(face = 'bold', size = 12))+
         theme(axis.title.y = element_text(face = 'bold', size = 12))
-    
-      print(plot)
+        plotname <- paste(param,'w_region_var', sep = '_')
+        plotsave(plotname)
+        # print(plot)
     }
   
 }
@@ -485,20 +488,21 @@ weatherplot <- function(weatherframe, wframename){
       geom_smooth(color='black')+
       xlab(label = 'Date')+
       ylab(label=paste(param, ' IS. Unit'))+
-      ggtitle(paste('Daily Variation of ',param,'. \n Mainland France & Corsica between January 2017 & April 2020 \n',wframename))+
+      ggtitle(paste('Daily Variation of ',param,'. \n Mainland France & Corsica between January 2017 & April 2020 \n (',wframename,')'))+
       theme(plot.title = element_text(hjust = .5, face = 'bold', size = 12))+
       theme(axis.title.x = element_text(face = 'bold', size = 9))+
       theme(axis.title.y = element_text(face = 'bold', size = 9))
+      plotname <- paste(param, wframename, sep = '_')
+      plotsave(plotname)
+      # print(plot)
     
-    print(plot)
-    
-    ggsave(
-      filename = paste(param,wframename,'.png', sep = '_'),
-      plot = plot,
-      device = "png",
-      path = plotpath,
-      dpi = 'retina'
-    )
+      # ggsave(
+      #   filename = paste(param,wframename,'.png', sep = '_'),
+      #   plot = plot,
+      #   device = "png",
+      #   path = plotpath,
+      #   dpi = 'retina'
+      # )
     
   }
   
@@ -509,7 +513,7 @@ query_dsk42 <- 'SELECT * FROM meteo.darksky_synop42_avg'
 res <- dbSendQuery(con, query_dsk42)
 dataset_dsk42 <- fetch(res, n=-1)
 
-weatherplot(dataset_dsk42, 'Darksky 42 Synoptic Stations.')
+weatherplot(dataset_dsk42, 'Darksky_42_Synoptic_Stations.')
 
 #############################  meteo france synop 42  ##############################
 
@@ -517,14 +521,14 @@ query_mf42 <- 'SELECT *, floor(humidite) as humidity_rounded FROM meteo.mf_synop
 res <- dbSendQuery(con, query_mf42)
 dataset_mf42 <- fetch(res, n=-1)
 
-weatherplot(dataset_mf42, '(Meteo-France 42 Synoptic Stations)')
+weatherplot(dataset_mf42, 'Meteo-France-42_Synoptic_Stations')
 
 #############################  dsk synop 700 ##############################
 query_dsk700 <- 'SELECT * FROM meteo.darksky_maille_700_avg'
 res <- dbSendQuery(con, query_dsk700)
 dataset_dsk700 <- fetch(res, n=-1)
 
-weatherplot(dataset_dsk700, '(Darksky 700 Synoptic Stations)')
+weatherplot(dataset_dsk700, 'Darksky_700_Synoptic_Stations')
 
 
 
