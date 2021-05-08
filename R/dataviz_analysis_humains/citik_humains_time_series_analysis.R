@@ -304,14 +304,14 @@ ggplot(datasubset, aes(date_piqure_saisie))+
   plotsave('ts_histogram_report_date_freq_two_days', plotpath_ts_dens_distro)
 
 ggplot(datasubset, aes(date_piqure_saisie))+
-geom_histogram(binwidth = 5, alpha=.7, colour='red')+
-xlab(label = 'Report Date')+
-ylab(label = 'Report Count')+
-ggtitle('Hisotgram of Report Date Frequency (Bin Width = 5 days)')+
-theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
-theme(axis.title.x = element_text(face = 'bold', size = 12))+
-theme(axis.title.y = element_text(face = 'bold', size = 12))
-plotsave('ts_histogram_report_date_freq_five_days', plotpath_ts_dens_distro)
+  geom_histogram(binwidth = 5, alpha=.7, colour='red')+
+  xlab(label = 'Report Date')+
+  ylab(label = 'Report Count')+
+  ggtitle('Hisotgram of Report Date Frequency (Bin Width = 5 days)')+
+  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
+  theme(axis.title.x = element_text(face = 'bold', size = 12))+
+  theme(axis.title.y = element_text(face = 'bold', size = 12))
+  plotsave('ts_histogram_report_date_freq_five_days', plotpath_ts_dens_distro)
 
 
 ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
@@ -554,7 +554,7 @@ query_dsk42 <- 'SELECT * FROM meteo.darksky_synop42_avg'
 res <- dbSendQuery(con, query_dsk42)
 dataset_dsk42 <- fetch(res, n=-1)
 
-############ Section Plot Path ############## 
+#### Plot Path
 plotpath_ts_weather_dsk42 <- paste(getwd(),'/plots/time_series_weather_darksky42', sep = '')
 dir.create(plotpath_ts_weather_dsk42)
 
@@ -566,7 +566,7 @@ query_mf42 <- 'SELECT *, floor(humidite) as humidity_rounded FROM meteo.mf_synop
 res <- dbSendQuery(con, query_mf42)
 dataset_mf42 <- fetch(res, n=-1)
 
-############ Section Plot Path ############## 
+#### Plot Path  
 plotpath_ts_weather_mf42 <- paste(getwd(),'/plots/time_series_weather_mf42', sep = '')
 dir.create(plotpath_ts_weather_mf42)
 
@@ -577,7 +577,7 @@ query_dsk700 <- 'SELECT * FROM meteo.darksky_maille_700_avg'
 res <- dbSendQuery(con, query_dsk700)
 dataset_dsk700 <- fetch(res, n=-1)
 
-############ Section Plot Path ############## 
+### Plot Path
 plotpath_ts_weather_dsk700 <- paste(getwd(),'/plots/time_series_weather_darksky700', sep = '')
 dir.create(plotpath_ts_weather_dsk700)
 
