@@ -78,7 +78,7 @@ aggnbr_tique <- fetch(res, n=-1)
 
 p <- ggplot(aggnbr_tique, aes(sex_pique, sum_nbr_tique))+
   geom_bar(stat = "identity")+
-  xlab(label = 'Collector’s Sex')+
+  xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Total Number of Collected Ticks')+
   ggtitle('Total Number of Collected Ticks \n (Breakdown by Sex)')
   p+plotstyle
@@ -86,7 +86,7 @@ plotsave('total_nbr_tick_col_by_sex', plotpath_quant_study)
 
 p <- ggplot(datasubset, aes(sex_pique))+
   geom_bar()+
-  xlab(label = 'Collector’s Sex')+
+  xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Frequency of Reporting')+
   ggtitle('Frequency of Tick Bite Reporting \n (Breakdown by Sex)')
   p+plotstyle
@@ -128,7 +128,7 @@ plotsave('dens_rep_by_nbr_tick_by_sex', plotpath_quant_study)
 
 p <- ggplot(datasubset, aes(sex_pique, nbr_tique, colour=sex_pique))+
   geom_violin(fill='grey', alpha=.7)+
-  xlab(label = 'Collector’s Sex')+
+  xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Density of Reporting per Number of Collected Ticks')+
   ggtitle('Density of Reports Declaring x Number of Collected Ticks \n (Breakdown by Sex - Violin Plot)')
   p+plotstyle
@@ -136,9 +136,9 @@ plotsave('violplot_dens_rep_by_nbr_tick_by_sex', plotpath_quant_study)
 
 p <- ggplot(datasubset, aes(sex_pique, nbr_tique, colour=sex_pique))+
   geom_boxplot()+
-  xlab(label = 'Collector’s Sex')+
+  xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Distribution of Reports per Number of Collected Ticks')+
-  ggtitle('Distribution of Reports Declaring x Number of Collected Ticks \n (Breakdown by Sex Whisker Boxplot)')
+  ggtitle('Distribution of Reports Declaring x Number of Collected Ticks \n (Breakdown by Sex Whisker - Boxplot)')
   p+plotstyle
 plotsave('boxplot_dens_rep_by_nbr_tick_by_sex', plotpath_quant_study)
 
@@ -175,7 +175,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, nbr_tique, colour=sex_pique))+
   xlab(label = 'Date')+
   ylab(label = 'Number of Collected Ticks')+
   # ylim(1,NA)+
-  ggtitle('Variation in Time of the Number of Ticks \n Collected per Report (Jitterd & Size Proportional)')
+  ggtitle('Variation in Time of the Number of Ticks \n Collected per Report (Jitterd - Size Proportional)')
   p+plotstyle
 # geom_smooth(aes(weight = nbr_tique), method = lm, size = 1)
 plotsave('ts_nbr_tick_by_sex_jitter_proportional', plotpath_ts_pt_distro)
@@ -185,7 +185,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, nbr_tique, colour=sex_pique))+
   xlab(label = 'Date')+
   ylab(label = 'Number of Collected Ticks')+
   ggtitle('Breakdown by Study Area of the Variation in Time of the Number of Ticks 
-           Collected per Report (Jitterd & Size Proportional)')+
+           Collected per Report (Jitterd - Size Proportional)')+
   facet_wrap(~study_area, ncol = 1)
   p+plotstyle
 plotsave('ts_nbr_tick_by_region_by_sex_jitter_proportional_vertlyo', plotpath_ts_pt_distro)
@@ -194,7 +194,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, nbr_tique, colour=sex_pique))+
   geom_jitter(aes(size=nbr_tique), alpha=.4)+
   xlab(label = 'Date')+
   ylab(label = 'Number of Collected Ticks')+
-  ggtitle('Breakdown by Study Area of the Variation in Time of the Number of Ticks Collected per Report \n (Jitterd & Size Proportional - Horizontal Layout)')+
+  ggtitle('Breakdown by Study Area of the Variation in Time of the Number of Ticks Collected per Report \n (Jitterd - Size Proportional - Horizontal Layout)')+
   facet_wrap(~study_area)
   p+plotstyle
   plotsave('ts_nbr_tick_by_region_by_sex_jitter_proportional_hzlyo', plotpath_ts_pt_distro)
@@ -259,7 +259,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour= sex_pique, fill= sex_piq
   geom_density(alpha=.1)+
   xlab(label = 'Date')+
   ylab(label = 'Reporting Density')+
-  ggtitle('Variation in Time of Reporting Date Density \n (Breakdown by Collector’s Sex)')+
+  ggtitle('Variation in Time of Reporting Date Density \n (Breakdown by ’s Sex)')+
   facet_wrap(~sex_pique, ncol = 1)
   p+plotstyle
   plotsave('ts_report_date_dens_by_sex', plotpath_ts_dens_distro)
@@ -276,7 +276,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour= sex_pique, fill= sex_piq
   geom_freqpoly(binwidth = 1)+
   xlab(label = 'Date')+
   ylab(label = 'Reporting Frequency')+
-  ggtitle('Variation in Time of Reporting Date Frequency \n (Breakdown by Collector’s Sex)')+
+  ggtitle('Variation in Time of Reporting Date Frequency \n (Breakdown by Reporter’s Sex)')+
   facet_wrap(~sex_pique, ncol = 1)
   p+plotstyle
   plotsave('ts_report_date_freq_by_sex', plotpath_ts_dens_distro)
@@ -310,7 +310,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.7)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Collector’s Sex & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Reporter’s Sex - Bin Width equals 5 days)')+
   facet_wrap(~sex_pique, ncol = 1)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_sex_five_days', plotpath_ts_dens_distro)
@@ -319,7 +319,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Study Area & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Study Area - Bin Width equals 5 days)')+
   facet_wrap(~study_area)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_region_five_days_hztlyo', plotpath_ts_dens_distro)
@@ -328,7 +328,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Study Area & Bin Width equals 5 days. Vertical Layout)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Study Area - Bin Width equals 5 days. Vertical Layout)')+
   facet_wrap(~study_area, ncol = 1)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_region_five_days_vertlyo', plotpath_ts_dens_distro)
@@ -337,7 +337,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.7)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by French Departement & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by French Departement - Bin Width equals 5 days)')+
   facet_wrap(~departement)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_dpt_five_days', plotpath_ts_dens_distro)
@@ -346,7 +346,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Reason of Presence at incident Date & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Reason of Presence at incident Date - Bin Width equals 5 days)')+
   facet_wrap(~raison_presence)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_reason_five_days', plotpath_ts_dens_distro)
@@ -355,7 +355,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Collector’s Age & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Reporter’s Age - Bin Width equals 5 days)')+
   facet_wrap(~age)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_age_five_days', plotpath_ts_dens_distro)
@@ -364,7 +364,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Report Positional Accuracy & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Report Positional Accuracy - Bin Width equals 5 days)')+
   facet_wrap(~precision_geo)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_precisiongeo_five_days', plotpath_ts_dens_distro)
@@ -373,7 +373,7 @@ p <- ggplot(datasubset, aes(date_piqure_saisie, colour=sex_pique))+
   geom_histogram(binwidth = 5, alpha=.4)+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Incident’s Environment & Bin Width equals 5 days)')+
+  ggtitle('Hisotgram of Report Date Frequency \n (Breakdown by Incident’s Environment - Bin Width equals 5 days)')+
   facet_wrap(~environnement)
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_by_environ_five_days', plotpath_ts_dens_distro)
@@ -399,10 +399,10 @@ rm(p);
 
 ############### Study of weather effect on Frequency of reporting dates using point geometries ###################
 
-############ Section Plot Path ############## 
+#### Section Plot Path
 plotpath_ts_reportdate_weather <- paste(getwd(),'/plots/time_series_reportdate_weather', sep = '')
 dir.create(plotpath_ts_reportdate_weather)
-#############################################
+
 
 for ( i in 37:length(datasubset) ) {
   
@@ -410,8 +410,9 @@ for ( i in 37:length(datasubset) ) {
   timecolumn <- grepl('time', param )
   datasourcecolumn <- grepl('datasource', param )
   cloudcovererrcolumn <- grepl('cloudcovererror', param )
+  study_area <- grepl('study_area', param )
   
-  if(timecolumn | datasourcecolumn | cloudcovererrcolumn) {
+  if(timecolumn | datasourcecolumn | cloudcovererrcolumn | study_area ) {
     print('Skipping time variable')
   }else{
     print(param)
@@ -420,18 +421,17 @@ for ( i in 37:length(datasubset) ) {
       geom_smooth(span=1, color='black')+
       xlab(label = 'Date')+
       ylab(label=paste(param, '( International System. Unit)'))+
-      ggtitle(paste('Variation of ',param,' at Report Date between January 2017 & April 2020'))
+      ggtitle(paste('Variation of ',param,' at Report Date between January 2017 - April 2020'))
     plot+plotstyle
-    plotname <- paste('ts_',param,'_no_jitter', sep = '')
+    plotname <- paste('ts_reportdate_',param, sep = '')
     plotsave(plotname, plotpath_ts_reportdate_weather)  
   }
   
 }
 
-############ Section Plot Path ############## 
+### Section Plot Path
 plotpath_ts_reportdate_weather_by_sex <- paste(getwd(),'/plots/time_series_reportdate_weather_by_sex', sep = '')
 dir.create(plotpath_ts_reportdate_weather_by_sex)
-#############################################
 
 ##### Without Regional Variation Breakdown by Sex Jittered and Weighted by number of ticks
 for ( i in 37:length(datasubset) ) {
@@ -440,8 +440,9 @@ for ( i in 37:length(datasubset) ) {
   timecolumn <- grepl('time', param )
   datasourcecolumn <- grepl('datasource', param )
   cloudcovererrcolumn <- grepl('cloudcovererror', param )
+  study_area <- grepl('study_area', param )
   
-  if(timecolumn | datasourcecolumn | cloudcovererrcolumn) {
+  if(timecolumn | datasourcecolumn | cloudcovererrcolumn | study_area) {
     print('Skipping time variable')
   }else{
     print(param)
@@ -450,22 +451,21 @@ for ( i in 37:length(datasubset) ) {
       geom_smooth(span=1)+
       xlab(label = 'Date')+
       ylab(label=paste(param, '( International System. Unit)'))+
-      ggtitle(paste('Variation of ',param,' at Report Date between January 2017 & April 2020 
-                     \n Breakdown by Sex Jittered and Weighted by nbr of Collected Ticks'))
+      ggtitle(paste('Variation of ',param,' at Report Date between January 2017 - April 2020 \n Breakdown by Sex Jittered and Weighted by nbr of Collected Ticks'))
     plot+plotstyle
-    plotname <- paste('ts_',param,'_by_sex_jitter_proportional', sep = '')
+    plotname <- paste('ts_reportdate_',param,'_by_sex_jitter_proportional', sep = '')
     plotsave(plotname, plotpath_ts_reportdate_weather_by_sex)    
     # print(plot)
   }
   
 }
 
-############ Section Plot Path ############## 
-plotpath_ts_reportdate_weather_by_sex_by_region <- paste(getwd(),'/plots/time_series_reportdate_weather_by_sex_by_region', sep = '')
-dir.create(plotpath_ts_reportdate_weather_by_sex_by_region)
-#############################################
+### Section Plot Path
+plotpath_ts_reportdate_weather_by_region <- paste(getwd(),'/plots/time_series_reportdate_weather_regional_variation', sep = '')
+dir.create(plotpath_ts_reportdate_weather_by_region)
 
 ############### Study of regional effect and weather parameters on Frequency of reporting days ###################
+
 ##### With Regional Variation
 for ( i in 37:length(datasubset) ) {
   
@@ -473,21 +473,22 @@ for ( i in 37:length(datasubset) ) {
   timecolumn <- grepl('time', param )
   datasourcecolumn <- grepl('datasource', param )
   cloudcovererrcolumn <- grepl('cloudcovererror', param )
+  study_area <- grepl('study_area', param )
   
-  if(timecolumn | datasourcecolumn | cloudcovererrcolumn) {
+  if(timecolumn | datasourcecolumn | cloudcovererrcolumn | study_area ) {
     print('Skipping time variable')
   }else{
     print(param)
-    plot <- ggplot(datasubset, aes(date_piqure_saisie, datasubset[,i], colour=sex_pique))+
-      geom_point(size=.2)+
-      geom_smooth(span=1)+
+    plot <- ggplot(datasubset, aes(date_piqure_saisie, datasubset[,i]) )+
+      geom_point(size=.2, color= 'blue', alpha = .4)+
+      geom_smooth(span=1, color='black')+
       facet_wrap(~study_area)+
       xlab(label = 'Date')+
       ylab(label=paste(param, ' IS. Unit'))+
-      ggtitle(paste('Regional Variation of ',param,' at Report Date between January 2017 & April 2020'))
+      ggtitle(paste('Regional Variation of ',param,' at Report Date between January 2017 - April 2020'))
     plot+plotstyle
-    plotname <- paste('ts_',param,'_with_region_var', sep = '')
-    plotsave(plotname, plotpath_ts_reportdate_weather_by_sex_by_region)
+    plotname <- paste('ts_reportdate_',param,'_regional_variation', sep = '')
+    plotsave(plotname, plotpath_ts_reportdate_weather_by_region)
     # print(plot)
   }
   
