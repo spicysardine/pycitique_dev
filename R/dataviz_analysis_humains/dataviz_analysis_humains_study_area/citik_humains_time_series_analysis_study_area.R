@@ -494,4 +494,37 @@ for ( i in 37:length(datasubset) ) {
   
 }
 
+############### Study of regional effect and weather parameters on Frequency of reporting days vertical layout ###################
 
+
+### Section Plot Path
+plotpath_ts_reportdate_weather_by_region_vlayout <- paste(getwd(),'/plots/time_series_reportdate_weather_regional_variation_vlayout', sep = '')
+dir.create(plotpath_ts_reportdate_weather_by_region_vlayout)
+
+##### With Regional Variation vertical layout 
+for ( i in 37:length(datasubset) ) {
+  
+  param <- names(datasubset[i])
+  timecolumn <- grepl('time', param )
+  datasourcecolumn <- grepl('datasource', param )
+  cloudcovererrcolumn <- grepl('cloudcovererror', param )
+  study_area <- grepl('study_area', param )
+  
+  if(timecolumn | datasourcecolumn | cloudcovererrcolumn | study_area ) {
+    print('Skipping time variable')
+  }else{
+    print(param)
+    plot <- ggplot(datasubset, aes(date_piqure_saisie, datasubset[,i]) )+
+      geom_point(size=.2, color= 'blue', alpha = .4)+
+      geom_smooth(span=1, color='black')+
+      facet_wrap(~study_area, ncol = 1)+
+      xlab(label = 'Date')+
+      ylab(label=paste(param, ' IS. Unit'))+
+      ggtitle(paste('Regional Variation of ',param,' at Report Date between January 2017 - April 2020 - Vertical Layout'))
+    plot+plotstyle
+    plotname <- paste('ts_reportdate_',param,'_regional_variation_vlayout', sep = '')
+    plotsave(plotname, plotpath_ts_reportdate_weather_by_region_vlayout)
+    # print(plot)
+  }
+  
+}
