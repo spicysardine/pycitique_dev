@@ -386,7 +386,7 @@ for ( i in 37:length(datasubset) ) {
       ylab(label=paste(param, '( International System. Unit)'))+
       ggtitle(paste('Variation of ',param,' at Report Date between January 2017 & April 2020'))
     plot+plotstyle
-    plotname <- paste(param,': ts_no_jitter', sep = '')
+    plotname <- paste('ts_',param,'_no_jitter', sep = '')
     plotsave(plotname, plotpath_ts_reportdate_weather)  
     # print(plot)
   }
