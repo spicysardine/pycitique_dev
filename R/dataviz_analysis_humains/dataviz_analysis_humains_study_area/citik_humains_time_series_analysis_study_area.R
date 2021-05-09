@@ -19,7 +19,7 @@ plotstyle <- theme(plot.title = element_text(hjust = .5, face = 'bold', size = 1
   theme(axis.title.x = element_text(face = 'bold', size = 12))+
   theme(axis.title.y = element_text(face = 'bold', size = 12))
 
-####### Getting data from postgres database for citik experimentation
+####### Getting data from postgres database for citik 
 
 ###### Connection parameters and main human reports dataset associated to weather conditions
 drv <- PostgreSQL()
