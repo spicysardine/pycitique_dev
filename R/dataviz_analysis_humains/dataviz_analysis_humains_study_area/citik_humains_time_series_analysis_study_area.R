@@ -15,9 +15,9 @@ plotsave <- function(plotname, plotpath){
 }
 
 ## Defining Plots General Theming
-plotstyle <- theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
-  theme(axis.title.x = element_text(face = 'bold', size = 12))+
-  theme(axis.title.y = element_text(face = 'bold', size = 12))
+plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
+              theme(axis.title.x = element_text(face = 'bold', size = 12))+
+              theme(axis.title.y = element_text(face = 'bold', size = 12))
 
 ####### Getting data from postgres database for citik 
 
@@ -36,19 +36,18 @@ query <- " SELECT
               	END as study_area
               
               FROM citik.citik_humains_clean_weather_strict
-              WHERE ( sex_pique != '' AND nbr_tique < 25 )
-              -- Departements of Île-de-France
-              AND ( region = 'Île-de-France'
-              -- Departements of Rhone-Alpes
-              OR departement_code ~* '26|07|42|69D|69M|01|74|73|38'
-              -- -- Departements of Alsace-Lorraine
-              OR departement_code ~* '54|55|57|67|68|88' ) "
+                WHERE ( sex_pique != '' AND nbr_tique < 25 )
+                -- Departements of Île-de-France
+                AND ( region = 'Île-de-France'
+                -- Departements of Rhone-Alpes
+                  OR departement_code ~* '26|07|42|69D|69M|01|74|73|38'
+                -- -- Departements of Alsace-Lorraine
+                  OR departement_code ~* '54|55|57|67|68|88' ) "
 
 res <- dbSendQuery(con, query)
 datasubset <- fetch(res, n=-1)
 
 nobs <- nrow(datasubset)
-
 
 ###########################################################################################################
 ###########################################################################################################
@@ -65,16 +64,33 @@ plotpath_quant_study <- paste(getwd(),'/plots/quantitative_study', sep = '')
 dir.create(plotpath_quant_study)
 ############################################# 
 
-query_aggnbr_tique <-"SELECT sex_pique,
-                      sum(nbr_tique) as sum_nbr_tique 
-                      FROM citik.citik_humains_clean_weather_strict
-                      WHERE ( sex_pique != '' AND nbr_tique < 25 )
-                      AND ( region = 'Île-de-France'
-                      OR departement_code ~* '26|07|42|69D|69M|01|74|73|38'
-                      OR departement_code ~* '54|55|57|67|68|88') group by sex_pique"
+query_aggnbr_tique <-"SELECT sex_pique, sum(nbr_tique) as sum_nbr_tique 
+                        FROM citik.citik_humains_clean_weather_strict
+                          WHERE ( sex_pique != '' AND nbr_tique < 25 )
+                          AND ( region = 'Île-de-France'
+                            OR departement_code ~* '26|07|42|69D|69M|01|74|73|38'
+                            OR departement_code ~* '54|55|57|67|68|88') 
+                          group by sex_pique"
 
 res <- dbSendQuery(con, query_aggnbr_tique)
 aggnbr_tique <- fetch(res, n=-1)
+
+query_aggnbr_tique_yearly <- "SELECT annee_extract as year, sum(nbr_tique) as sum
+                              FROM citik.citik_humains_clean_weather_strict
+                                WHERE (sex_pique != '' AND nbr_tique < 25)
+                                group by annee_extract"
+
+res <- dbSendQuery(con, query_aggnbr_tique_yearly)
+aggnbr_tique_yearly <- fetch(res, n=-1)
+
+query_aggnbr_tique_yearly_by_sex <- "SELECT annee_extract as year, sex_pique sex, sum(nbr_tique) as sum
+                                      FROM citik.citik_humains_clean_weather_strict
+                                        WHERE (sex_pique != '' AND nbr_tique < 25)
+                                        group by annee_extract, sex_pique
+                                        order by annee_extract, sex_pique"
+
+res <- dbSendQuery(con, query_aggnbr_tique_yearly_by_sex)
+aggnbr_tique_yearly_by_sex <- fetch(res, n=-1)
 
 p <- ggplot(aggnbr_tique, aes(sex_pique, sum_nbr_tique))+
   geom_bar(stat = "identity")+
@@ -82,7 +98,24 @@ p <- ggplot(aggnbr_tique, aes(sex_pique, sum_nbr_tique))+
   ylab(label = 'Total Number of Collected Ticks')+
   ggtitle('Total Number of Collected Ticks \n (Breakdown by Sex)')
   p+plotstyle
-plotsave('total_nbr_tick_col_by_sex', plotpath_quant_study)
+  plotsave('total_nbr_tick_col_by_sex', plotpath_quant_study)
+
+p <- ggplot(aggnbr_tique_yearly, aes(year, sum))+
+  geom_bar(stat = "identity")+
+  xlab(label = 'Year')+
+  ylab(label = 'Total Number of Collected Ticks')+
+  ggtitle('Total Number of Collected Ticks \n (Breakdown by Year)')
+  p+plotstyle
+  plotsave('total_nbr_tick_col_yearly', plotpath_quant_study)
+  
+p <- ggplot(aggnbr_tique_yearly_by_sex, aes(year, sum, fill=sex))+
+  geom_bar(stat = "identity")+
+  facet_wrap(~sex)+
+  xlab(label = 'Year')+
+  ylab(label = 'Total Number of Collected Ticks')+
+  ggtitle('Total Number of Collected Ticks \n (Breakdown by Year)')
+  p+plotstyle
+plotsave('total_nbr_tick_col_yearly_by_sex', plotpath_quant_study)
 
 p <- ggplot(datasubset, aes(sex_pique))+
   geom_bar()+

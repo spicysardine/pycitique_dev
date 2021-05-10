@@ -31,7 +31,7 @@ dataset <- fetch(res, n=-1)
 
 ### Selecting reports with less than 25 Collected Ticks by reporter’s sex.
 ### This subset will be used throughout the script.
-datasubset <- dataset[dataset$nbr_tique < 25 & dataset$sex_pique != '',]
+datasubset <- dataset[dataset$nbr_tique < 25 & dataset$sex_pique != '', -5]
 
 nobs <- nrow(datasubset)
 
