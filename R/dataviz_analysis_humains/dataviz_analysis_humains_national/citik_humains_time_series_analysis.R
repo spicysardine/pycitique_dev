@@ -503,7 +503,6 @@ dir.create(plotpath_ts_weather_dsk42)
 weatherplot(dataset_dsk42, 'Darksky_42_Synoptic_Stations.', plotpath_ts_weather_dsk42)
 
 #############################  meteo france synop 42  ################################
-
 query_mf42 <- 'SELECT *, floor(humidite) as humidity_rounded FROM meteo.mf_synop42_avg'
 res <- dbSendQuery(con, query_mf42)
 dataset_mf42 <- fetch(res, n=-1)
