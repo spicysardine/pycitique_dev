@@ -16,8 +16,7 @@ plotsave <- function(plotname, plotpath){
 
 ## Defining Plots General Theming
 plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 14))+
-              theme(axis.title.x = element_text(face = 'bold', size = 12))+
-              theme(axis.title.y = element_text(face = 'bold', size = 12))
+              theme(axis.title = element_text(face = 'bold', size = 12))+
 
 ####### Getting data from postgres database for citik 
 
@@ -92,7 +91,7 @@ query_aggnbr_tique_yearly_by_sex <- "SELECT annee_extract as year, sex_pique sex
 res <- dbSendQuery(con, query_aggnbr_tique_yearly_by_sex)
 aggnbr_tique_yearly_by_sex <- fetch(res, n=-1)
 
-p <- ggplot(aggnbr_tique, aes(sex_pique, sum_nbr_tique))+
+p <- ggplot(aggnbr_tique, aes(sex_pique, sum_nbr_tique, fill=sex_pique))+
   geom_bar(stat = "identity")+
   xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Total Number of Collected Ticks')+
@@ -109,8 +108,7 @@ p <- ggplot(aggnbr_tique_yearly, aes(year, sum))+
   plotsave('total_nbr_tick_col_yearly', plotpath_quant_study)
   
 p <- ggplot(aggnbr_tique_yearly_by_sex, aes(year, sum, fill=sex))+
-  geom_bar(stat = "identity")+
-  facet_wrap(~sex)+
+  geom_bar(stat = "identity", position = 'dodge')+
   xlab(label = 'Year')+
   ylab(label = 'Total Number of Collected Ticks')+
   ggtitle('Total Number of Collected Ticks \n (Breakdown by Year)')
@@ -126,7 +124,7 @@ p <- ggplot(datasubset, aes(sex_pique))+
 plotsave('freq_tick_col_by_sex', plotpath_quant_study)
 
 p <- ggplot(datasubset, aes(nbr_tique))+
-  geom_bar(color='red', alpha=.7)+
+  geom_bar(fill='red', alpha=.7, color='black')+
   xlab(label = 'Report Declaring x Number of Collected Ticks')+
   ylab(label = 'Frequency of reporting')+
   ggtitle('Frequency of Reports Declaring x Number of Collected Ticks')
@@ -154,6 +152,7 @@ p <- ggplot(datasubset, aes(nbr_tique, colour=sex_pique))+
   geom_density()+
   xlab(label = 'Report Declaring x Number of Collected Ticks')+
   ylab(label = 'Density of Reporting')+
+  labs(colour='Sex')+
   ggtitle('Density of Reports Declaring x Number of Collected Ticks \n (Breakdown by Sex)')+
   facet_wrap(~sex_pique, ncol = 1)
   p+plotstyle
@@ -163,6 +162,7 @@ p <- ggplot(datasubset, aes(sex_pique, nbr_tique, colour=sex_pique))+
   geom_violin(fill='grey', alpha=.7)+
   xlab(label = 'Reporter’s Sex')+
   ylab(label = 'Density of Reporting per Number of Collected Ticks')+
+  labs(colour='Sex')+
   ggtitle('Density of Reports Declaring x Number of Collected Ticks \n (Breakdown by Sex - Violin Plot)')
   p+plotstyle
 plotsave('violplot_dens_rep_by_nbr_tick_by_sex', plotpath_quant_study)
@@ -432,7 +432,7 @@ rm(p);
 
 ############### Study of weather effect on Frequency of reporting dates using point geometries ###################
 
-#### Section Plot Path
+#### Plot Path
 plotpath_ts_reportdate_weather <- paste(getwd(),'/plots/time_series_reportdate_weather', sep = '')
 dir.create(plotpath_ts_reportdate_weather)
 
@@ -462,7 +462,7 @@ for ( i in 37:length(datasubset) ) {
   
 }
 
-### Section Plot Path
+### Plot Path
 plotpath_ts_reportdate_weather_by_sex <- paste(getwd(),'/plots/time_series_reportdate_weather_by_sex', sep = '')
 dir.create(plotpath_ts_reportdate_weather_by_sex)
 
@@ -493,7 +493,7 @@ for ( i in 37:length(datasubset) ) {
   
 }
 
-### Section Plot Path
+### Plot Path
 plotpath_ts_reportdate_weather_by_region <- paste(getwd(),'/plots/time_series_reportdate_weather_regional_variation', sep = '')
 dir.create(plotpath_ts_reportdate_weather_by_region)
 
@@ -530,7 +530,7 @@ for ( i in 37:length(datasubset) ) {
 ############### Study of regional effect and weather parameters on Frequency of reporting days vertical layout ###################
 
 
-### Section Plot Path
+### Plot Path
 plotpath_ts_reportdate_weather_by_region_vlayout <- paste(getwd(),'/plots/time_series_reportdate_weather_regional_variation_vlayout', sep = '')
 dir.create(plotpath_ts_reportdate_weather_by_region_vlayout)
 

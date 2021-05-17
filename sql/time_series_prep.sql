@@ -64,7 +64,9 @@ order by annee_extract, sex_pique
 
 
 
-select st_subdivide(geom, 100) from geography.france_hexagone
+select row_number() over() as gid,
+	(st_dump(st_generatepoints(geom, 100))).geom as geom
+from geography.france_hexagone
 
 
 
