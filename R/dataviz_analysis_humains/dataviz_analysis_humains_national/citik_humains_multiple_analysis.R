@@ -78,3 +78,27 @@ ggplot(datasubset, aes(date_piqure_saisie))+
   ylab(label=' Temperature degrees Celsius')+
   plotstyle
 plotsave('Comparaison between vartiations in time of signaling vs witness night temperatures', '.')
+
+
+# ggplot(datasubset, aes(date_piqure_saisie))+
+#   geom_point(aes(y=uvindex), color='blue', size=.2, alpha=.7)+
+#   geom_smooth(aes(y=uvindex), color='black')+
+#   geom_line( data = dataset_dsk700, aes(date_releve, round(uvindex) ), color='green')+
+#   geom_smooth(data=dataset_dsk700, color='red', mapping = aes(date_releve, round(uvindex)))+
+#   ggtitle('Comparaison between vartiations in time of signaling vs witness Ultra violet index')+
+#   xlab(label = 'Date')+
+#   ylab(label='Ultra violet index scale 0 to 10')+
+#   plotstyle
+
+
+ggplot(datasubset, aes(date_piqure_saisie))+
+  geom_point(aes(y=pressure), color='blue', size=.2, alpha=.7)+
+  geom_smooth(aes(y=pressure), color='black')+
+  geom_line( data = dataset_dsk700, aes(date_releve,y=pressure), color='green')+
+  geom_smooth(data=dataset_dsk700, color='red', mapping = aes(date_releve,y=pressure))+
+  ggtitle('Comparaison between vartiations in time of signaling vs witness pressure')+
+  xlab(label = 'Date')+
+  ylab(label=' pressure hPa')+
+  plotstyle
+plotsave('Comparaison between vartiations in time of signaling vs witness pressure', '.')
+
