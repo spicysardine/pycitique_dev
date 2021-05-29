@@ -13,7 +13,7 @@ require(car)
 # Import de la donnée comparative météo-France (MF) et darksky (DSK)
 # La donnée MF est issue de 42 stations synoptiques réparties sur le territoire nationale
 dskdatavg<- read.csv(
-        "../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
+        "../../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
         header = TRUE, sep = ",", dec = ".")
 mfdatavg <- read.csv(
         "../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
