@@ -1,3 +1,11 @@
+###### Code Tableau n°4 – Pour la France entière, selon le 1er quartile, le 2ème quartile (la médiane) et le 3ème quartile :
+
+###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
+
+###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+
+
+
 ######
 ###### Analyse des signalements et des données Météo DSK (non plus moyennées mais DSK brutes) pour la France entière
 

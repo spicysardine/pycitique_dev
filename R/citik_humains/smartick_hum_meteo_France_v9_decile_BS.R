@@ -1,4 +1,32 @@
-######
+###### Code figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
+
+###### mais pour un semis de lieux aléatoires (France, July 15th 2017 – April 5th 2020, soit 995 jours).
+
+
+###### Code Tableau n°5 – En Île-de-France, selon le 1er décile, la moyenne et le 9ème décile :
+
+###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
+
+###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+
+
+###### Code Tableau n°6 – En Alsace-Lorraine, selon le 1er décile, la moyenne et le 9ème décile :
+
+###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
+
+###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+
+
+###### Code Tableau n°7 – En Rhône-Alpes, selon le 1er décile, la moyenne et le 9ème décile :
+
+###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
+
+###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+
+
+
+
+
 ###### Analyse des signalements et des données Météo DSK (non plus moyennées mais DSK brutes) pour la France entière
 
 ###### D1, Moy, D9 et leurs IC
@@ -150,7 +178,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -210,7 +238,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.2 temperaturehigh
@@ -272,7 +300,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -332,7 +360,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.3 humidity
@@ -394,7 +422,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -454,7 +482,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 ## 3.4 dewpoint
 
@@ -515,7 +543,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 length_ss_NA <- 1000 - length(length_ss_NA_humDF_D1.sort)
@@ -582,7 +610,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 length_ss_NA <- 1000 - length(length_ss_NA_DSKDF_D1.sort)
@@ -653,7 +681,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -713,7 +741,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.6 windspeed
@@ -775,7 +803,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -835,7 +863,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.7 visibility
@@ -897,7 +925,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -957,7 +985,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.8 cloudcover
@@ -1019,7 +1047,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -1079,7 +1107,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.9 windgust
@@ -1141,7 +1169,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
@@ -1201,7 +1229,7 @@ cc <- DSKDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", row.names = TRUE)
 
 
 ## 3.10 uvindex
@@ -1263,7 +1291,7 @@ cc <- humDF_D9.sort[975]
 output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
 output_Fr ## affichage du résultat
 
-write.table(output_Fr,"results_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
+write.table(output_Fr,"results_decil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 
 
