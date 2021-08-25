@@ -27,20 +27,48 @@ for( name in names(humdata) ) {
   rm(list = c(name))
 }
 
+ic_list <- list()
 
-for(name in names(humdata)){
+for(name in names(humdata) ){
   
-  if (!grepl('time', name) ){
+  if (!grepl('time', name) & grepl('temperature|pressure|humid|uv|precip|visib|dew|win|uv|precip|visib|dew|wind', name) ){
     
+    cat('------------------------\n\n')
     print(name)
-    
+    param <- humdata[,name]
+    vect <- decile(param)
+    print(vect)
+    ic_list[[name]] <- vect
+    ic_list <- as.data.frame(ic_list)
+    rm(param)
   }
+  
 }
 
+write.csv(ic_list, 'table_echantillonnage.csv')
+
+ic_table[,'temp'] <- decile(humdata$temperature)
+empty
+  
+  
+alist <- list('first'='one', 'second'=2, 'third'='three')
+  
+alist['fifth'] <-  decile(humdata$apparenttemperaturehigh)
+
+alist
 
 
 
 
-
-
-
+# names(humdata)
+# 
+# humdata[,"temperature"]
+decile(humdata$apparenttemperaturehigh)
+# 
+# # |pressure|humid|uv|precip|cloud|visib|dew|win|uv|precip|cloud|visib|dew|win
+# index = sapply(humdata, is.numeric)
+# index
+# for (var in humdata[,index]){
+# 
+#   decile(var)
+# }

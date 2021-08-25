@@ -77,7 +77,7 @@ humdata_idf <- humdata[humdata$departement_code == c("75","77","78",91:95) , ]
 
 ### 3.1.1 humdata$
 
-decile <- function(param){
+quartile <- function(param){
 
         c1 <- c(0:999)*NA ## création d'une table remplie de 0
         ## ** pour initialiser les dimensions et la valeurs des cellules du dataframe qui suit
@@ -95,15 +95,13 @@ decile <- function(param){
             humDF$decile_75[i] <- quantile(sample(param,50,replace=T), 0.75, na.rm = T);
         }
         
-        aa <- mean(humDF$decile_25) ## moyenne des 1000 1er quartiles
-        ba <- mean(humDF$decile_50) ## moyenne des 1000 2eme quartiles
-        ca <- mean(humDF$decile_75) ## moyenne des 1000 3eme quartiles
-        
+        moy_quart1 <- mean(humDF$decile_25) ## moyenne des 1000 1er quartiles
+        moy_quart2 <- mean(humDF$decile_50) ## moyenne des 1000 2eme quartiles
+        moy_quart3 <- mean(humDF$decile_75) ## moyenne des 1000 3eme quartiles
         
         humDF_D25.sort=sort(humDF$decile_25)
         humDF_D50.sort=sort(humDF$decile_50)
         humDF_D75.sort=sort(humDF$decile_75)
-        
         
         length_ss_NA_humDF_D25.sort <- length(na.omit(humDF_D25.sort))
         length_ss_NA_humDF_D50.sort <- length(na.omit(humDF_D50.sort))
@@ -113,40 +111,113 @@ decile <- function(param){
         length_ss_NA_humDF_D50.sort
         length_ss_NA_humDF_D75.sort
         
-        
         ## c(humDF_D25.sort[25], humDF_D25.sort[975])
-        ab <- humDF_D25.sort[25]
-        ac <- humDF_D25.sort[975]
+        quart1_IC_bas <- humDF_D25.sort[25]
+        quart1_IC_haut <- humDF_D25.sort[975]
         
         ## c(humDF_D50.sort[25], humDF_D50.sort[975])
-        bb <- humDF_D50.sort[25]
-        bc <- humDF_D50.sort[975]
+        quart2_IC_bas <- humDF_D50.sort[25]
+        quart2_IC_haut <- humDF_D50.sort[975]
         
         ## c(humDF_D25.sort[25], humDF_D25.sort[975])
-        cb <- humDF_D75.sort[25]
-        cc <- humDF_D75.sort[975]
+        quart3_IC_bas <- humDF_D75.sort[25]
+        quart3_IC_haut <- humDF_D75.sort[975]
         
+        # La fonction renvoie un vecteur numeric
+        output_Fr = c(moy_quart1, quart1_IC_bas, quart1_IC_haut,
+                                moy_quart2, quart2_IC_bas, quart2_IC_haut,
+                                                moy_quart3, quart3_IC_bas, quart3_IC_haut)
         
-        output_Fr=data.frame(aa, ab, ac, ba, bb, bc, ca, cb, cc)
-        output_Fr ## affichage du résultat
-        
+        # print(output_Fr) ## affichage du résultat
+        return(output_Fr)
         # write.table(output_Fr,"results_quartil_Fr.txt", append = TRUE, sep=";", col.names = TRUE, row.names = TRUE)
 
 }
 
 
+# is dot is.numeric 
+
+# vectornames <- c("temperaturehigh", "humidity", "dewpoint", "pressure", "windspeed")
+
+# sapply applique la fonction a droite au data frame cible en retournant un vecteur booléen
+index <- sapply(humdata, is.numeric)
+#vecteur booléen
+index
+
+#liste vide a remplir
+ic_table <- list()
+ic_table
+
+# boucle de calcule implementant la fonction quartile
+# avec filtrage par le vecteur index sur le dataframe humdata
+for (name in names(humdata[,index])  ){
+        
+        # isolation de la colonne cible pour chaque iteration de la boucle
+        param <- humdata[,name]
+        # affectation dans une variable intermediaire
+        result <- quartile(param)
+        # insertion du vecteru numeric resultant dans la liste
+        ic_table[[name]] <- result
+         
+}
+
+# transformation (cast) de la list en data.frame
+ic_table <- as.data.frame(ic_table)
+# transposition du tableau (data.frame)
+ic_table <- t(ic_table)
+
+# Creation d’un vecteur de nom de colonne pour le tableau transpose
+nom_de_colonne = c('moy_quart1', 'quart1_IC_bas', 'quart1_IC_haut',
+                      'moy_quart2', 'quart2_IC_bas', 'quart2_IC_haut',
+                        'moy_quart3', 'quart3_IC_bas', 'quart3_IC_haut')
+
+# renommage des colonnes
+colnames(ic_table) <- nom_de_colonne
+# visualisation  de la table
+View(ic_table)
+
+# export au format csv
+write.csv(ic_table, 'ic_quartiles.csv')
 
 
-names <- names(humdata)
-mode(names)
 
+# empty_list <- list('un', 2, 'quatre', 45, T)
+# empty_list[[6]] <- vectornames
+# 
+# empty_list$six[3]
+# 
+# list_names <- c('un', 'deux', 'trois', 'quatre', 'cinq', 'six')
+# names(empty_list) <- list_names 
 
-rm(names)
+# empty <- humdata[, "temperaturehigh"]
+# 
+# quartile(empty)
 
-
-
-
-
+# 
+# quartile(humdata$temperature)
+# 
+# dim(humdata)
+# names(humdata)
+# 
+# # Dans l’indexation R on commence toujours par 1
+# for(i in 37:length(humdata)){
+#         
+#        name <- names(humdata[i])
+#        print(name)
+#        
+# }
+# 
+# vectornames
+# 
+# 
+# for( name in vectornames ){
+#         
+#         print(name)
+#         param <- humdata[,name]
+#         result <- quartile(param)
+#         print(result)
+#         
+# }
 
 
 
