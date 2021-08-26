@@ -85,6 +85,36 @@ humdata_ra <- humdata[ humdata$departement_code %in% c("01", "07", "26", "38", "
 # semi meteo
 DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01", "07", "26", "38", "42", "69", "73", "74") , ]
 
+### 2.4.3. Sélection de la période hivernale "longue" (6 mois)
+
+humdata_winter17_long <- humdata[humdata$date_piqure_saisie >= "2017-10-01" & humdata$date_piqure_saisie  <= "2018-03-31",] 
+humdata_winter18_long <- humdata[humdata$date_piqure_saisie >= "2018-10-01" & humdata$date_piqure_saisie  <= "2019-03-31",] 
+humdata_winter19_long <- humdata[humdata$date_piqure_saisie >= "2019-10-01" & humdata$date_piqure_saisie  <= "2020-03-31",] 
+
+humdata_winter_long <-rbind(humdata_winter17_long, humdata_winter18_long, humdata_winter19_long)
+
+
+DSKdata_winter17_long <- DSKdata[DSKdata$date_releve >= "2017-10-01" & DSKdata$date_releve <= "2018-03-31",]
+DSKdata_winter18_long <- DSKdata[DSKdata$date_releve >= "2018-10-01" & DSKdata$date_releve <= "2019-03-31",]
+DSKdata_winter19_long <- DSKdata[DSKdata$date_releve >= "2019-10-01" & DSKdata$date_releve <= "2020-03-31",]
+
+DSKdata_winter_long <-rbind(DSKdata_winter17_long, DSKdata_winter18_long, DSKdata_winter19_long)
+
+### 2.4.3. Sélection de la période hivernale "courte" (4 mois)
+
+humdata_winter17_short <- humdata[humdata$date_piqure_saisie >= "2017-11-01" & humdata$date_piqure_saisie  <= "2018-02-28",] 
+humdata_winter18_short <- humdata[humdata$date_piqure_saisie >= "2018-11-01" & humdata$date_piqure_saisie  <= "2019-02-28",] 
+humdata_winter19_short <- humdata[humdata$date_piqure_saisie >= "2019-11-01" & humdata$date_piqure_saisie  <= "2020-02-28",] 
+
+humdata_winter_short <-rbind(humdata_winter17_short, humdata_winter18_short, humdata_winter19_short)
+
+
+DSKdata_winter17_short <- DSKdata[DSKdata$date_releve >= "2017-11-01" & DSKdata$date_releve <= "2018-02-28",]
+DSKdata_winter18_short <- DSKdata[DSKdata$date_releve >= "2018-11-01" & DSKdata$date_releve <= "2019-02-28",]
+DSKdata_winter19_short <- DSKdata[DSKdata$date_releve >= "2019-11-01" & DSKdata$date_releve <= "2020-02-28",]
+
+DSKdata_winter_short <-rbind(DSKdata_winter17_short, DSKdata_winter18_short, DSKdata_winter19_short)
+
 ### 5. Boostrap pour stabiliser indicateurs et intervalles de confiance du t.test d'une moyenne
 #Cf. médiane/quantile Poinsot, 2005, R pour les statophobes, pp.13-1510
 
@@ -214,6 +244,7 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
                          "visibility", "cloudcover",   "windgust", "uvindex")
 
 ### Generation rapide des tables statistiques
+
 # France entiere
 france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile' )
 datatable(france_quartile)
@@ -227,4 +258,26 @@ datatable(alsace_decile)
 rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
 datatable(rhone_alpes_decile)
 
-?datatable
+# Periode hivernale longue deciles
+ic_hiver_long_decile <- ic_table_maker(humdata_winter_long, DSKdata_winter_long, vectornames, calcul='decile')
+datatable(ic_hiver_long_decile)
+# Periode hivernale longue deciles
+ic_hiver_short_decile <- ic_table_maker(humdata_winter_short, DSKdata_winter_short, vectornames, calcul='decile')
+datatable(ic_hiver_short_decile)
+
+# Periode hivernale longue quartiles
+ic_hiver_long_decile <- ic_table_maker(humdata_winter_long, DSKdata_winter_long, vectornames, calcul='quartile')
+datatable(ic_hiver_long_decile)
+# Periode hivernale longue quartiles
+ic_hiver_short_decile <- ic_table_maker(humdata_winter_short, DSKdata_winter_short, vectornames, calcul='quartile')
+datatable(ic_hiver_short_decile)
+
+
+
+
+
+
+
+
+
+
