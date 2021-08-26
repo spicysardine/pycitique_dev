@@ -1,6 +1,6 @@
 
 ###############################################################################################################################
-###### Code pour Tableau n°4 – Pour la France entière, selon le 1er quartile, le 2ème quartile (la médiane) et le 3ème quartile :
+###### Code pour Tableau n°4 – Pour la France entière, selon le 1er quantile, le 2ème quantile (la médiane) et le 3ème quantile :
 ###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
 ###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
 ###### Analyse des signalements et des données Météo DSK (non plus moyennées mais DSK brutes) pour la France entière
@@ -55,6 +55,7 @@ names(humdata)
 ## 2.3 Methode d’importation depuis la BDD geographique PostgreSQL/PostGIS
 ## /!\ Ne pas commenter ni supprimer /!\
 require(RPostgreSQL)
+require(DT)
 drv <- PostgreSQL()
 con <- dbConnect(drv, db='localbase10', user='beetroot')
 humdata_curs_query <- dbSendQuery(con, 'SELECT * FROM citik.citik_humains_clean_weather_strict')
@@ -85,7 +86,7 @@ humdata_ra <- humdata[ humdata$departement_code %in% c("01", "07", "26", "38", "
 DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01", "07", "26", "38", "42", "69", "73", "74") , ]
 
 ### 5. Boostrap pour stabiliser indicateurs et intervalles de confiance du t.test d'une moyenne
-#Cf. médiane/quartile Poinsot, 2005, R pour les statophobes, pp.13-1510
+#Cf. médiane/quantile Poinsot, 2005, R pour les statophobes, pp.13-1510
 
 ### Fonction de Calcul d'un IC en utilisant le Bootstrap pour des petits échantillons ou avec une absence
 ### de normalité avérée (cf. section 3.4 de Poinsot, p.14)
@@ -123,9 +124,9 @@ ic_calculator <- function(param, calcul){
                 print('Aucune opération valide demandée')
         }
 
-        moy_quart1 <- mean(humDF$lower_quantile) ## moyenne des 1000 1er quantiles
-        moy_quart2 <- mean(humDF$middl_quantile) ## moyenne des 1000 2eme quantiles
-        moy_quart3 <- mean(humDF$upper_quantile) ## moyenne des 1000 3eme quantiles
+        moy_quant1 <- mean(humDF$lower_quantile) ## moyenne des 1000 1er quantiles
+        moy_quant2 <- mean(humDF$middl_quantile) ## moyenne des 1000 2eme quantiles
+        moy_quant3 <- mean(humDF$upper_quantile) ## moyenne des 1000 3eme quantiles
 
         humDF_C25.sort=sort(humDF$lower_quantile)
         humDF_C50.sort=sort(humDF$middl_quantile)
@@ -136,24 +137,26 @@ ic_calculator <- function(param, calcul){
         length_C75.sort <- length(na.omit(humDF_C75.sort))
 
         ## c(humDF_C25.sort[25], humDF_C25.sort[975])
-        quart1_IC_bas <- humDF_C25.sort[25]
-        quart1_IC_haut <- humDF_C25.sort[975]
+        quant1_IC_bas <- humDF_C25.sort[25]
+        quant1_IC_haut <- humDF_C25.sort[975]
 
         ## c(humDF_C50.sort[25], humDF_C50.sort[975])
-        quart2_IC_bas <- humDF_C50.sort[25]
-        quart2_IC_haut <- humDF_C50.sort[975]
+        quant2_IC_bas <- humDF_C50.sort[25]
+        quant2_IC_haut <- humDF_C50.sort[975]
 
         ## c(humDF_C75.sort[25], humDF_C75.sort[975])
-        quart3_IC_bas <- humDF_C75.sort[25]
-        quart3_IC_haut <- humDF_C75.sort[975]
+        quant3_IC_bas <- humDF_C75.sort[25]
+        quant3_IC_haut <- humDF_C75.sort[975]
 
         # La fonction retourne ce vecteur numeric contenant les 
         # trois moyennes et leur intervale de confiance
-        output_Fr = c(moy_quart1, quart1_IC_bas, quart1_IC_haut,
-                        moy_quart2, quart2_IC_bas, quart2_IC_haut,
-                          moy_quart3, quart3_IC_bas, quart3_IC_haut)
+        ic_vector = c(moy_quant1, quant1_IC_bas, quant1_IC_haut,
+                        moy_quant2, quant2_IC_bas, quant2_IC_haut,
+                          moy_quant3, quant3_IC_bas, quant3_IC_haut)
+        # arrondire a deux decimales
+        ic_vector <- round(ic_vector, digits=2)
         
-        return(output_Fr)
+        return(ic_vector)
 
 }
 
@@ -163,7 +166,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
         #liste vide a remplir
         ic_table <- list()
         
-        # boucle de calcule implementant la fonction quartile
+        # boucle de calcule implementant la fonction quantile
         # avec filtrage par le vecteur vectornames sur le dataframe humdata
         for (name in paramvector ){
         
@@ -195,13 +198,13 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
         
         # renommage des colonnes
         colnames(ic_table) <- nom_de_colonne
-        # visualisation  de la table
-        View(ic_table)
         
-        # # export au format csv
-        date <- format(Sys.time(), "%A_%b_%d_%Hh%Mm%Ss_%Y")
-        filename <- paste('ic', calcul, date, '.csv', sep = '_')
-        write.csv(ic_table, filename )
+        ## export au format csv (de-commenter en cas de besoin)
+        # date <- format(Sys.time(), "%A_%b_%d_%Hh%Mm%Ss_%Y")
+        # filename <- paste('ic', calcul, date, '.csv', sep = '_')
+        # write.csv(ic_table, filename )
+        
+        return(ic_table)
 
 }
 
@@ -210,10 +213,18 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
                       "dewpoint",   "pressure",      "windspeed",
                          "visibility", "cloudcover",   "windgust", "uvindex")
 
+### Generation rapide des tables statistiques
+# France entiere
+france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile' )
+datatable(france_quartile)
+#idf
+idf_decile <- ic_table_maker(humdata_idf, DSKdata_idf, vectornames, calcul='quartile')
+datatable(idf_decile)
+#alsace
+alsace_decile <- ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile' )
+datatable(alsace_decile)
+#rhone-alpes
+rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
+datatable(rhone_alpes_decile)
 
-ic_table_maker(humdata, DSKdata, vectornames, calcul='decile' )
-ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile' )
-ic_table_maker(humdata_idf, DSKdata_idf, vectornames, calcul='quartile')
-ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
-
-
+?datatable
