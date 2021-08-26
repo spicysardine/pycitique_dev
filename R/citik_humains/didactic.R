@@ -72,3 +72,94 @@ decile(humdata$apparenttemperaturehigh)
 # 
 #   decile(var)
 # }
+
+
+
+
+
+empty_list <- list('un', 2, 'quatre', 45, T)
+empty_list[[6]] <- vectornames
+
+empty_list$six[3]
+
+list_names <- c('un', 'deux', 'trois', 'quatre', 'cinq', 'six')
+names(empty_list) <- list_names
+
+empty <- humdata[, "temperaturehigh"]
+
+quartile(empty)
+
+
+quartile(humdata$temperature)
+
+dim(humdata)
+names(humdata)
+
+# Dans l’indexation R on commence toujours par 1
+for(i in 37:length(humdata)){
+
+       name <- names(humdata[i])
+       print(name)
+
+}
+
+vectornames
+
+
+for( name in vectornames ){
+
+        print(name)
+        param <- humdata[,name]
+        result <- quartile(param)
+        print(result)
+
+}
+
+# sapply applique la fonction a droite au data frame cible en retournant un vecteur booléen
+index <- sapply(humdata, is.numeric)
+
+# boucle de calcule implementant la fonction quartile
+# avec filtrage par le vecteur index sur le dataframe humdata
+for (name in names(humdata[,index])  ){
+  
+  # isolation de la colonne cible pour chaque iteration de la boucle
+  param <- humdata[,name]
+  # affectation dans une variable intermediaire
+  result <- quartile(param)
+  # insertion du vecteru numeric resultant dans la liste
+  ic_table[[name]] <- result
+  
+}
+
+
+
+
+
+
+c1 <- c(0:999)*NA 
+
+
+empty <- data.frame("centile_25"=c(0:999),"centile_50"=c(0:999),"centile_75"=c(0:999))*NA
+View(empty)
+
+
+c(paste('centile_', c(25,50,75)))
+
+
+?data.frame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
