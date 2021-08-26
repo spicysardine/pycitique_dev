@@ -72,3 +72,45 @@ decile(humdata$apparenttemperaturehigh)
 # 
 #   decile(var)
 # }
+
+
+
+# empty_list <- list('un', 2, 'quatre', 45, T)
+# empty_list[[6]] <- vectornames
+#
+# empty_list$six[3]
+#
+# list_names <- c('un', 'deux', 'trois', 'quatre', 'cinq', 'six')
+# names(empty_list) <- list_names
+
+# empty <- humdata[, "temperaturehigh"]
+#
+# quartile(empty)
+
+#
+# quartile(humdata$temperature)
+#
+# dim(humdata)
+# names(humdata)
+#
+# # Dans l’indexation R on commence toujours par 1
+# for(i in 37:length(humdata)){
+#
+#        name <- names(humdata[i])
+#        print(name)
+#
+# }
+#
+# vectornames
+#
+#
+# for( name in vectornames ){
+#
+#         print(name)
+#         param <- humdata[,name]
+#         result <- quartile(param)
+#         print(result)
+#
+# }
+
+
