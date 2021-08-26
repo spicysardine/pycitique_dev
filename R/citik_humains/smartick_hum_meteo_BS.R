@@ -9,13 +9,13 @@
 ###### Authors : Khaldoune Hilami, Vincent Godard
 ##############################################################################################################################
 ###### Code figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
-###### mais pour un semis de lieux aléatoires (France, July 15th 2017 – April 5th 2020, soit 995 jours).
+###### mais pour un semis de lieux aléatoires (France, January 17th 2017 – April 5th 2020, soit 995 jours).
 ###### Code Tableau n°5 – En Île-de-France, selon le 1er décile, la moyenne et le 9ème décile :
 ###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
-###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+###### mais pour un semis de lieux aléatoires (France, January 2017 – April 2020, soit 995 jours).
 ###### Code Tableau n°6 – En Alsace-Lorraine, selon le 1er décile, la moyenne et le 9ème décile :
 ###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
-###### mais pour un semis de lieux aléatoires (France, July 2017 – April 2020, soit 995 jours).
+###### mais pour un semis de lieux aléatoires (France, January 2017 – April 2020, soit 995 jours).
 ###### Code Tableau n°7 – En Rhône-Alpes, selon le 1er décile, la moyenne et le 9ème décile :
 ###### Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des mêmes dates
 ###### mais pour un semis de lieux aléatoires (France, January 2017 – April 2020, soit 995 jours).
@@ -198,8 +198,10 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
         # visualisation  de la table
         View(ic_table)
         
-        # export au format csv
-        write.csv(ic_table, 'ic_quartiles.csv')
+        # # export au format csv
+        date <- format(Sys.time(), "%A_%b_%d_%Hh%Mm%Ss_%Y")
+        filename <- paste('ic', calcul, date, '.csv', sep = '_')
+        write.csv(ic_table, filename )
 
 }
 
@@ -211,7 +213,7 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
 
 ic_table_maker(humdata, DSKdata, vectornames, calcul='decile' )
 ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile' )
-ic_table_maker(humdata_idf, DSKdata_idf, vectornames,  calcul='decile')
-ic_table_maker(humdata_ra, DSKdata_ra, vectornames,  calcul='decile')
+ic_table_maker(humdata_idf, DSKdata_idf, vectornames, calcul='quartile')
+ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
 
 
