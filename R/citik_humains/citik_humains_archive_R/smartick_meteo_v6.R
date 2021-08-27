@@ -130,7 +130,8 @@ shapiro.test(MFdata$temperature) # W = 0.97696, p-value = 7.649e-13 => p-value s
 
 
 ### t.test entre les différentes températures
-    t.test(MFdata$temperature,DSKdata$temperature, paired = TRUE) # t = -16.503, df = 995, p-value < 2.2e-16 => p-value significative, les 2 échantillons seraient significativement différents !
+    t.test(MFdata$temperature,DSKdata$temperature, paired = TRUE) 
+    # t = -16.503, df = 995, p-value < 2.2e-16 => p-value significative, les 2 échantillons seraient significativement différents !
 
     # t.test(MFdata$temperature_p1D,DSKdata$temperature) ## SO
     # t.test(MFdata$temperature_p15D,DSKdata$temperature) ## SO

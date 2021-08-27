@@ -337,6 +337,93 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   
 }
 
+t.test_batch <- function (dsk_paramnames, mf_paramnames){
+  
+  # Liste vide pour accueillir les nom de parametres
+  paramlist <- list()
+  t.test_List <- list()
+  t_matrix <- matrix(nrow=4,ncol = length(dsk_paramnames))
+  
+  # boucle de remplissage de la liste de correspondance
+  for (i in 1:11){
+    # cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
+    paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
+  }
+  
+  i=1
+  # boucle de calcul
+  for (param in paramlist ){
+    
+    paramdsk <- param[1]
+    parammf <- param[2]
+    test_result <- t.test(DSKdata_42avg[,paramdsk], MFdata[,parammf])
+    cat(param[1], '|------>', param[2],'\n')
+    test_result_vector <- c(test_result$statistic[[1]], test_result$p.value[[1]],
+                            test_result$parameter[[1]], test_result$conf.int[[1]])
+    t_matrix[,i] <- round(test_result_vector, digits = 10)
+    i=i+1
+    
+    
+  }
+  
+  t_table <- as.data.frame(t_matrix)
+  names(t_table) <- dsk_paramnames
+  rownames(t_table) <- c('t.test_vs_MF', 'p.value_vs_MF', 'ddl_vs_MF', 'IC_vs_MF')
+  return(t_table)
+}
+
+kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
+  
+  # Liste vide pour accueillir les nom de parametres
+  paramlist <- list()
+  kwcox_matrix <- matrix(nrow=2, ncol = length(dsk_paramnames))
+  
+  
+  # boucle de remplissage de la liste de correspondance
+  for (i in 1:11){
+    # cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
+    paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
+  }
+  
+  i=1
+  # boucle de calcul iteratif des tests
+  for (param in paramlist ){
+    
+    paramdsk <- param[1]
+    parammf <- param[2]
+    
+    # Preparation de la donnee des tests
+    cat("____ Fabrication des données pour le test KW ____\n")
+    dskdf <- data.frame(param=DSKdata_42avg[,paramdsk], data_provider='dsk')
+    mfdf <- data.frame(param=MFdata[,parammf], data_provider='mf')
+    kwcoxdata <- rbind(dskdf,mfdf)
+    cat("____ Objet de donnée pour KW Fabriqué____\n")
+    
+    if(test=='wilcox'){
+      test_result <- wilcox.test(param ~ data_provider, data = kwcoxdata)
+    } else if (test=='kruskal'){
+      test_result <- kruskal.test(param ~ data_provider, data = kwcoxdata)
+    }else{
+      print('Aucun nom de test valide fourni. tapez wilcox ou kruskal.')
+    }
+    
+    cat(param[1], '|------>', param[2],'\n')
+    test_result_vector <- c(test_result$statistic[[1]],
+                            test_result$p.value[[1]])
+    kwcox_matrix[,i] <- test_result_vector
+    i=i+1
+    
+  }
+  
+  kwcox_table <- as.data.frame(kwcox_matrix)
+  names(kwcox_table) <- dsk_paramnames
+  rownames(kwcox_table) <- c('t.test_vs_MF', 'p.value_vs_MF')
+  return(kwcox_table)
+  
+}
+
+
+
 #___________________________________________ Programme principal ________________________________________________________#
 
 ### Vecteur de caracteres contenant les parametres meteo a traiter
@@ -390,9 +477,17 @@ batch_histogram(dsk_paramnames, mf_paramnames)
 shapiro_df <- shapiro_batch(dsk_paramnames, mf_paramnames)
 datatable(shapiro_df)
 
+# Calcule de la table DSK vs MF au test t.test
+m <- t.test_batch(dsk_paramnames, mf_paramnames)
+datatable(m)
 
+# Calcule de la table du test DSK vs MF pour le test de Wilcoxon
+m <- kwcox_table(dsk_paramnames, mf_paramnames, test='wilcox')
+datatable(m)
 
-
+# Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
+m <- kwcox_table(dsk_paramnames, mf_paramnames, test='kruskal')
+datatable(m)
 
 
 
