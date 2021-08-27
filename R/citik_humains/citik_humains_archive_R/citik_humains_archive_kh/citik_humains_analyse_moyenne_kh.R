@@ -13,7 +13,7 @@ require(car)
 # Import de la donnée comparative météo-France (MF) et darksky (DSK)
 # La donnée MF est issue de 42 stations synoptiques réparties sur le territoire nationale
 dskdatavg<- read.csv(
-        "../../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
+        "../../data/donnee_meteo_nationale_comparative/darksky/darksky_moyennes_journalieres_maille_42.csv", 
         header = TRUE, sep = ",", dec = ".")
 mfdatavg <- read.csv(
         "../../data/donnee_meteo_nationale_comparative/meteoFrance/mf_moyennes_journalieres_maille_42.csv",
@@ -79,10 +79,10 @@ weatherHistogram <- function(paramDSK, paramMF, Breaks, paramName, SIunit){
 weatherStats <- function(paramDSK, paramMF, paramName, SIunit){
         
         ######### Test des distributions statistiques
-        cat("\n####### Test de normalité ",paramName," ",SIunit,"#######\n")
-        qqPlot(paramDSK, ylab = paramName)
-        qqPlot(paramMF, ylab = paramName)
-        cat("\n Fait: voir les grahiques dans la case des Plots de Rstudio \n")
+        # cat("\n####### Test de normalité ",paramName," ",SIunit,"#######\n")
+        # qqPlot(paramDSK, ylab = paramName)
+        # qqPlot(paramMF, ylab = paramName)
+        # cat("\n Fait: voir les grahiques dans la case des Plots de Rstudio \n")
         
         cat("\n####### Shapiro test #######\n")
         print( shapiro.test(paramDSK) ) 
@@ -91,13 +91,13 @@ weatherStats <- function(paramDSK, paramMF, paramName, SIunit){
         cat("\n#######  t.test entre les différentes DSK et MF ",paramName," ",SIunit,"#######\n")
         print(t.test(paramDSK, paramMF))
         
-        cat("\n####### fabrication des données pour le test KW ",paramName," ",SIunit,"#######\n")
+        # cat("\n####### fabrication des données pour le test KW ",paramName," ",SIunit,"#######\n")
         dskdf <- data.frame(param=paramDSK, type='dsk')
         mfdf <- data.frame(param=paramMF, type='mf')
         kwdata <- rbind(dskdf,mfdf)
-        cat("Objet de donnée pour KW Fabriqué:\n")
-        cat("Sommaire de la donnée:\n")
-        print( summary(kwdata) )
+        # cat("Objet de donnée pour KW Fabriqué:\n")
+        # cat("Sommaire de la donnée:\n")
+        # print( summary(kwdata) )
         
         cat("\n####### Kruskal-Wallis test ",paramName," ",SIunit,"#######\n")
         ## ~ signifie : "en fonction de"
