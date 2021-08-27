@@ -21,7 +21,7 @@
 ###### mais pour un semis de lieux aléatoires (France, January 2017 – April 2020, soit 995 jours).
 ##############################################################################################################################
 
-#_____________________________ Preparation de la donnee et definition des fonctions  _________________________________________#
+#_____________________________ Preparation de la donnee  _________________________________________#
 
 #### 1. Mise en place de l’environnement de travail
 setwd('./')
@@ -35,11 +35,11 @@ getwd()
 ## 2.1 Création des dataframes France entière des données CSV de signalements lies a la meteo
 
 # donnees de signalement pour les humains
-humdata <- read.csv("../../data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv",
-                        sep = ",",
-                        dec = ".",
-                        quote = "'",
-                        stringsAsFactors = FALSE)
+# humdata <- read.csv("../../data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv",
+#                         sep = ",",
+#                         dec = ".",
+#                         quote = "'",
+#                         stringsAsFactors = FALSE)
 
 ## pour connaître verifier les variables du tableau human data (facultatif)
 # names(humdata) 
@@ -74,7 +74,7 @@ DSKdata <- fetch(DSKdata_curs_query, n=-1)
 MFdata_curs_query <- dbSendQuery(con, 'SELECT * FROM meteo.mf_synop42_avg order by date_iso asc')
 MFdata <- fetch(MFdata_curs_query, n=-1)
 
-## Uniformisation des parametres en % de MF
+## Uniformisation des parametres en % de MF - donnee moyennee
 # humidite
 MFdata$humidite_floor <- floor(MFdata$humidite)
 MFdata$humidite_ceiling <- ceiling(MFdata$humidite)
@@ -82,25 +82,31 @@ MFdata$humidite_ceiling <- ceiling(MFdata$humidite)
 MFdata$nebulosite_floor <- floor(MFdata$nebulosite)
 MFdata$nebulosite_ceiling <- ceiling(MFdata$nebulosite)
 
-### 2.4 Création des dataframe par région comparées dans l'article
+curs_dsk_42avg <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_synop42_avg order by date_releve asc')
+DSKdata_42avg <- fetch(curs_dsk_42avg, n=-1)
+
+curs_dsk_700avg <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_avg order by date_releve asc')
+DSKdata_700avg <- fetch(curs_dsk_700avg, n=-1)
+
+### 2.4 Création des dataframes par région comparées dans l'article
 
 ## 2.4.1 Création des subset pour l'IDF:
 # signalements
-humdata_idf <- humdata[humdata$departement_code %in% c("75","77","78",91:95) , ]
+humdata_idf <- humdata[humdata$departement_code %in% c("75","77","78",91:95),]
 # semi meteo
-DSKdata_idf <- DSKdata[DSKdata$departement_code %in% c("75","77","78",91:95) , ]
+DSKdata_idf <- DSKdata[DSKdata$departement_code %in% c("75","77","78",91:95),]
 
 ## 2.4.2 Création des subset pour l'AL:
 # signalements
-humdata_al <- humdata[ humdata$departement_code %in% c("54", "55", "57",  "88", "67", "68") , ]
+humdata_al <- humdata[ humdata$departement_code %in% c("54","55","57","88","67","68"),]
 # semi meteo
-DSKdata_al <- DSKdata[ DSKdata$departement_code %in% c("54", "55", "57",  "88", "67", "68") , ]
+DSKdata_al <- DSKdata[ DSKdata$departement_code %in% c("54","55","57","88","67","68"),]
 
 ### 2.4.3 Création des subset pour RA:
 # signalements
-humdata_ra <- humdata[ humdata$departement_code %in% c("01", "07", "26", "38", "42", "69", "73", "74") , ]
+humdata_ra <- humdata[ humdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
 # semi meteo
-DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01", "07", "26", "38", "42", "69", "73", "74") , ]
+DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
 
 ### 2.4.3. Sélection de la période hivernale "longue" (6 mois)
 # signalements
@@ -126,14 +132,20 @@ DSKdata_winter18_short <- DSKdata[DSKdata$date_releve >= "2018-11-01" & DSKdata$
 DSKdata_winter19_short <- DSKdata[DSKdata$date_releve >= "2019-11-01" & DSKdata$date_releve <= "2020-02-28",]
 DSKdata_winter_short <-rbind(DSKdata_winter17_short, DSKdata_winter18_short, DSKdata_winter19_short)
 
+## Nettoyage des variables inutiles
+rm(list = c(paste('humdata_winter', 17:19, '_long', sep=''),
+                paste('humdata_winter', 17:19, '_short', sep=''),
+                        paste('DSKdata_winter', 17:19, '_long', sep=''),
+                                paste('DSKdata_winter', 17:19, '_short', sep='') ) )
+
+#______________________________________ Definition des fonctions  ___________________________________________#
+
+
 ### 5. Boostrap pour stabiliser indicateurs et intervalles de confiance du t.test d'une moyenne
 # Cf. médiane/quantile Poinsot, 2005, R pour les statophobes, pp.13-1510
 
-### Fonction de Calcul d'un IC en utilisant le Bootstrap pour des petits échantillons ou avec une absence
+## Fonction de Calcul d'un IC en utilisant le Bootstrap pour des petits échantillons ou avec une absence
 # de normalité avérée (cf. section 3.4 de Poinsot, p.14)
-# création d'un vecteur (tableau à une seule rangée) nommé table devant accueillir
-# 1000 valeurs numériques => les 1000 valeurs de moyennes obtenues.
-
 ic_calculator <- function(param, calcul){
         
         ## création d'une table 1000x3 index vides
@@ -143,8 +155,6 @@ ic_calculator <- function(param, calcul){
 
         ## boucle qui calcule 1000 fois sur un échantillon de 50 tirages les centiles 25, 50 et 75 à partir du vecteur index (cf. infra)
         ## /!\ il faut exclure les NA du calcul de la moyenne également /!\
-        ## /!\ j'ai renommé le centile_3 en centile_75 /!\
-        
         ## Calcule conditionnel selon l’option de la variable calcul
         # Calcul de quartiles
         if(calcul=='quartile'){
@@ -199,6 +209,7 @@ ic_calculator <- function(param, calcul){
 
 }
 
+## Fonction de fabrication des tables statistiques d’IC
 ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
                 
         #liste vide a remplir
@@ -246,10 +257,10 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 
 }
 
-### 6. Fonctions de abrication des graphiaues comparatifs avec ggplot2
+### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
 make_hist <- function(paramdsk, parammf){
   
-  p <- ggplot(DSKdata, aes(DSKdata[,paramdsk]))+
+  p <- ggplot(DSKdata_42avg, aes(DSKdata_42avg[,paramdsk]))+
     geom_histogram( color='green', fill='black', aes(y=..density..), alpha=.55)+
     geom_density(data = MFdata, color='blue', aes(MFdata[,parammf]), fill='light blue', alpha=.2)
   
@@ -280,6 +291,52 @@ batch_histogram <- function (dsk_paramnames, mf_paramnames){
     }
 }
 
+shapiro <- function(paramDSK, paramMF){
+  
+  shapiroDSK <- shapiro.test(paramDSK) 
+  shapiroMF <- shapiro.test(paramMF)
+  
+  shapiroList <- list()
+  shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]], 'p.value'=shapiroDSK$p.value[[1]] )
+  shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]], 'p.value'=shapiroMF$p.value[[1]] )
+  
+  return(shapiroList)
+  
+}
+
+shapiro_batch <- function (dsk_paramnames, mf_paramnames){
+  
+  # Liste vide pour accueillir les nom de parametres
+  paramlist <- list()
+  shapiroList <- list()
+  
+  # boucle de remplissage de la liste de correspondance
+  for (i in 1:11){
+    cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
+    paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
+  }
+  
+  # boucle de calcul
+  for (param in paramlist ){
+    
+    paramdsk <- param[1]
+    parammf <- param[2]
+    result <- shapiro(DSKdata_42avg[,paramdsk], MFdata[,parammf])
+    print(result)
+    
+    shapiroList[[paramdsk]] <- c(result$shapiroDSK['shapiro_test'], result$shapiroDSK['p.value'])
+    shapiroList[[parammf]] <- c(result$shapiroMF['shapiro_test'], result$shapiroMF['p.value'])
+    
+    shapiroDF <- as.data.frame(shapiroList)
+    
+    shapiroDF <- t(shapiroDF)
+    
+  }
+  
+  return(shapiroDF)
+  
+}
+
 #___________________________________________ Programme principal ________________________________________________________#
 
 ### Vecteur de caracteres contenant les parametres meteo a traiter
@@ -291,13 +348,13 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
 
 ## Periode annuelle sur la France entier ou les trois regions d’etude
 # France entiere
-france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile' )
+france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile')
 datatable(france_quartile)
 #idf
 idf_decile <- ic_table_maker(humdata_idf, DSKdata_idf, vectornames, calcul='decile')
 datatable(idf_decile)
 #alsace
-alsace_decile <- ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile' )
+alsace_decile <- ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile')
 datatable(alsace_decile)
 #rhone-alpes
 rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
@@ -326,7 +383,31 @@ mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
                    'humidite_floor', 'point_rose', 'press_mer', 'vvent',
                    'visibilite', 'nebulosite_floor','rafale_10min', 'precip_24h')
 
+# Cette ligne fabrique automatiquement tous les graphs de l’article
 batch_histogram(dsk_paramnames, mf_paramnames)
+
+# Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalite 
+shapiro_df <- shapiro_batch(dsk_paramnames, mf_paramnames)
+datatable(shapiro_df)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

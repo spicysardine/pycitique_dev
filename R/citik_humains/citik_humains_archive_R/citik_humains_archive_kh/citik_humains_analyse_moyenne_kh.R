@@ -91,11 +91,11 @@ weatherStats <- function(paramDSK, paramMF, paramName, SIunit){
         cat("\n#######  t.test entre les différentes DSK et MF ",paramName," ",SIunit,"#######\n")
         print(t.test(paramDSK, paramMF))
         
-        # cat("\n####### fabrication des données pour le test KW ",paramName," ",SIunit,"#######\n")
+        cat("\n####### fabrication des données pour le test KW ",paramName," ",SIunit,"#######\n")
         dskdf <- data.frame(param=paramDSK, type='dsk')
         mfdf <- data.frame(param=paramMF, type='mf')
         kwdata <- rbind(dskdf,mfdf)
-        # cat("Objet de donnée pour KW Fabriqué:\n")
+        cat("Objet de donnée pour KW Fabriqué:\n")
         # cat("Sommaire de la donnée:\n")
         # print( summary(kwdata) )
         
@@ -135,3 +135,55 @@ for( param in paramlist) {
         ## Test des distributions statistiques
         weatherStats(param$dskParam, param$mfParam, param$paramName, param$SIunit)
 }
+
+
+shapiro <- function(paramDSK, paramMF){
+  
+  shapiroDSK <- shapiro.test(paramDSK) 
+  shapiroMF <- shapiro.test(paramMF)
+  
+  shapiroList <- list()
+  shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]], 'p.value'=shapiroDSK$p.value[[1]] )
+  shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]], 'p.value'=shapiroMF$p.value[[1]] )
+  
+  return(shapiroList)
+  
+}
+
+shapiro_batch <- function (dsk_paramnames, mf_paramnames){
+  
+  # Liste vide pour accueillir les nom de parametres
+  paramlist <- list()
+  shapiroList <- list()
+  
+  # boucle de remplissage de la liste de correspondance
+  for (i in 1:11){
+    cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
+    paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
+  }
+  
+  # boucle de calcul
+  for (param in paramlist ){
+    
+    paramdsk <- param[1]
+    parammf <- param[2]
+    result <- shapiro(DSKdata_42avg[,paramdsk], MFdata[,parammf])
+    print(result)
+
+    shapiroList[[paramdsk]] <- c(result$shapiroDSK['shapiro_test'], result$shapiroDSK['p.value'])
+    shapiroList[[parammf]] <- c(result$shapiroMF['shapiro_test'], result$shapiroMF['p.value'])
+
+    shapiroDF <- as.data.frame(shapiroList)
+
+    shapiroDF <- t(shapiroDF)
+    
+  }
+  
+  return(shapiroDF)
+  
+}
+
+df <- shapiro_batch(dsk_paramnames, mf_paramnames)
+datatable(df)
+
+

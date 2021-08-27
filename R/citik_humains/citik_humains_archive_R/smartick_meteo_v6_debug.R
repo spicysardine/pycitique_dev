@@ -22,18 +22,18 @@ require(tidyverse)
 drv <- PostgreSQL()
 con <- dbConnect(drv, db='localbase10', user='beetroot')
 
-curs_dsk <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_synop42_avg order by date_releve asc')
-DSKdata <- fetch(curs, n=-1)
+curs_dsk_avg <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_synop42_avg order by date_releve asc')
+DSKdata_avg <- fetch(curs_dsk_avg, n=-1)
 
-curs_mf <- dbSendQuery(con, 'SELECT * FROM meteo.mf_synop42_avg order by date_iso asc')
-MFdata <- fetch(curs_mf, n=-1)
+curs_mf_avg <- dbSendQuery(con, 'SELECT * FROM meteo.mf_synop42_avg order by date_iso asc')
+MFdata_avg <- fetch(curs_mf_avg, n=-1)
 
-## Uniformisation des parametres en % de MF
-MFdata$humidite_floor <- floor(MFdata$humidite)
-MFdata$humidite_ceiling <- ceiling(MFdata$humidite)
+## Uniformisation des parametres en % de MF de la donnee moyennee
+MFdata_avg$humidite_floor <- floor(MFdata_avg$humidite)
+MFdata_avg$humidite_ceiling <- ceiling(MFdata_avg$humidite)
 
-MFdata$nebulosite_floor <- floor(MFdata$nebulosite)
-MFdata$nebulosite_ceiling <- ceiling(MFdata$nebulosite)
+MFdata_avg$nebulosite_floor <- floor(MFdata_avg$nebulosite)
+MFdata_avg$nebulosite_ceiling <- ceiling(MFdata_avg$nebulosite)
 
 ###### Fonction de abrication des graphiaues comparatifs avec ggplot2
 make_hist <- function(paramdsk, parammf){
