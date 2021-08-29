@@ -278,7 +278,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 
 ### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
 # La fonction retourne un objet de type liste contenant les graphiques 
-# contenant les analyse. Le resultat peut etre ensuite utilise avec 
+# des les analyse. Le resultat peut etre ensuite utilise avec 
 # une librairie d’aggregation de graphiaues comme cowplot
 batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
   
@@ -496,6 +496,9 @@ plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 
 
 # Fonction de fabrication des grilles des series temporelles
 # elle recupere une chaine de caracteres du parmetre a analyser
+# et retourne un objet de type liste contenant les graphiques
+# des analyse. Le resultat peut etre ensuite utilise avec 
+# une librairie d’aggregation de graphiaues comme cowplot
 weatherPlotGrid <- function(param){
   
   paramlist <- list("temperature"='Temperature (°C)',
@@ -581,7 +584,9 @@ weatherPlotGrid <- function(param){
   graphlist[['al']]     <- weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
   graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
   
-  # Cette fonction retourne un objet de type liste contenant des graphiques
+  # Cette fonction retourne un objet de type liste contenant 
+  # les graphiques generes contenant les analyse. Le resultat peut  
+  # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
   plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')    
   
   return(plotgrid)
@@ -698,7 +703,6 @@ plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landsca
 # Production automatique des grilles des graphiques
 
 weatherPlotGrid('temperature')
-typeof(t)
 # plotsave(t, 'temperature_plot_grid.png', format='landscape', extension='png')
 
 weatherPlotGrid('humidity')
