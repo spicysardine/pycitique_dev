@@ -277,7 +277,9 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 }
 
 ### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
-
+# La fonction retourne un objet de type liste contenant les graphiques 
+# contenant les analyse. Le resultat peut etre ensuite utilise avec 
+# une librairie d’aggregation de graphiaues comme cowplot
 batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
   
     if ( length(dsk_paramnames) != length(dens_paramnames) ){
@@ -315,7 +317,7 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
         parammf <- param[2]
         # print(paramdsk, parmmf)
         p <- make_hist(paramdsk, parammf)
-        p <- p+xlab(label= paramdsk)
+        p <- p+xlab(label= paramdsk)+plotstyle
         # print(p)
         graphlist[[paramdsk]] <<- p
         rm(p)
@@ -325,28 +327,31 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
     
     make_hist_batch()
     
+    # La fonction retourne un objet de type liste contenant les graphiques produits
     return(graphlist)
 }
 
-shapiro <- function(paramDSK, paramMF){
-  
-  shapiroDSK <- shapiro.test(paramDSK) 
-  shapiroMF <- shapiro.test(paramMF)
-  
-  shapiroList <- list()
-  shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]], 'p.value'=shapiroDSK$p.value[[1]] )
-  shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]], 'p.value'=shapiroMF$p.value[[1]] )
-  
-  return(shapiroList)
-  
-}
-
+# fonction du comparatif du test shapiro dsk vs mf fabrication en lot
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
 shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   
   # Liste vide pour accueillir les nom de parametres
   paramlist <- list()
   shapiroList <- list()
   
+  # fonction du comparatif du test shapiro dsk vs mf
+  shapiro <- function(paramDSK, paramMF){
+    
+    shapiroDSK <- shapiro.test(paramDSK) 
+    shapiroMF <- shapiro.test(paramMF)
+    
+    shapiroList <- list()
+    shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]], 'p.value'=shapiroDSK$p.value[[1]] )
+    shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]], 'p.value'=shapiroMF$p.value[[1]] )
+    
+    return(shapiroList)
+    
+  }
   # boucle de remplissage de la liste de correspondance
   for (i in 1:11){
     cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
@@ -373,6 +378,8 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   
 }
 
+# fonction de fabrication en masse des tables comparatives du t.test
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
 t.test_batch <- function (dsk_paramnames, mf_paramnames){
   
   # Liste vide pour accueillir les nom de parametres
@@ -408,6 +415,9 @@ t.test_batch <- function (dsk_paramnames, mf_paramnames){
   return(t_table)
 }
 
+# fonction parametrique permettant de fabriquer les tables comparatives
+# du test cible wilcoxon ou kruskal-wallis
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
 kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   
   # Liste vide pour accueillir les nom de parametres
@@ -458,6 +468,126 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   
 }
 
+## Defining plotsaving Function Template
+plotsave <- function(plot, plotname, extension='png', format, plotpath=NULL){
+                
+                if(format=='portrait'){
+                  height=11.69
+                  width=8.27
+                }else if (format=='landscape'){
+                  width=11.69
+                  height=8.27
+                }
+                  
+                ggsave2(filename = plotname,
+                       plot = plot,
+                       path = plotpath,
+                       device= extension,
+                       width=width, # format A4
+                       height=height,
+                       units = 'in',
+                       dpi = 92,
+                       limitsize=TRUE)
+}
+
+## Definition d’un theme general pour les graphs du module
+plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 12))+
+              theme(axis.title = element_text(face = 'bold', size = 9))
+
+# Fonction de fabrication des grilles des series temporelles
+# elle recupere une chaine de caracteres du parmetre a analyser
+weatherPlotGrid <- function(param){
+  
+  paramlist <- list("temperature"='Temperature (°C)',
+                    "temperaturehigh"='Day temperature (°C)',
+                    "temperaturelow"='Night temperature',
+                    'humidity'='Humidity (%)',
+                    "dewpoint"='Dewpoint (°C)',
+                    "pressure"='Atmospheric Pressure (hPa)',
+                    "windspeed"='Windspeed (m/s)',
+                    "visibility"='Visibility (km)',
+                    "cloudcover"='Cloud cover (%)',
+                    'precipintensity'='Precipitation Intensity mm/h',
+                    "windgust"='Wind Gust (m/s)',
+                    'uvindex'='UV Index (scale 1 to 10)')
+  
+  datalist <- list('france'=list('name'='France', 'report'=humdata, 'witness'=DSKdata_700avg ),
+                   'idf'=list('name'='île-de-France', 'report'=humdata_idf, 'witness'=DSKdata_700avg_idf ),
+                   'al'=list('name'='Alsace', 'report'=humdata_al,'witness'=DSKdata_700avg_al ),
+                   'ra'=list('name'='Rhône-Alpes', 'report'=humdata_ra, 'witness'=DSKdata_700avg_ra )
+  )
+  
+  graphlist <- list()
+  
+  weatherPlot <- function(reportdata, witnessdata, region, param){
+    
+    paramname <- paramlist[[param]]
+    
+    ## General theme
+    legende <- c('Reports'='#0000ff',
+                 'Reports Model'='#000000',
+                 'Random Witness'='#00ff00',
+                 'Random Witness Model'='#ff0000')
+    # Explication détaillée du graphique
+    # la date de la piqûre est en abscisse
+    # la donnée principale est tirée du dataframe humdata qui représente la table de donnée de signalements
+    # citik_humains_clean_weather_strict.csv
+    # dans mes script je travaille directememnt sur la base de donnée géographique postgis
+    # la donnée météo témoin DSKdata_700avg provient de la table darksky_maille_700_avg
+    # le grahique est établi à partir de la colonne temperature représentat
+    # la température moyenne obtenue en moyennant temphigh et templow
+    ggplot(reportdata, aes(x=date_piqure_saisie))+
+      # c'est la ligne qui affiche les poctuels des signalements
+      geom_jitter(aes(y=reportdata[,param], color='Reports'), size=.1, alpha=.6)+
+      # Cette ligne établit la courbe lisse noire des poinctuels
+      # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
+      # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
+      # comme paramètre, donc la fonction s(x) du packet R mgcv
+      # pour plus de détail consultez les références que je vous avais envoyés dans les mails précédents
+      # a utrement l'explication de la méthode additive est en dehors du sujet de l'article
+      geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
+      #cette lingne de code établit la ligne verte de la température témoin
+      geom_line(data = witnessdata,
+                aes(date_releve, witnessdata[,param], color='Random Witness'),
+                size=.5,
+                alpha=.7)+
+      #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
+      geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.5)+
+      #titre du graph
+      ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses measurements
+                             in ',region,' from 2017-03-31 to 2020-04-01'))+
+      geom_line(y=0, colour='grey50', linetype='dotdash')+
+      xlab(label = 'Date')+
+      ylab(label=paramname)+
+      labs(color='Legende: ')+
+      # les thèmes et labels des axes
+      theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1) )+
+      # theme(axis.text.y = element_text(color='grey20', size = 6) )+
+      theme(legend.position = 'top')+
+      #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
+      #de zoom sur une période de l'année ou pour restreindre le champ temporel
+      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)), by=5),
+                          limits = c(floor( min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)) ) )+
+      scale_x_date( expand = c(0,0),
+                    limits=as.Date( c('2017-03-31','2020-04-01')),
+                    date_labels = '%b %Y',
+                    date_breaks = '2 month')+
+      scale_color_manual(values=legende)+plotstyle
+    
+  }
+  
+  graphlist[['france']] <- weatherPlot(datalist$france$report, datalist$france$witness, datalist$france$name, param)
+  graphlist[['idf']]    <- weatherPlot(datalist$idf$report, datalist$idf$witness, datalist$idf$name, param)
+  graphlist[['al']]     <- weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
+  graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
+  
+  # Cette fonction retourne un objet de type liste contenant des graphiques
+  plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')    
+  
+  return(plotgrid)
+  
+}
+
 #__________________________________________ Programme principal ___________________________________#
 
 ### Vecteur de caracteres contenant les parametres meteo a traiter
@@ -498,11 +628,9 @@ datatable(ic_hiver_short_decile)
 dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh", 
                           "humidity", "dewpoint", "pressure", "windspeed",
                             "visibility", "cloudcover", "windgust", 'precipintensity', 'uvindex')
-
 mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
                           'humidite_floor', 'point_rose', 'press_mer', 'vvent',
-                              'visibilite', 'nebulosite_floor','rafale_10min', 'precip_24h', 'uvindex')
-
+                              'visibilite', 'nebulosite_floor','rafale_10min', 'precip_24h')
 
 # Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalite 
 shapiro_df <- shapiro_batch(dsk_paramnames, mf_paramnames)
@@ -523,52 +651,65 @@ datatable(m)
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
 # ces lignes fabrique automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
+
 g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames, mf_paramnames)
-
-# Commande avec possibilite d’arrangement des positions
-weather_gridplot_g <- plot_grid(g$temperature, g$temperaturelow, g$temperaturehigh, 
-                                    g$humidity, g$dewpoint, g$pressure, g$windspeed,
-                                      g$visibility, g$cloudcover, g$windgust, g$precipintensity, 
-                                       g$uvindex,  labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-
 # commande courte mais sans possibilite d’arrangement des positions
-# weather_graphplot <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-weather_gidplot_g
+weather_gridplot_g <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+title_text_g <- paste('Average parameters for 42 Météo France Synoptic Stations vs DarkSky (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+bkg <- ggplot()
+title_g <- ggdraw(bkg) + draw_label(title_text_g, fontface='bold', size = 12, lineheight = 0.3)
+# rel_heights values control title margins
+weather_gridplot_g <- plot_grid(title_g, weather_gridplot_g, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
+plotsave(weather_gridplot_g, 'dsk_vs_mf_moyennes_france.png', format='landscape', extension='png')
 
 ### Fabrication rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
-# ces lignes fabriquent automatiquement tous les graphs de l’article
-# la fonction batch_histogram renvoi une liste contenant les graphs fabriques
 h <- batch_histogram(humdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
-# Commande avec possibilite d’arrangement des positions
-weather_gridplot_h <- plot_grid(h$temperature, h$temperaturelow, h$temperaturehigh, 
-                               h$humidity, h$dewpoint, h$pressure, h$windspeed,
-                               h$visibility, h$cloudcover, h$windgust, h$precipintensity, h$uvindex,
-                               labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-
-# commande courte mais sans possibilite d’arrangement des positions
-# weather_gridplot <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-weather_gridplot_h
+weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+title_text_h <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_h <- ggdraw(bkg) + draw_label(title_text_h, fontface='bold', size = 12, lineheight = 0.3)
+weather_gridplot_h <- plot_grid(title_h, weather_gridplot_h, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
+plotsave(weather_gridplot_h, 'humdata_vs_dsk_random700_france.png', format='landscape', extension='png')
 
 ### Gridplots regeionaux
 # idf
 idf <- batch_histogram(humdata_idf, DSKdata_700avg_idf, dsk_paramnames, dsk_paramnames)
-idf$uvindex
-weather_gridplot_idf <- plot_grid(plotlist=idf, labels = "AUTO", ncol=3, nrow = 4 , idfign = 'hv')
-weather_gridplot_idf
+weather_gridplot_idf <- plot_grid(plotlist=idf, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+title_text_idf <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (île-de-France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_idf <- ggdraw(bkg) + draw_label(title_text_idf, fontface='bold', size = 12, lineheight = 0.3)
+weather_gridplot_idf <- plot_grid(title_idf, weather_gridplot_idf, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
+plotsave(weather_gridplot_idf, 'humdata_vs_dsk_random700_idf.png', format='landscape', extension='png')
 
 # alsace
 al <- batch_histogram(humdata_al, DSKdata_700avg_al, dsk_paramnames, dsk_paramnames)
-al$uvindex
 weather_gridplot_al <- plot_grid(plotlist=al, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-weather_gridplot_al
+title_text_al <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Alsace, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_al <- ggdraw(bkg) + draw_label(title_text_al, fontface='bold', size = 12, lineheight = 0.3)
+weather_gridplot_al <- plot_grid(title_al, weather_gridplot_al, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
+plotsave(weather_gridplot_al, 'humdata_vs_dsk_random700_al.png', format='landscape', extension='png')
 
 #ra
 ra <- batch_histogram(humdata_ra, DSKdata_700avg_ra, dsk_paramnames, dsk_paramnames)
-ra$uvindex
-weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=4, nrow = 3 , raign = 'hv')
-weather_gridplot_ra
+weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+title_text <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Rhône-Alpes, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title <- ggdraw(bkg) + draw_label(title_text, fontface='bold', size = 12, lineheight = 0.3)
+weather_gridplot_ra <- plot_grid(title, weather_gridplot_ra, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
+plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landscape', extension='png')
 
+# Production automatique des grilles des graphiques
 
+weatherPlotGrid('temperature')
+typeof(t)
+# plotsave(t, 'temperature_plot_grid.png', format='landscape', extension='png')
 
-
+weatherPlotGrid('humidity')
+weatherPlotGrid('temperaturehigh')
+weatherPlotGrid('temperaturelow')
+weatherPlotGrid('dewpoint')
+weatherPlotGrid('pressure')
+weatherPlotGrid('windspeed')
+weatherPlotGrid('visibility')
+weatherPlotGrid('cloudcover')
+weatherPlotGrid('precipintensity')
+weatherPlotGrid('windgust')
+weatherPlotGrid('uvindex')
 

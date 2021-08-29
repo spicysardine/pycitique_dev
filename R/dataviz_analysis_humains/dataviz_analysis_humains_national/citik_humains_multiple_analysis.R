@@ -8,16 +8,21 @@ require(MASS)
 require(mgcv)
 
 
-ggplot(datasubset, aes(date_piqure_saisie))+
-  geom_point(aes(y=temperature), color='blue', size=.2, alpha=.7)+
-  geom_smooth(aes(y=temperature), color='black')+
-  geom_line( data = dataset_dsk700, aes(date_releve, temperature), color='green')+
-  geom_smooth(data=dataset_dsk700, color='red', mapping = aes(date_releve, temperature))+
+ggplot(humdata, aes(date_piqure_saisie))+
+  geom_jitter(aes(y=temperature), color='blue', size=1, alpha=.7)+
+  geom_smooth(aes(y=temperature), color='black', size=.5)+
+  geom_line( data = DSKdata_700avg, aes(date_releve, temperature), color='green')+
+  geom_smooth(data = DSKdata_700avg, color='red', aes(date_releve, temperature), size=.5 )+
   ggtitle('Comparaison between vartiations in time of signaling vs witness temperatures')+
+  geom_line(y = 0, colour='grey50', linetype='dotdash')+
   xlab(label = 'Date')+
   ylab(label=' Temperature degrees Celsius')+
+  # ylim(min(DSKdata_700avg$temperature), max(DSKdata_700avg$temperature))+
+  # scale_y_continuous(breaks = seq(ceiling(min(DSKdata_700avg$temperature)+5),ceiling(max(DSKdata_700avg$temperature)+5), by=5) )+
+  scale_y_continuous(breaks = c(seq(-10,40, by=5)) )+
+  scale_x_date(expand = c(0,0), limits = as.Date(c('2017-03-31','2020-04-01')))+
   plotstyle
-plotsave('Comparaison between vartiations in time of signaling vs witness temperatures', '.')
+# plotsave('Comparaison between vartiations in time of signaling vs witness temperatures', '.')
 
 ggplot(datasubset, aes(date_piqure_saisie))+
   geom_point(aes(y=temperature), color='blue', size=.2, alpha=.7)+

@@ -22,7 +22,7 @@ plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 
 
 ###### Connection parameters and main human reports dataset associated to weather conditions
 drv <- PostgreSQL()
-con <- dbConnect(drv, dbname= 'localbase10', user='beetroot', password='root', port=5432, host='localhost')
+con <- dbConnect(drv, dbname= 'localbase10', user='beetroot', port=5432, host='localhost')
 
 ### Selecting reports with less than 25 Collected Ticks by reporter’s sex. Île-de-France
 ### This subset will be used throughout the script.
