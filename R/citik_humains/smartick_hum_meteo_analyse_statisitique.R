@@ -469,7 +469,7 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
 }
 
 ## Defining plotsaving Function Template
-plotsave <- function(plot, plotname, extension='png', format, plotpath=NULL){
+plotsave <- function(plot, plotname, extension='png', format='landscape', plotpath=NULL){
                 
                 if(format=='portrait'){
                   height=11.69
@@ -530,7 +530,9 @@ weatherPlotGrid <- function(param){
     legende <- c('Reports'='#0000ff',
                  'Reports Model'='#000000',
                  'Random Witness'='#00ff00',
-                 'Random Witness Model'='#ff0000')
+                 'Random Witness Model'='#ff0000',
+                 'Equinox'='orange',
+                 'Solstice'='grey50')
     # Explication détaillée du graphique
     # la date de la piqûre est en abscisse
     # la donnée principale est tirée du dataframe humdata qui représente la table de donnée de signalements
@@ -555,21 +557,29 @@ weatherPlotGrid <- function(param){
                 size=.5,
                 alpha=.7)+
       #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
-      geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.5)+
+      geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
+      geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
+      # equinox du printemps
+      geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )), colour='orange', linetype='twodash', alpha=.8, size=.5)+
+      # solstice d’hiver
+      geom_vline(xintercept=as.Date(c( '2017-12-21', '2018-12-21', '2019-12-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
+      # solstice d’ete
+      geom_vline(xintercept=as.Date(c( '2017-06-21', '2018-06-21', '2019-06-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
+      #e quinox d’automne
+      geom_vline(xintercept=as.Date(c( '2017-09-21', '2018-09-21', '2019-09-21')), colour='orange', linetype='twodash', alpha=.8, size=.5)+
       #titre du graph
       ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses measurements
                              in ',region,' from 2017-03-31 to 2020-04-01'))+
-      geom_line(y=0, colour='grey50', linetype='dotdash')+
       xlab(label = 'Date')+
       ylab(label=paramname)+
-      labs(color='Legende: ')+
+      labs(color='Legend: ')+
       # les thèmes et labels des axes
       theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1) )+
       # theme(axis.text.y = element_text(color='grey20', size = 6) )+
-      theme(legend.position = 'top')+
+      theme(legend.position = 'top')+guides(col=guide_legend(nrow = 1))+
       #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
       #de zoom sur une période de l'année ou pour restreindre le champ temporel
-      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)), by=5),
+      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)), by=4),
                           limits = c(floor( min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)) ) )+
       scale_x_date( expand = c(0,0),
                     limits=as.Date( c('2017-03-31','2020-04-01')),
@@ -592,6 +602,8 @@ weatherPlotGrid <- function(param){
   return(plotgrid)
   
 }
+
+weatherPlotGrid('temperature')
 
 #__________________________________________ Programme principal ___________________________________#
 
