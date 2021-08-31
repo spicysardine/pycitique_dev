@@ -472,11 +472,11 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
 plotsave <- function(plot, plotname, extension='png', format='landscape', plotpath=NULL){
                 
                 if(format=='portrait'){
-                  height=11.69
-                  width=8.27
-                }else if (format=='landscape'){
+                  height=16.54# papier A3 (8.27 A4)
                   width=11.69
-                  height=8.27
+                }else if (format=='landscape'){
+                  width=16.54 # papier A3 
+                  height=11.69
                 }
                   
                 ggsave2(filename = plotname,
@@ -486,13 +486,15 @@ plotsave <- function(plot, plotname, extension='png', format='landscape', plotpa
                        width=width, # format A4
                        height=height,
                        units = 'in',
-                       dpi = 92,
+                       # dpi = 92,
                        limitsize=TRUE)
 }
 
 ## Definition d’un theme general pour les graphs du module
-plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 12))+
-              theme(axis.title = element_text(face = 'bold', size = 9))
+plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 8.5))+
+              theme(axis.title = element_text(face = 'bold', size = 8.5))+
+              theme(axis.text.x  = element_text( size = 8.5))+
+              theme(axis.text.y  = element_text( size = 8.5))
 
 # Fonction de fabrication des grilles des series temporelles
 # elle recupere une chaine de caracteres du parmetre a analyser
@@ -554,7 +556,7 @@ weatherPlotGrid <- function(param){
       #cette lingne de code établit la ligne verte de la température témoin
       geom_line(data = witnessdata,
                 aes(date_releve, witnessdata[,param], color='Random Witness'),
-                size=.5,
+                size=.4,
                 alpha=.7)+
       #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
       geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
@@ -568,15 +570,15 @@ weatherPlotGrid <- function(param){
       #e quinox d’automne
       geom_vline(xintercept=as.Date(c( '2017-09-21', '2018-09-21', '2019-09-21')), colour='orange', linetype='twodash', alpha=.8, size=.5)+
       #titre du graph
-      ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses measurements
-                             in ',region,' from 2017-03-31 to 2020-04-01'))+
+      ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses
+                             measurements in ',region,' from 2017-03-31 to 2020-04-01'))+
       xlab(label = 'Date')+
       ylab(label=paramname)+
       labs(color='Legend: ')+
       # les thèmes et labels des axes
       theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1) )+
       # theme(axis.text.y = element_text(color='grey20', size = 6) )+
-      theme(legend.position = 'top')+guides(col=guide_legend(nrow = 1))+
+      theme(legend.position = 'top', legend.text = (element_text(size = 9)))+guides(col=guide_legend(nrow = 1))+
       #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
       #de zoom sur une période de l'année ou pour restreindre le champ temporel
       scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)), by=4),
@@ -603,7 +605,7 @@ weatherPlotGrid <- function(param){
   
 }
 
-weatherPlotGrid('temperature')
+# weatherPlotGrid('temperature')
 
 #__________________________________________ Programme principal ___________________________________#
 
@@ -714,9 +716,9 @@ plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landsca
 
 # Production automatique des grilles des graphiques
 
-weatherPlotGrid('temperature')
-# plotsave(t, 'temperature_plot_grid.png', format='landscape', extension='png')
-
+t <- weatherPlotGrid('temperature')
+plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
+save_plot('Rplot.png',t)
 weatherPlotGrid('humidity')
 weatherPlotGrid('temperaturehigh')
 weatherPlotGrid('temperaturelow')
