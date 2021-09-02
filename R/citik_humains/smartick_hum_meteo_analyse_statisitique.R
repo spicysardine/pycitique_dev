@@ -472,11 +472,11 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
 plotsave <- function(plot, plotname, extension='png', format='landscape', plotpath=NULL){
                 
                 if(format=='portrait'){
-                  height=16.54# papier A3 (8.27 A4)
-                  width=11.69
+                  height=23.39# papier A3 (8.27 A4)
+                  width=16.54
                 }else if (format=='landscape'){
-                  width=16.54 # papier A3 
-                  height=11.69
+                  width=23.39 # papier A3 
+                  height=16.54
                 }
                   
                 ggsave2(filename = plotname,
@@ -501,7 +501,7 @@ plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 
 # et retourne un objet de type liste contenant les graphiques
 # des analyse. Le resultat peut etre ensuite utilise avec 
 # une librairie d’aggregation de graphiaues comme cowplot
-weatherPlotGrid <- function(param){
+weatherPlotGrid <- function(param, mode){
   
   paramlist <- list("temperature"='Temperature (°C)',
                     "temperaturehigh"='Day temperature (°C)',
@@ -591,17 +591,51 @@ weatherPlotGrid <- function(param){
     
   }
   
-  graphlist[['france']] <- weatherPlot(datalist$france$report, datalist$france$witness, datalist$france$name, param)
-  graphlist[['idf']]    <- weatherPlot(datalist$idf$report, datalist$idf$witness, datalist$idf$name, param)
-  graphlist[['al']]     <- weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
-  graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
+  getGrid_by_param <- function(param){
+      graphlist[['france']] <- weatherPlot(datalist$france$report, datalist$france$witness, datalist$france$name, param)
+      graphlist[['idf']]    <- weatherPlot(datalist$idf$report, datalist$idf$witness, datalist$idf$name, param)
+      graphlist[['al']]     <- weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
+      graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
+      
+      # Cette fonction retourne un objet de type liste contenant 
+      # les graphiques generes contenant les analyse. Le resultat peut  
+      # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
+      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')
+      
+      return(plotgrid)
+  }
   
-  # Cette fonction retourne un objet de type liste contenant 
-  # les graphiques generes contenant les analyse. Le resultat peut  
-  # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
-  plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')    
+  getGrid_by_region <- function(param){
+    
+    for (paramname in names(paramlist)){
+      
+      graphlist[[paramname]] <- weatherPlot(datalist[[param]]$report, datalist[[param]]$witness, datalist[[param]]$name, paramname)
+      
+    }
   
-  return(plotgrid)
+    # Cette fonction retourne un objet de type liste contenant
+    # les graphiques generes contenant les analyse. Le resultat peut
+    # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
+    plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=6, align = 'hv')
+    
+    return(plotgrid)
+    
+  }
+  
+  if (mode=='param'){
+    
+    plotgrid <- getGrid_by_param(param)
+    return(plotgrid)
+    
+  }else if (mode=='region'){
+    
+    plotgrid <- getGrid_by_region(param)
+    return(plotgrid)
+    
+  }else {
+    stop('Aucun mode de mosaicage fourni: france, idf, al, ra')
+  }
+  
   
 }
 
@@ -714,7 +748,7 @@ title <- ggdraw(bkg) + draw_label(title_text, fontface='bold', size = 12, linehe
 weather_gridplot_ra <- plot_grid(title, weather_gridplot_ra, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landscape', extension='png')
 
-# Production automatique des grilles des graphiques
+# Production automatique des grilles des graphiques des séries temporelles
 
 t <- weatherPlotGrid('temperature')
 plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
@@ -731,3 +765,9 @@ weatherPlotGrid('precipintensity')
 weatherPlotGrid('windgust')
 weatherPlotGrid('uvindex')
 
+g <- weatherPlotGrid('idf', mode='region')
+plotsave(g, 'idf_plot_grid.pdf', format='portrait', extension='pdf')
+
+
+f <- weatherPlotGrid('france', mode='region')
+plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
