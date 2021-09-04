@@ -58,46 +58,52 @@ getwd()
 # names(DSKdata)
 
 ### Appel des librairies requises
-require(RPostgreSQL)
+# le script ne se lancera pas correctement sans
+# l’invocation prelalable de ces librairies
+require(RSQLite)
+require(piggyback)
 require(tidyverse)
 require(cowplot)
 require(DT)
 
-### 2.3 Methode d’importation depuis la BDD geographique PostgreSQL/PostGIS
+#--------------------------------------------------------------------------------------------------#
+### 2.3 Methode d’importation depuis la BDD geographique SQLite/SPatialite
 ## /!\ Ne pas commenter ni supprimer /!\
 
-## Parametres de connectin a la base PostgreSQL
-drv <- PostgreSQL()
-con <- dbConnect(drv, db='localbase10', user='beetroot')
+## La base de donnees ayant une taille relativement consequente
+# elle est stoquee sous le format d’un fichier attache au depot Git
+# centrale, sans toutefois de versionnement pris en charge par celui-ci
+# le telechargement prealable est une etape obligatoire suite au clonage
+# du projet sur la machine locale. Une connexion a internet est egalement requise
+pb_download('citique.db', repo = 'spicysardine/pycitique')
 
-# recuperation de la donnee par le curseur humdata_curs_query
-humdata_curs_query <- dbSendQuery(con, 'SELECT * FROM citik.citik_humains_clean_weather_strict')
-humdata <- fetch(humdata_curs_query, n=-1)
-# recuperation de la donnee par le curseur DSKdata_curs_query
-DSKdata_curs_query <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_extraction_dpt')
-DSKdata <- fetch(DSKdata_curs_query, n=-1)         
-# recuperation de la donnee par le curseur curs_mf
-MFdata_curs_query <- dbSendQuery(con, 'SELECT * FROM meteo.mf_synop42_avg order by date_iso asc')
-MFdata <- fetch(MFdata_curs_query, n=-1)
+# Etablissement de la connexion avec la base SQLite
+sqlitedrv <- RSQLite::SQLite()
+sqlitedb <- dbConnect(sqlitedrv, 'citique.db')
+# Recurperationde la liste des tables utiles
+tablist <- dbListTables(sqlitedb)
+# Requete groupee des tables de donnee
+for (tab in tablist){
+  
+  query <- paste('SELECT * FROM ',tab,';')
+  curs <- dbSendQuery(sqlitedb, query)
+  df <- dbFetch(curs)
+  assign(tab, df)
+  dbClearResult(curs)
+  rm(query)
+  rm(df)
+  rm(curs)
+  
+}
 
-curs_dsk_42avg <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_synop42_avg order by date_releve asc')
-DSKdata_42avg <- fetch(curs_dsk_42avg, n=-1)
-
-curs_dsk_700avg <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_avg order by date_releve asc')
-DSKdata_700avg <- fetch(curs_dsk_700avg, n=-1)
-
-# Donnee regionale moyennee idf
-curs_dsk_700avg_idf <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_idf_avg order by date_releve asc')
-DSKdata_700avg_idf <- fetch(curs_dsk_700avg_idf, n=-1)
-
-# Donnee regionale moyennee al
-curs_dsk_700avg_al <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_al_avg order by date_releve asc')
-DSKdata_700avg_al <- fetch(curs_dsk_700avg_al, n=-1)
-
-# Donnee regionale moyennee ra
-curs_dsk_700avg_ra <- dbSendQuery(con, 'SELECT * FROM meteo.darksky_maille_700_ra_avg order by date_releve asc')
-DSKdata_700avg_ra <- fetch(curs_dsk_700avg_ra, n=-1)
-
+humdata$date_piqure_saisie <- as.Date(humdata$date_piqure_saisie)
+MFdata$date_iso <- as.Date(MFdata$date_iso)
+DSKdata$date_releve <- as.Date(DSKdata$date_releve)
+DSKdata_42avg$date_releve <- as.Date(DSKdata_42avg$date_releve) 
+DSKdata_700avg$date_releve <- as.Date(DSKdata_700avg$date_releve) 
+DSKdata_700avg_al$date_releve <- as.Date(DSKdata_700avg_al$date_releve) 
+DSKdata_700avg_idf$date_releve <- as.Date(DSKdata_700avg_idf$date_releve) 
+DSKdata_700avg_ra$date_releve <- as.Date(DSKdata_700avg_ra$date_releve) 
 
 ## Uniformisation des parametres en % de MF - donnee moyennee
 # humidite
@@ -282,7 +288,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 # une librairie d’aggregation de graphiaues comme cowplot
 batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
   
-    if ( length(dsk_paramnames) != length(dens_paramnames) ){
+    if ( length(hist_paramnames) != length(dens_paramnames) ){
       stop('Les vecteurs de parametres ne sont pas de tailles egales.')
     }
   
@@ -705,7 +711,7 @@ datatable(m)
 # ces lignes fabrique automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
 
-g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames, mf_paramnames)
+g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames[-12], mf_paramnames)
 # commande courte mais sans possibilite d’arrangement des positions
 weather_gridplot_g <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
 title_text_g <- paste('Average parameters for 42 Météo France Synoptic Stations vs DarkSky (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
@@ -750,7 +756,7 @@ plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landsca
 
 # Production automatique des grilles des graphiques des séries temporelles
 
-t <- weatherPlotGrid('temperature')
+t <- weatherPlotGrid('temperature', mode='param')
 plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
 save_plot('Rplot.png',t)
 weatherPlotGrid('humidity')
