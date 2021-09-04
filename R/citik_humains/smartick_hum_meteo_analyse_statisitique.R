@@ -758,18 +758,9 @@ plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landsca
 
 t <- weatherPlotGrid('temperature', mode='param')
 plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
-save_plot('Rplot.png',t)
-weatherPlotGrid('humidity')
-weatherPlotGrid('temperaturehigh')
-weatherPlotGrid('temperaturelow')
-weatherPlotGrid('dewpoint')
-weatherPlotGrid('pressure')
-weatherPlotGrid('windspeed')
-weatherPlotGrid('visibility')
-weatherPlotGrid('cloudcover')
-weatherPlotGrid('precipintensity')
-weatherPlotGrid('windgust')
-weatherPlotGrid('uvindex')
+
+h <- weatherPlotGrid('humidity', mode='param')
+plotsave(h, 'humidity_plot_grid.pdf', format='landscape', extension='pdf')
 
 g <- weatherPlotGrid('idf', mode='region')
 plotsave(g, 'idf_plot_grid.pdf', format='portrait', extension='pdf')

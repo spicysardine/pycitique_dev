@@ -89,6 +89,7 @@ ipython_config.py
 #   However, in case of collaboration, if having platform-specific dependencies or dependencies
 # Fichier de sauvegarde des donnees RStudio
 *.RData
+.RData
 
 # Base de donnee SQLite citique
 citique.db
