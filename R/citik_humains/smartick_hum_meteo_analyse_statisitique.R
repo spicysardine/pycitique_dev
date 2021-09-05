@@ -30,33 +30,6 @@
 setwd('./')
 getwd()
 
-#### 2. Importation des données des signalements et du semis aleatoire de 700 points-France entiere 
-### Le separateur du csv est la virgule "," et "'" comme caractere d’echapement
-### quote = "'" pour le caractère d’échappement
-### stringAsFactors pour ne pas factoriser les chaines de caracters.
-
-## 2.1 Création des dataframes France entière des données CSV de signalements lies a la meteo
-
-# donnees de signalement pour les humains
-# humdata <- read.csv("../../data/donnee_signalements_avec_meteo_dsk/citik_humains_clean_weather_strict.csv",
-#                         sep = ",",
-#                         dec = ".",
-#                         quote = "'",
-#                         stringsAsFactors = FALSE)
-
-## pour connaître verifier les variables du tableau human data (facultatif)
-# names(humdata) 
-
-## 2.2 Création des dataframe France entière des données meteo du semis a 700 points 
-# DSKdata <- read.csv("../data/donnee_meteo_nationale_comparative/darksky/darksky_donnee_brute_700_dpt.csv",
-#                         sep = ",",
-#                         dec = ".",
-#                         quote = "'",
-#                         stringsAsFactors = FALSE)
-
-## pour connaître verifier les variables du tableau darksky data (facultatif)
-# names(DSKdata)
-
 ### Appel des librairies requises
 # le script ne se lancera pas correctement sans
 # l’invocation prelalable de ces librairies
@@ -66,7 +39,7 @@ require(tidyverse)
 require(cowplot)
 require(DT)
 
-#--------------------------------------------------------------------------------------------------#
+#------------------------------ Connexion a la base SQLite-----------------------------------------#
 ### 2.3 Methode d’importation depuis la BDD geographique SQLite/SPatialite
 ## /!\ Ne pas commenter ni supprimer /!\
 
@@ -75,14 +48,17 @@ require(DT)
 # centrale, sans toutefois de versionnement pris en charge par celui-ci
 # le telechargement prealable est une etape obligatoire suite au clonage
 # du projet sur la machine locale. Une connexion a internet est egalement requise
-pb_download('citique.db', repo = 'spicysardine/pycitique')
+datapath='../../data'
+pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
-sqlitedb <- dbConnect(sqlitedrv, 'citique.db')
-# Recurperationde la liste des tables utiles
+sqlitedb <- dbConnect(sqlitedrv, '../../data/citique.db')
+# Recurperation de la liste des tables utiles
 tablist <- dbListTables(sqlitedb)
+
 # Requete groupee des tables de donnee
+# c’est cette partie qui recupere la donnee de la base SQLite
 for (tab in tablist){
   
   query <- paste('SELECT * FROM ',tab,';')
@@ -96,14 +72,17 @@ for (tab in tablist){
   
 }
 
-humdata$date_piqure_saisie <- as.Date(humdata$date_piqure_saisie)
+# La BDD SQLite stoque le dates sous format text
+# avant d’utiliser les jeux de donnees on converti 
+# les colonnes date au format approprie
 MFdata$date_iso <- as.Date(MFdata$date_iso)
 DSKdata$date_releve <- as.Date(DSKdata$date_releve)
 DSKdata_42avg$date_releve <- as.Date(DSKdata_42avg$date_releve) 
+humdata$date_piqure_saisie <- as.Date(humdata$date_piqure_saisie)
 DSKdata_700avg$date_releve <- as.Date(DSKdata_700avg$date_releve) 
 DSKdata_700avg_al$date_releve <- as.Date(DSKdata_700avg_al$date_releve) 
-DSKdata_700avg_idf$date_releve <- as.Date(DSKdata_700avg_idf$date_releve) 
 DSKdata_700avg_ra$date_releve <- as.Date(DSKdata_700avg_ra$date_releve) 
+DSKdata_700avg_idf$date_releve <- as.Date(DSKdata_700avg_idf$date_releve) 
 
 ## Uniformisation des parametres en % de MF - donnee moyennee
 # humidite
@@ -175,7 +154,9 @@ ic_calculator <- function(param, calcul){
   ## création d'une table 1000x3 index vides
   ## pour initialiser les dimensions et la valeurs des cellules du dataframe qui suit
   ## création d'un DF initialisé avec les valeurs de c1 pour les cellules et le nombre de lignes.
-  humDF <- data.frame("lower_quantile"=c(0:999),"middl_quantile"=c(0:999),"upper_quantile"=c(0:999))*NA 
+  humDF <- data.frame("lower_quantile"=c(0:999),
+                      "middl_quantile"=c(0:999),
+                      "upper_quantile"=c(0:999))*NA 
   
   ## boucle qui calcule 1000 fois sur un échantillon de 50 tirages les centiles
   ## 25, 50 et 75 à partir du vecteur index (cf. infra)
@@ -301,7 +282,11 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
       
       p <- ggplot(hist_dataset, aes(hist_dataset[,paramdsk]))+
         geom_histogram( color='green', fill='black', aes(y=..density..), alpha=.55)+
-        geom_density(data = dens_dataset, color='blue', aes(dens_dataset[,parammf]), fill='light blue', alpha=.2)
+        geom_density(data = dens_dataset,
+                     color='blue',
+                     aes(dens_dataset[,parammf]),
+                     fill='light blue',
+                     alpha=.2)
       
       return(p)
     }
@@ -352,8 +337,10 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
     shapiroMF <- shapiro.test(paramMF)
     
     shapiroList <- list()
-    shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]], 'p.value'=shapiroDSK$p.value[[1]] )
-    shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]], 'p.value'=shapiroMF$p.value[[1]] )
+    shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]],
+                                                'p.value'=shapiroDSK$p.value[[1]] )
+    shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]],
+                                                'p.value'=shapiroMF$p.value[[1]] )
     
     return(shapiroList)
     
@@ -543,8 +530,8 @@ weatherPlotGrid <- function(param, mode){
                  'Solstice'='grey50')
     # Explication détaillée du graphique
     # la date de la piqûre est en abscisse
-    # la donnée principale est tirée du dataframe humdata qui représente la table de donnée de signalements
-    # citik_humains_clean_weather_strict.csv
+    # la donnée principale est tirée du dataframe humdata qui représente la table de donnée 
+    # de signalements citik_humains_clean_weather_strict.csv
     # dans mes script je travaille directememnt sur la base de donnée géographique postgis
     # la donnée météo témoin DSKdata_700avg provient de la table darksky_maille_700_avg
     # le grahique est établi à partir de la colonne temperature représentat
@@ -556,8 +543,7 @@ weatherPlotGrid <- function(param, mode){
       # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
       # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
       # comme paramètre, donc la fonction s(x) du packet R mgcv
-      # pour plus de détail consultez les références que je vous avais envoyés dans les mails précédents
-      # a utrement l'explication de la méthode additive est en dehors du sujet de l'article
+      # pour plus de détail consultez les références d'explication de la méthode additive 
       geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
       #cette lingne de code établit la ligne verte de la température témoin
       geom_line(data = witnessdata,
@@ -587,8 +573,11 @@ weatherPlotGrid <- function(param, mode){
       theme(legend.position = 'top', legend.text = (element_text(size = 9)))+guides(col=guide_legend(nrow = 1))+
       #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
       #de zoom sur une période de l'année ou pour restreindre le champ temporel
-      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)), by=4),
-                          limits = c(floor( min(humdata[,param], na.rm = T)), ceiling(max(humdata[,param], na.rm = T)) ) )+
+      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)),
+                                       ceiling(max(humdata[,param], na.rm = T)),
+                                       by=4),
+                          limits = c(floor( min(humdata[,param], na.rm = T)),
+                                     ceiling(max(humdata[,param], na.rm = T)) ) )+
       scale_x_date( expand = c(0,0),
                     limits=as.Date( c('2017-03-31','2020-04-01')),
                     date_labels = '%b %Y',
@@ -615,7 +604,10 @@ weatherPlotGrid <- function(param, mode){
     
     for (paramname in names(paramlist)){
       
-      graphlist[[paramname]] <- weatherPlot(datalist[[param]]$report, datalist[[param]]$witness, datalist[[param]]$name, paramname)
+      graphlist[[paramname]] <- weatherPlot(datalist[[param]]$report,
+                                            datalist[[param]]$witness,
+                                            datalist[[param]]$name,
+                                            paramname)
       
     }
   
@@ -642,10 +634,8 @@ weatherPlotGrid <- function(param, mode){
     stop('Aucun mode de mosaicage fourni: france, idf, al, ra')
   }
   
-  
 }
 
-# weatherPlotGrid('temperature')
 
 #__________________________________________ Programme principal ___________________________________#
 
@@ -671,16 +661,28 @@ rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul
 datatable(rhone_alpes_decile)
 
 ## Periode hivernale longue deciles
-ic_hiver_long_decile <- ic_table_maker(humdata_winter_long, DSKdata_winter_long, vectornames, calcul='decile')
+ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
+                                       DSKdata_winter_long,
+                                       vectornames,
+                                       calcul='decile')
 datatable(ic_hiver_long_decile)
 # Periode hivernale courte deciles
-ic_hiver_short_decile <- ic_table_maker(humdata_winter_short, DSKdata_winter_short, vectornames, calcul='decile')
+ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
+                                        DSKdata_winter_short,
+                                        vectornames,
+                                        calcul='decile')
 datatable(ic_hiver_short_decile)
 # Periode hivernale longue quartiles
-ic_hiver_long_decile <- ic_table_maker(humdata_winter_long, DSKdata_winter_long, vectornames, calcul='quartile')
+ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
+                                       DSKdata_winter_long,
+                                       vectornames,
+                                       calcul='quartile')
 datatable(ic_hiver_long_decile)
 # Periode hivernale courte quartiles
-ic_hiver_short_decile <- ic_table_maker(humdata_winter_short, DSKdata_winter_short, vectornames, calcul='quartile')
+ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
+                                        DSKdata_winter_short,
+                                        vectornames,
+                                        calcul='quartile')
 datatable(ic_hiver_short_decile)
 
 ## Vecteurs de caracteres contenant les parametres meteo a comparer un a un
@@ -708,7 +710,7 @@ m <- kwcox_table(dsk_paramnames, mf_paramnames, test='kruskal')
 datatable(m)
 
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
-# ces lignes fabrique automatiquement tous les graphs de l’article
+# ces lignes fabriquent automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
 
 g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames[-12], mf_paramnames)

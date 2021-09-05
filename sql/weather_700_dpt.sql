@@ -90,7 +90,15 @@ order by id asc
 
 
 
-
+DO
+$$
+DECLARE rec record;
+BEGIN
+	for rec in (select code_insee from datasample) loop
+		raise notice '%', rec;
+	end loop;
+END
+$$
 
 
 

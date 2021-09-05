@@ -112,8 +112,9 @@ set temperatureoffset2 = round((((temperaturehigh+temperaturelow)/2)+2), 2)
 
 
 
-
-
+select pg_size_pretty(
+	pg_relation_size('meteo.darksky_maille_700_extraction_dpt')
+)
 
 
 
