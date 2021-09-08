@@ -114,9 +114,9 @@ DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01","07","26","38","42",
 
 ### 2.4.3. Sélection de la période hivernale "longue" (6 mois)
 # signalements
-humdata_winter17_long <- humdata[humdata$date_piqure_saisie >= "2017-10-01" & humdata$date_piqure_saisie  <= "2018-03-31",] 
-humdata_winter18_long <- humdata[humdata$date_piqure_saisie >= "2018-10-01" & humdata$date_piqure_saisie  <= "2019-03-31",] 
-humdata_winter19_long <- humdata[humdata$date_piqure_saisie >= "2019-10-01" & humdata$date_piqure_saisie  <= "2020-03-31",] 
+humdata_winter17_long <- humdata[humdata$date_piqure_saisie >= "2017-10-01" & humdata$date_piqure_saisie <= "2018-03-31",] 
+humdata_winter18_long <- humdata[humdata$date_piqure_saisie >= "2018-10-01" & humdata$date_piqure_saisie <= "2019-03-31",] 
+humdata_winter19_long <- humdata[humdata$date_piqure_saisie >= "2019-10-01" & humdata$date_piqure_saisie <= "2020-03-31",] 
 humdata_winter_long <-rbind(humdata_winter17_long, humdata_winter18_long, humdata_winter19_long)
 # semi meteo
 DSKdata_winter17_long <- DSKdata[DSKdata$date_releve >= "2017-10-01" & DSKdata$date_releve <= "2018-03-31",]
@@ -126,9 +126,9 @@ DSKdata_winter_long <-rbind(DSKdata_winter17_long, DSKdata_winter18_long, DSKdat
 
 ### 2.4.3. Sélection de la période hivernale "courte" (4 mois)
 # signalements
-humdata_winter17_short <- humdata[humdata$date_piqure_saisie >= "2017-11-01" & humdata$date_piqure_saisie  <= "2018-02-28",] 
-humdata_winter18_short <- humdata[humdata$date_piqure_saisie >= "2018-11-01" & humdata$date_piqure_saisie  <= "2019-02-28",] 
-humdata_winter19_short <- humdata[humdata$date_piqure_saisie >= "2019-11-01" & humdata$date_piqure_saisie  <= "2020-02-28",] 
+humdata_winter17_short <- humdata[humdata$date_piqure_saisie >= "2017-11-01" & humdata$date_piqure_saisie <= "2018-02-28",] 
+humdata_winter18_short <- humdata[humdata$date_piqure_saisie >= "2018-11-01" & humdata$date_piqure_saisie <= "2019-02-28",] 
+humdata_winter19_short <- humdata[humdata$date_piqure_saisie >= "2019-11-01" & humdata$date_piqure_saisie <= "2020-02-28",] 
 humdata_winter_short <-rbind(humdata_winter17_short, humdata_winter18_short, humdata_winter19_short)
 # semi meteo
 DSKdata_winter17_short <- DSKdata[DSKdata$date_releve >= "2017-11-01" & DSKdata$date_releve <= "2018-02-28",]
@@ -142,7 +142,7 @@ rm(list = c(paste('humdata_winter', 17:19, '_long', sep=''),
                         paste('DSKdata_winter', 17:19, '_long', sep=''),
                                 paste('DSKdata_winter', 17:19, '_short', sep='') ) )
 
-#______________________________________ Definitions des fonctions  _________________________________#
+#_____________________________________ Definitions des fonctions  _________________________________#
 
 ### 5. Boostrap pour stabiliser indicateurs et intervalles de confiance du t.test d'une moyenne
 # Cf. médiane/quantile Poinsot, 2005, R pour les statophobes, pp.13-1510
@@ -496,144 +496,163 @@ plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 
 # une librairie d’aggregation de graphiaues comme cowplot
 weatherPlotGrid <- function(param, mode){
   
-  paramlist <- list("temperature"='Temperature (°C)',
-                    "temperaturehigh"='Day temperature (°C)',
-                    "temperaturelow"='Night temperature',
-                    'humidity'='Humidity (%)',
-                    "dewpoint"='Dewpoint (°C)',
-                    "pressure"='Atmospheric Pressure (hPa)',
-                    "windspeed"='Windspeed (m/s)',
-                    "visibility"='Visibility (km)',
-                    "cloudcover"='Cloud cover (%)',
-                    'precipintensity'='Precipitation Intensity mm/h',
-                    "windgust"='Wind Gust (m/s)',
-                    'uvindex'='UV Index (scale 1 to 10)')
-  
-  datalist <- list('france'=list('name'='France', 'report'=humdata, 'witness'=DSKdata_700avg ),
-                   'idf'=list('name'='île-de-France', 'report'=humdata_idf, 'witness'=DSKdata_700avg_idf ),
-                   'al'=list('name'='Alsace', 'report'=humdata_al,'witness'=DSKdata_700avg_al ),
-                   'ra'=list('name'='Rhône-Alpes', 'report'=humdata_ra, 'witness'=DSKdata_700avg_ra )
-  )
-  
-  graphlist <- list()
-  
-  weatherPlot <- function(reportdata, witnessdata, region, param){
+    paramlist <- list("temperature"='Temperature (°C)',
+                      "temperaturehigh"='Day temperature (°C)',
+                      "temperaturelow"='Night temperature',
+                      'humidity'='Humidity (%)',
+                      "dewpoint"='Dewpoint (°C)',
+                      "pressure"='Atmospheric Pressure (hPa)',
+                      "windspeed"='Windspeed (m/s)',
+                      "visibility"='Visibility (km)',
+                      "cloudcover"='Cloud cover (%)',
+                      'precipintensity'='Precipitation Intensity mm/h',
+                      "windgust"='Wind Gust (m/s)',
+                      'uvindex'='UV Index (scale 1 to 10)')
     
-    paramname <- paramlist[[param]]
+    datalist <- list('france'=list('name'='France', 'report'=humdata, 'witness'=DSKdata_700avg ),
+                     'idf'=list('name'='île-de-France', 'report'=humdata_idf, 'witness'=DSKdata_700avg_idf ),
+                     'al'=list('name'='Alsace', 'report'=humdata_al,'witness'=DSKdata_700avg_al ),
+                     'ra'=list('name'='Rhône-Alpes', 'report'=humdata_ra, 'witness'=DSKdata_700avg_ra )
+    )
     
-    ## General theme
-    legende <- c('Reports'='#0000ff',
-                 'Reports Model'='#000000',
-                 'Random Witness'='#00ff00',
-                 'Random Witness Model'='#ff0000',
-                 'Equinox'='orange',
-                 'Solstice'='grey50')
-    # Explication détaillée du graphique
-    # la date de la piqûre est en abscisse
-    # la donnée principale est tirée du dataframe humdata qui représente la table de donnée 
-    # de signalements citik_humains_clean_weather_strict.csv
-    # dans mes script je travaille directememnt sur la base de donnée géographique postgis
-    # la donnée météo témoin DSKdata_700avg provient de la table darksky_maille_700_avg
-    # le grahique est établi à partir de la colonne temperature représentat
-    # la température moyenne obtenue en moyennant temphigh et templow
-    ggplot(reportdata, aes(x=date_piqure_saisie))+
-      # c'est la ligne qui affiche les poctuels des signalements
-      geom_jitter(aes(y=reportdata[,param], color='Reports'), size=.1, alpha=.6)+
-      # Cette ligne établit la courbe lisse noire des poinctuels
-      # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
-      # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
-      # comme paramètre, donc la fonction s(x) du packet R mgcv
-      # pour plus de détail consultez les références d'explication de la méthode additive 
-      geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
-      #cette lingne de code établit la ligne verte de la température témoin
-      geom_line(data = witnessdata,
-                aes(date_releve, witnessdata[,param], color='Random Witness'),
-                size=.4,
-                alpha=.7)+
-      #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
-      geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
-      geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
-      # equinox du printemps
-      geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )), colour='orange', linetype='twodash', alpha=.8, size=.5)+
-      # solstice d’hiver
-      geom_vline(xintercept=as.Date(c( '2017-12-21', '2018-12-21', '2019-12-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
-      # solstice d’ete
-      geom_vline(xintercept=as.Date(c( '2017-06-21', '2018-06-21', '2019-06-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
-      #e quinox d’automne
-      geom_vline(xintercept=as.Date(c( '2017-09-21', '2018-09-21', '2019-09-21')), colour='orange', linetype='twodash', alpha=.8, size=.5)+
-      #titre du graph
-      ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses
-                             measurements in ',region,' from 2017-03-31 to 2020-04-01'))+
-      xlab(label = 'Date')+
-      ylab(label=paramname)+
-      labs(color='Legend: ')+
-      # les thèmes et labels des axes
-      theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1) )+
-      # theme(axis.text.y = element_text(color='grey20', size = 6) )+
-      theme(legend.position = 'top', legend.text = (element_text(size = 9)))+guides(col=guide_legend(nrow = 1))+
-      #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
-      #de zoom sur une période de l'année ou pour restreindre le champ temporel
-      scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)),
-                                       ceiling(max(humdata[,param], na.rm = T)),
-                                       by=4),
-                          limits = c(floor( min(humdata[,param], na.rm = T)),
-                                     ceiling(max(humdata[,param], na.rm = T)) ) )+
-      scale_x_date( expand = c(0,0),
-                    limits=as.Date( c('2017-03-31','2020-04-01')),
-                    date_labels = '%b %Y',
-                    date_breaks = '2 month')+
-      scale_color_manual(values=legende)+plotstyle
+    graphlist <- list()
     
-  }
-  
-  getGrid_by_param <- function(param){
-      graphlist[['france']] <- weatherPlot(datalist$france$report, datalist$france$witness, datalist$france$name, param)
-      graphlist[['idf']]    <- weatherPlot(datalist$idf$report, datalist$idf$witness, datalist$idf$name, param)
-      graphlist[['al']]     <- weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
-      graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
+    weatherPlot <- function(reportdata, witnessdata, region, param){
+      
+      paramname <- paramlist[[param]]
+      
+      ## General theme
+      legende <- c('Reports'='#0000ff',
+                   'Reports Model'='#000000',
+                   'Random Witness'='#00ff00',
+                   'Random Witness Model'='#ff0000',
+                   'Equinox'='orange',
+                   'Solstice'='grey50')
+      # Explication détaillée du graphique
+      # la date de la piqûre est en abscisse
+      # la donnée principale est tirée du dataframe humdata qui représente la table de donnée 
+      # de signalements citik_humains_clean_weather_strict.csv
+      # dans mes script je travaille directememnt sur la base de donnée géographique postgis
+      # la donnée météo témoin DSKdata_700avg provient de la table darksky_maille_700_avg
+      # le grahique est établi à partir de la colonne temperature représentat
+      # la température moyenne obtenue en moyennant temphigh et templow
+      ggplot(reportdata, aes(x=date_piqure_saisie))+
+        # c'est la ligne qui affiche les poctuels des signalements
+        geom_jitter(aes(y=reportdata[,param], color='Reports'), size=.1, alpha=.6)+
+        # Cette ligne établit la courbe lisse noire des poinctuels
+        # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
+        # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
+        # comme paramètre, donc la fonction s(x) du packet R mgcv
+        # pour plus de détail consultez les références d'explication de la méthode additive 
+        geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
+        #cette lingne de code établit la ligne verte de la température témoin
+        geom_line(data = witnessdata,
+                  aes(date_releve, witnessdata[,param], color='Random Witness'),
+                  size=.4,
+                  alpha=.7)+
+        #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
+        geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
+        geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
+        # equinox du printemps
+        geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )),
+                   colour='orange',
+                   linetype='twodash',
+                   alpha=.8,
+                   size=.5)+
+        # solstice d’hiver
+        geom_vline(xintercept=as.Date(c( '2017-12-21', '2018-12-21', '2019-12-21')),
+                   colour='grey50',
+                   linetype='twodash',
+                   alpha=.8,
+                   size=.5)+
+        # solstice d’ete
+        geom_vline(xintercept=as.Date(c( '2017-06-21', '2018-06-21', '2019-06-21')),
+                   colour='grey50',
+                   linetype='twodash',
+                   alpha=.8,
+                   size=.5)+
+        #e quinox d’automne
+        geom_vline(xintercept=as.Date(c( '2017-09-21', '2018-09-21', '2019-09-21')),
+                   colour='orange',
+                   linetype='twodash',
+                   alpha=.8,
+                   size=.5)+
+        #titre du graph
+        ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses
+                               measurements in ',region,' from 2017-03-31 to 2020-04-01'))+
+        xlab(label = 'Date')+
+        ylab(label=paramname)+
+        labs(color='Legend: ')+
+        # les thèmes et labels des axes
+        theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1))+
+        # theme(axis.text.y = element_text(color='grey20', size = 6) )+
+        theme(legend.position = 'top', legend.text = (element_text(size = 9)))+
+        # Les elements de la legende en une seule rangee
+        guides(col=guide_legend(nrow = 1))+
+        #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
+        #de zoom sur une période de l'année ou pour restreindre le champ temporel
+        scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)),
+                                         ceiling(max(humdata[,param], na.rm = T)),
+                                         by=4),
+                            limits = c(floor( min(humdata[,param], na.rm = T)),
+                                       ceiling(max(humdata[,param], na.rm = T)) ) )+
+        scale_x_date( expand = c(0,0),
+                      limits=as.Date( c('2017-03-31','2020-04-01')),
+                      date_labels = '%b %Y',
+                      date_breaks = '2 month')+
+        scale_color_manual(values=legende)+plotstyle
+      
+    }
+    
+    getGrid_by_param <- function(param){
+      
+      graphlist[['france']]<-weatherPlot(datalist$france$report, datalist$france$witness, datalist$france$name, param)
+      graphlist[['idf']]<-weatherPlot(datalist$idf$report, datalist$idf$witness, datalist$idf$name, param)
+      graphlist[['al']]<-weatherPlot(datalist$al$report, datalist$al$witness, datalist$al$name, param)
+      graphlist[['ra']]<-weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
       
       # Cette fonction retourne un objet de type liste contenant 
       # les graphiques generes contenant les analyse. Le resultat peut  
       # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
       plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')
+        
+        return(plotgrid)
+    }
+    
+    getGrid_by_region <- function(param){
+      
+      for (paramname in names(paramlist)){
+        
+        graphlist[[paramname]] <- weatherPlot(datalist[[param]]$report,
+                                              datalist[[param]]$witness,
+                                              datalist[[param]]$name,
+                                              paramname)
+        
+      }
+    
+      # Cette fonction retourne un objet de type liste contenant
+      # les graphiques generes contenant les analyse. Le resultat peut
+      # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
+      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=6, align = 'hv')
       
       return(plotgrid)
-  }
-  
-  getGrid_by_region <- function(param){
-    
-    for (paramname in names(paramlist)){
-      
-      graphlist[[paramname]] <- weatherPlot(datalist[[param]]$report,
-                                            datalist[[param]]$witness,
-                                            datalist[[param]]$name,
-                                            paramname)
       
     }
-  
-    # Cette fonction retourne un objet de type liste contenant
-    # les graphiques generes contenant les analyse. Le resultat peut
-    # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
-    plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=6, align = 'hv')
     
-    return(plotgrid)
+    if (mode=='param'){
+      
+      plotgrid <- getGrid_by_param(param)
+      return(plotgrid)
+      
+    }else if (mode=='region'){
+      
+      plotgrid <- getGrid_by_region(param)
+      return(plotgrid)
+      
+    }else {
+      stop('Aucun mode de mosaicage fourni: france, idf, al, ra')
+    }
     
-  }
-  
-  if (mode=='param'){
-    
-    plotgrid <- getGrid_by_param(param)
-    return(plotgrid)
-    
-  }else if (mode=='region'){
-    
-    plotgrid <- getGrid_by_region(param)
-    return(plotgrid)
-    
-  }else {
-    stop('Aucun mode de mosaicage fourni: france, idf, al, ra')
-  }
-  
 }
 
 
