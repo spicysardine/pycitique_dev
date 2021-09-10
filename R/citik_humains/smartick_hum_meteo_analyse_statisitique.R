@@ -1,27 +1,55 @@
-
 ####################################################################################################
-## Code pour Tableau n°4 – Pour la France entière, selon le 1er quantile, le 2ème quantile
-## (la médiane) et le 3ème quantile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 – April 2020; 995 jours).
-## Analyse des signalements et des données Météo DSK (non plus moyennées mais DSK brutes) 
-## pour la France entière Q1, Q2 (Médiane), Q3 et leurs IC
+## Script destiné à produire des statistiques et des graphiques pour étudier les conditions
+## météorologiques lors des signalements de piqûres dans le cadre de la collecte du programme de 
+## sciences participatives "Citique" (https://www.citique.fr/) à l'aide de l'application "Signalement tiques" 
+## (https://www.citique.fr/signalement-tique/).
+##
+##
+##
 ####################################################################################################
 ## Date : 25/08/2021
 ## Authors : Khaldoune Hilami, Vincent Godard
+##
+##
 ####################################################################################################
-## Code figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements
-## comparés à ceux des mêmes dates, mais pour un semis de
-## lieux aléatoires (France, January 17th 2017 – April 5th 2020, soit 995 jours).
+####################################################################################################
+## Code des scripts produisant les différents résultats de l'article.
+##
+## Code pour Tableau n°3 – Pour la France entière, selon le 1er décile, la moyenne et le 9ème décile :
+## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis de lieux aléatoires (France, January 2017 – April 2020; soit 995 jours).
+## 
+## Code pour Tableau n°4 – Pour la France entière, selon le 1er quantile, le 2ème quantile (la médiane)
+## et le 3ème quantile : Paramètres météorologiques associés aux 14 657 lieux et dates de signalements
+## comparés à ceux des mêmes dates mais pour un semis de lieux aléatoires (France, January 2017 –
+## April 2020; soit 995 jours).
+##
 ## Code Tableau n°5 – En Île-de-France, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des
-## mêmes dates mais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 17 46 lieux et dates de signalements comparés à ceux des
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
 ## Code Tableau n°6 – En Alsace-Lorraine, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 2 761 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
 ## Code Tableau n°7 – En Rhône-Alpes, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 1 607 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
+## Code Tableau n°8 – Caractéristiques hivernales (octobre à mars), pour la France entière, selon le
+## 1er décile, la moyenne et le 9ème décile des paramètres météorologiques associés aux 1 095 lieux
+## et dates de signalements comparés à ceux des mêmes dates mais pour un semis de lieux aléatoires
+## (France, January 2017 – April 2020, soit 995 jours).
+##
+## Code Figure n°6 – Profils temporels des variables météorologiques associés aux 14 657 lieux
+## et dates de signalements comparés à ceux des mêmes dates, mais pour un semis de lieux aléatoires 
+## (France, April 1st 2017 – April 5th 2020, soit 1100 jours).
+##
+## Code Figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements
+## comparés à ceux des mêmes dates, mais pour un semis de lieux aléatoires 
+## (France, July 15th 2017 – April 5th 2020, soit 995 jours).
+##
+##
 ####################################################################################################
 
 #_____________________________ Preparation de la donnee  __________________________________________#
@@ -39,26 +67,27 @@ require(tidyverse)
 require(cowplot)
 require(DT)
 
-#------------------------------ Connexion a la base SQLite-----------------------------------------#
-### 2.3 Methode d’importation depuis la BDD geographique SQLite/SPatialite
+#------------------------------ Connexion à la base SQLite-----------------------------------------#
+### 2.3 Méthode d’importation depuis la BDD geographique SQLite/SPatialite
 ## /!\ Ne pas commenter ni supprimer /!\
 
-## La base de donnees ayant une taille relativement consequente
-# elle est stoquee sous le format d’un fichier attache au depot Git
-# centrale, sans toutefois de versionnement pris en charge par celui-ci
-# le telechargement prealable est une etape obligatoire suite au clonage
-# du projet sur la machine locale. Une connexion a internet est egalement requise
+## La base de donnees ayant une taille relativement conséquente
+# elle est stoquée sous le format d’un fichier attache au dépôt Git
+# central, sans que toutefois le versionnement soit pris en charge par celui-ci.
+# Le télechargement préalable est une étape obligatoire suite au clonage
+# du projet sur la machine locale. Une connexion à internet est également requise
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
 sqlitedb <- dbConnect(sqlitedrv, '../../data/citique.db')
-# Recurperation de la liste des tables utiles
+
+# Récurperation de la liste des tables utiles
 tablist <- dbListTables(sqlitedb)
 
-# Requete groupee des tables de donnee
-# c’est cette partie qui recupere la donnee de la base SQLite
+# Requête groupée des tables de donnée
+# c’est cette partie qui récupère la donnée de la base SQLite
 for (tab in tablist){
   
   query <- paste('SELECT * FROM ',tab,';')
@@ -72,9 +101,9 @@ for (tab in tablist){
   
 }
 
-# La BDD SQLite stoque le dates sous format text
-# avant d’utiliser les jeux de donnees on converti 
-# les colonnes date au format approprie
+# La BDD SQLite stoque les dates sous format text
+# avant d’utiliser les jeux de données on convertit 
+# les colonnes date au format approprié
 MFdata$date_iso <- as.Date(MFdata$date_iso)
 DSKdata$date_releve <- as.Date(DSKdata$date_releve)
 DSKdata_42avg$date_releve <- as.Date(DSKdata_42avg$date_releve) 
@@ -84,11 +113,11 @@ DSKdata_700avg_al$date_releve <- as.Date(DSKdata_700avg_al$date_releve)
 DSKdata_700avg_ra$date_releve <- as.Date(DSKdata_700avg_ra$date_releve) 
 DSKdata_700avg_idf$date_releve <- as.Date(DSKdata_700avg_idf$date_releve) 
 
-## Uniformisation des parametres en % de MF - donnee moyennee
-# humidite
+## Uniformisation des paramètres en % de MF - donnée moyennée
+# humidité
 MFdata$humidite_floor <- floor(MFdata$humidite)
 MFdata$humidite_ceiling <- ceiling(MFdata$humidite)
-# nebulosite
+# nebulosité
 MFdata$nebulosite_floor <- floor(MFdata$nebulosite)
 MFdata$nebulosite_ceiling <- ceiling(MFdata$nebulosite)
 
@@ -97,19 +126,19 @@ MFdata$nebulosite_ceiling <- ceiling(MFdata$nebulosite)
 ## 2.4.1 Création du subset pour l'IDF:
 # signalements
 humdata_idf <- humdata[humdata$departement_code %in% c("75","77","78",91:95),]
-# semi meteo
+# semi météo
 DSKdata_idf <- DSKdata[DSKdata$departement_code %in% c("75","77","78",91:95),]
 
 ## 2.4.2 Création du subset pour l'AL:
 # signalements
 humdata_al <- humdata[ humdata$departement_code %in% c("54","55","57","88","67","68"),]
-# semi meteo
+# semi météo
 DSKdata_al <- DSKdata[ DSKdata$departement_code %in% c("54","55","57","88","67","68"),]
 
 ### 2.4.3 Création du subset pour RA:
 # signalements
 humdata_ra <- humdata[ humdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
-# semi meteo
+# semi météo
 DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
 
 ### 2.4.3. Sélection de la période hivernale "longue" (6 mois)
@@ -118,7 +147,7 @@ humdata_winter17_long <- humdata[humdata$date_piqure_saisie >= "2017-10-01" & hu
 humdata_winter18_long <- humdata[humdata$date_piqure_saisie >= "2018-10-01" & humdata$date_piqure_saisie  <= "2019-03-31",] 
 humdata_winter19_long <- humdata[humdata$date_piqure_saisie >= "2019-10-01" & humdata$date_piqure_saisie  <= "2020-03-31",] 
 humdata_winter_long <-rbind(humdata_winter17_long, humdata_winter18_long, humdata_winter19_long)
-# semi meteo
+# semi météo
 DSKdata_winter17_long <- DSKdata[DSKdata$date_releve >= "2017-10-01" & DSKdata$date_releve <= "2018-03-31",]
 DSKdata_winter18_long <- DSKdata[DSKdata$date_releve >= "2018-10-01" & DSKdata$date_releve <= "2019-03-31",]
 DSKdata_winter19_long <- DSKdata[DSKdata$date_releve >= "2019-10-01" & DSKdata$date_releve <= "2020-03-31",]
@@ -130,7 +159,7 @@ humdata_winter17_short <- humdata[humdata$date_piqure_saisie >= "2017-11-01" & h
 humdata_winter18_short <- humdata[humdata$date_piqure_saisie >= "2018-11-01" & humdata$date_piqure_saisie  <= "2019-02-28",] 
 humdata_winter19_short <- humdata[humdata$date_piqure_saisie >= "2019-11-01" & humdata$date_piqure_saisie  <= "2020-02-28",] 
 humdata_winter_short <-rbind(humdata_winter17_short, humdata_winter18_short, humdata_winter19_short)
-# semi meteo
+# semi météo
 DSKdata_winter17_short <- DSKdata[DSKdata$date_releve >= "2017-11-01" & DSKdata$date_releve <= "2018-02-28",]
 DSKdata_winter18_short <- DSKdata[DSKdata$date_releve >= "2018-11-01" & DSKdata$date_releve <= "2019-02-28",]
 DSKdata_winter19_short <- DSKdata[DSKdata$date_releve >= "2019-11-01" & DSKdata$date_releve <= "2020-02-28",]
@@ -170,7 +199,7 @@ ic_calculator <- function(param, calcul){
           humDF$middl_quantile[i] <- quantile(sample(param, 50, replace=T), 0.50, na.rm = T)
           humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.75, na.rm = T)
     }
-  # Calcul de deciles        
+  # Calcul de déciles        
   }else if (calcul=='decile'){
           
     for (i in 1:1000){
@@ -203,7 +232,7 @@ ic_calculator <- function(param, calcul){
   quant3_IC_bas <- humDF_C75.sort[25]
   quant3_IC_haut <- humDF_C75.sort[975]
   
-  # La fonction retourne ce vecteur numeric contenant les 
+  # La fonction retourne ce vecteur numerique contenant les 
   # trois moyennes et leur intervalle de confiance
   ic_vector = c(moy_quant1, quant1_IC_bas, quant1_IC_haut,
                   moy_quant2, quant2_IC_bas, quant2_IC_haut,
@@ -215,13 +244,13 @@ ic_calculator <- function(param, calcul){
 
 }
 
-## Fonction de fabrication des tables statistiques d’IC
+## Fonction de réalisation des tables statistiques d’IC
 ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
                 
-  #liste vide a remplir
+  #liste vide à remplir
   ic_table <- list()
   
-  # boucle de calcule implementant la fonction quantile
+  # boucle de calcul implémentant la fonction quantile
   # avec filtrage par le vecteur vectornames sur le dataframe humdata
   for (name in paramvector ){
   
@@ -246,7 +275,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
   # transposition du tableau (data.frame)
   ic_table <- as.data.frame(t(ic_table))
   
-  # Creation d’un vecteur de nom de colonne pour le tableau transpose
+  # Création d’un vecteur de nom de colonnes pour le tableau transpose
   nom_de_colonne = c('moy_quant1', 'quant1_IC_bas', 'quant1_IC_haut',
                         'moy_quant2', 'quant2_IC_bas', 'quant2_IC_haut',
                           'moy_quant3', 'quant3_IC_bas', 'quant3_IC_haut')
@@ -263,17 +292,17 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 
 }
 
-### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
+### 6. Fonctions de réalisation des graphiques comparatifs avec ggplot2
 # La fonction retourne un objet de type liste contenant les graphiques 
-# des les analyse. Le resultat peut etre ensuite utilise avec 
-# une librairie d’aggregation de graphiaues comme cowplot
+# des analyses. Le résultat peut être ensuite utilisé avec 
+# une librairie d’aggrégation de graphiques comme cowplot
 batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
   
     if ( length(hist_paramnames) != length(dens_paramnames) ){
-      stop('Les vecteurs de parametres ne sont pas de tailles egales.')
+      stop('Les vecteurs de paramètres ne sont pas de tailles egales.')
     }
   
-    # Listes vide pour accueillir les noms de parametres et objets
+    # Liste vide pour accueillir les noms de paramètres et objets
     paramlist <- list()
     graphlist <- list()
     
@@ -291,16 +320,16 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
       return(p)
     }
     
-    # boucle de remplissage de la liste de correspondance
+    # boucle de remplissage de la liste de correspondances
     for ( i in 1:length(hist_paramnames) ){
       cat(hist_paramnames[i], '|------>', dens_paramnames[i],'\n')
       paramlist[[ hist_paramnames[i] ]] <- c(hist_paramnames[i], dens_paramnames[i])
     }
     
-    # boucle de fabrication des graphiques scope general
+    # boucle de réalisation des graphiques scope general
 
     
-    # boucle de fabrication des graphiques scope local
+    # boucle de réalisation des graphiques scope local
     make_hist_batch <- function(){
       for (param in paramlist )local({
         param <- param
@@ -322,11 +351,11 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
     return(graphlist)
 }
 
-# fonction du comparatif du test shapiro dsk vs mf fabrication en lot
-# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
+# fonction du comparatif du test shapiro dsk vs mf réalisation en lot
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisées
 shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   
-  # Liste vide pour accueillir les nom de parametres
+  # Liste vide pour accueillir les nom de paramètres
   paramlist <- list()
   shapiroList <- list()
   
@@ -345,13 +374,13 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
     return(shapiroList)
     
   }
-  # boucle de remplissage de la liste de correspondance
+  # boucle de remplissage de la liste de correspondances
   for (i in 1:11){
     cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
     paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
   }
   
-  # boucle de calcul
+  # boucle de calculs
   for (param in paramlist ){
     
     paramdsk <- param[1]
@@ -371,23 +400,23 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   
 }
 
-# fonction de fabrication en masse des tables comparatives du t.test
-# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
+# fonction de réalisation en masse des tables comparatives du t.test
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisées
 t.test_batch <- function (dsk_paramnames, mf_paramnames){
   
-  # Liste vide pour accueillir les nom de parametres
+  # Liste vide pour accueillir les noms de paramètres
   paramlist <- list()
   t.test_List <- list()
   t_matrix <- matrix(nrow=4,ncol = length(dsk_paramnames))
   
-  # boucle de remplissage de la liste de correspondance
+  # boucle de remplissage de la liste de correspondances
   for (i in 1:11){
     # cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
     paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
   }
   
   i=1
-  # boucle de calcul
+  # boucle de calculs
   for (param in paramlist ){
     
     paramdsk <- param[1]
@@ -408,12 +437,12 @@ t.test_batch <- function (dsk_paramnames, mf_paramnames){
   return(t_table)
 }
 
-# fonction parametrique permettant de fabriquer les tables comparatives
+# fonction paramétrique permettant de fabriquer les tables comparatives
 # du test cible wilcoxon ou kruskal-wallis
-# Cette fonction retourne un objet de type dataframe contenant les analyses croisees
+# Cette fonction retourne un objet de type dataframe contenant les analyses croisées
 kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   
-  # Liste vide pour accueillir les nom de parametres
+  # Liste vide pour accueillir les nom de paramètres
   paramlist <- list()
   kwcox_matrix <- matrix(nrow=2, ncol = length(dsk_paramnames))
   
@@ -425,14 +454,14 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   }
   
   i=1
-  # boucle de calcul iteratif des tests
+  # boucle de calculs iteratifs des tests
   for (param in paramlist ){
     
     paramdsk <- param[1]
     parammf <- param[2]
     
-    # Preparation de la donnee des tests
-    cat("____ Fabrication des données pour le test KW ____\n")
+    # Préparation de la donnée des tests
+    cat("____ réalisation des données pour le test KW ____\n")
     dskdf <- data.frame(param=DSKdata_42avg[,paramdsk], data_provider='dsk')
     mfdf <- data.frame(param=MFdata[,parammf], data_provider='mf')
     kwcoxdata <- rbind(dskdf,mfdf)
@@ -443,7 +472,7 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
     } else if (test=='kruskal'){
       test_result <- kruskal.test(param ~ data_provider, data = kwcoxdata)
     }else{
-      print('Aucun nom de test valide fourni. tapez wilcox ou kruskal.')
+      print('Aucun nom de test valide fourni. Tapez wilcox ou kruskal.')
     }
     
     cat(param[1], '|------>', param[2],'\n')
@@ -483,17 +512,17 @@ plotsave <- function(plot, plotname, extension='png', format='landscape', plotpa
                        limitsize=TRUE)
 }
 
-## Definition d’un theme general pour les graphs du module
+## Définition d’un thème général pour les graphs du module
 plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 8.5))+
               theme(axis.title = element_text(face = 'bold', size = 8.5))+
               theme(axis.text.x  = element_text( size = 8.5))+
               theme(axis.text.y  = element_text( size = 8.5))
 
-# Fonction de fabrication des grilles des series temporelles
-# elle recupere une chaine de caracteres du parmetre a analyser
+# Fonction de réalisation des grilles des séries temporelles.
+# Elle récupère une chaîne de caractères du parmètre à analyser
 # et retourne un objet de type liste contenant les graphiques
-# des analyse. Le resultat peut etre ensuite utilise avec 
-# une librairie d’aggregation de graphiaues comme cowplot
+# des analyse. Le résultat peut être ensuite utilisé avec 
+# une librairie d’aggrégation de graphiaues comme cowplot
 weatherPlotGrid <- function(param, mode){
   
   paramlist <- list("temperature"='Temperature (°C)',
@@ -537,31 +566,31 @@ weatherPlotGrid <- function(param, mode){
     # le grahique est établi à partir de la colonne temperature représentat
     # la température moyenne obtenue en moyennant temphigh et templow
     ggplot(reportdata, aes(x=date_piqure_saisie))+
-      # c'est la ligne qui affiche les poctuels des signalements
+      # c'est la ligne qui affiche les ponctuels des signalements
       geom_jitter(aes(y=reportdata[,param], color='Reports'), size=.1, alpha=.6)+
-      # Cette ligne établit la courbe lisse noire des poinctuels
+      # Cette ligne établit la courbe lisse noire des ponctuels
       # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
       # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
       # comme paramètre, donc la fonction s(x) du packet R mgcv
       # pour plus de détail consultez les références d'explication de la méthode additive 
       geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
-      #cette lingne de code établit la ligne verte de la température témoin
+      # cette lingne de code établit la ligne verte de la température témoin
       geom_line(data = witnessdata,
                 aes(date_releve, witnessdata[,param], color='Random Witness'),
                 size=.4,
                 alpha=.7)+
-      #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
+      # Même chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
       geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
       geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
-      # equinox du printemps
+      # équinoxe du printemps
       geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )), colour='orange', linetype='twodash', alpha=.8, size=.5)+
       # solstice d’hiver
       geom_vline(xintercept=as.Date(c( '2017-12-21', '2018-12-21', '2019-12-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
-      # solstice d’ete
+      # solstice d’été
       geom_vline(xintercept=as.Date(c( '2017-06-21', '2018-06-21', '2019-06-21')), colour='grey50', linetype='twodash', alpha=.8, size=.5)+
-      #e quinox d’automne
+      # équinoxe d’automne
       geom_vline(xintercept=as.Date(c( '2017-09-21', '2018-09-21', '2019-09-21')), colour='orange', linetype='twodash', alpha=.8, size=.5)+
-      #titre du graph
+      # titre du graph
       ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses
                              measurements in ',region,' from 2017-03-31 to 2020-04-01'))+
       xlab(label = 'Date')+
@@ -571,8 +600,8 @@ weatherPlotGrid <- function(param, mode){
       theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1) )+
       # theme(axis.text.y = element_text(color='grey20', size = 6) )+
       theme(legend.position = 'top', legend.text = (element_text(size = 9)))+guides(col=guide_legend(nrow = 1))+
-      #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
-      #de zoom sur une période de l'année ou pour restreindre le champ temporel
+      # Cette ligne est facultative, elle sert uniquement au cas où on a besoin
+      # de zoom sur une période de l'année ou pour restreindre le champ temporel
       scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)),
                                        ceiling(max(humdata[,param], na.rm = T)),
                                        by=4),
@@ -593,8 +622,8 @@ weatherPlotGrid <- function(param, mode){
       graphlist[['ra']]     <- weatherPlot(datalist$ra$report, datalist$ra$witness, datalist$ra$name, param)
       
       # Cette fonction retourne un objet de type liste contenant 
-      # les graphiques generes contenant les analyse. Le resultat peut  
-      # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
+      # les graphiques générés contenant les analyses. Le résultat peut  
+      # être ensuite aggrégé avec une librairie d’aggrégation de graphiques comme cowplot
       plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=2, align = 'hv')
       
       return(plotgrid)
@@ -612,8 +641,8 @@ weatherPlotGrid <- function(param, mode){
     }
   
     # Cette fonction retourne un objet de type liste contenant
-    # les graphiques generes contenant les analyse. Le resultat peut
-    # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
+    # les graphiques générés contenant les analyses. Le résultat peut
+    # être ensuite aggrégé avec une librairie d’aggrégation de graphiques comme cowplot
     plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=6, align = 'hv')
     
     return(plotgrid)
@@ -639,15 +668,15 @@ weatherPlotGrid <- function(param, mode){
 
 #__________________________________________ Programme principal ___________________________________#
 
-### Vecteur de caracteres contenant les parametres meteo a traiter
+### Vecteur de caractères contenant les paramètres météo à traiter
 vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity",
                       "dewpoint",   "pressure",      "windspeed",
                          "visibility", "cloudcover",   "windgust", "uvindex")
 
-### Calcule et generation rapide et automatique des tables statistiques
+### Calcul et génération rapide et automatique des tables statistiques
 
-## Periode annuelle sur la France entier ou les trois regions d’etude
-# France entiere
+## Période annuelle sur la France entière ou les trois régions d’étude
+# France entière
 france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile')
 datatable(france_quartile)
 #idf
@@ -660,32 +689,32 @@ datatable(alsace_decile)
 rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
 datatable(rhone_alpes_decile)
 
-## Periode hivernale longue deciles
+## Période hivernale longue déciles
 ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
                                        DSKdata_winter_long,
                                        vectornames,
                                        calcul='decile')
 datatable(ic_hiver_long_decile)
-# Periode hivernale courte deciles
+# Période hivernale courte deciles
 ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
                                         DSKdata_winter_short,
                                         vectornames,
                                         calcul='decile')
 datatable(ic_hiver_short_decile)
-# Periode hivernale longue quartiles
+# Période hivernale longue quartiles
 ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
                                        DSKdata_winter_long,
                                        vectornames,
                                        calcul='quartile')
 datatable(ic_hiver_long_decile)
-# Periode hivernale courte quartiles
+# Période hivernale courte quartiles
 ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
                                         DSKdata_winter_short,
                                         vectornames,
                                         calcul='quartile')
 datatable(ic_hiver_short_decile)
 
-## Vecteurs de caracteres contenant les parametres meteo a comparer un a un
+## Vecteurs de caractères contenant les paramètres météo à comparer un à un
 dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh", 
                           "humidity", "dewpoint", "pressure", "windspeed",
                             "visibility", "cloudcover", "windgust", 'precipintensity', 'uvindex')
@@ -693,28 +722,28 @@ mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
                           'humidite_floor', 'point_rose', 'press_mer', 'vvent',
                               'visibilite', 'nebulosite_floor','rafale_10min', 'precip_24h')
 
-# Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalite 
+# Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalité 
 shapiro_df <- shapiro_batch(dsk_paramnames, mf_paramnames)
 datatable(shapiro_df)
 
-# Calcule de la table DSK vs MF au test t.test
+# Calcul de la table DSK vs MF au test t.test
 m <- t.test_batch(dsk_paramnames, mf_paramnames)
 datatable(m)
 
-# Calcule de la table du test DSK vs MF pour le test de Wilcoxon
+# Calcul de la table du test DSK vs MF pour le test de Wilcoxon
 m <- kwcox_table(dsk_paramnames, mf_paramnames, test='wilcox')
 datatable(m)
 
-# Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
+# Calcul de la table du test DSK vs MF pour le test de Kruskal-Wallis
 m <- kwcox_table(dsk_paramnames, mf_paramnames, test='kruskal')
 datatable(m)
 
-### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
+### Réalisation rapide et automatique des graphiques DSK moyennes vs MF moyennes
 # ces lignes fabriquent automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
 
 g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames[-12], mf_paramnames)
-# commande courte mais sans possibilite d’arrangement des positions
+# Commande courte mais sans possibilité d’arrangement des positions
 weather_gridplot_g <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
 title_text_g <- paste('Average parameters for 42 Météo France Synoptic Stations vs DarkSky (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 bkg <- ggplot()
@@ -723,7 +752,7 @@ title_g <- ggdraw(bkg) + draw_label(title_text_g, fontface='bold', size = 12, li
 weather_gridplot_g <- plot_grid(title_g, weather_gridplot_g, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_g, 'dsk_vs_mf_moyennes_france.png', format='landscape', extension='png')
 
-### Fabrication rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
+### réalisation rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
 h <- batch_histogram(humdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
 weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
 title_text_h <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
@@ -740,15 +769,15 @@ title_idf <- ggdraw(bkg) + draw_label(title_text_idf, fontface='bold', size = 12
 weather_gridplot_idf <- plot_grid(title_idf, weather_gridplot_idf, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_idf, 'humdata_vs_dsk_random700_idf.png', format='landscape', extension='png')
 
-# alsace
+# Alsace-Lorraine
 al <- batch_histogram(humdata_al, DSKdata_700avg_al, dsk_paramnames, dsk_paramnames)
 weather_gridplot_al <- plot_grid(plotlist=al, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-title_text_al <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Alsace, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_text_al <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Alsace-LOrraine, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 title_al <- ggdraw(bkg) + draw_label(title_text_al, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_al <- plot_grid(title_al, weather_gridplot_al, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_al, 'humdata_vs_dsk_random700_al.png', format='landscape', extension='png')
 
-#ra
+# RA
 ra <- batch_histogram(humdata_ra, DSKdata_700avg_ra, dsk_paramnames, dsk_paramnames)
 weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
 title_text <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Rhône-Alpes, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
