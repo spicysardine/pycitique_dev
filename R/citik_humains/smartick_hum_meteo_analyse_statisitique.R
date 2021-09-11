@@ -465,8 +465,8 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
 plotsave <- function(plot, plotname, extension='png', format='landscape', plotpath=NULL){
                 
                 if(format=='portrait'){
-                  height=23.39# papier A3 (8.27 A4)
-                  width=16.54
+                  height=11.69  #(8.27/11.69 A4)
+                  width=8.27
                 }else if (format=='landscape'){
                   width=23.39 # papier A3 
                   height=16.54
@@ -633,7 +633,7 @@ weatherPlotGrid <- function(param, mode){
       # Cette fonction retourne un objet de type liste contenant
       # les graphiques generes contenant les analyse. Le resultat peut
       # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
-      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=6, align = 'hv')
+      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=3, nrow=4, align = 'hv')
       
       return(plotgrid)
       
@@ -713,19 +713,19 @@ mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
                               'visibilite', 'nebulosite_floor','rafale_10min', 'precip_24h')
 
 # Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalite 
-shapiro_df <- shapiro_batch(dsk_paramnames, mf_paramnames)
+shapiro_df <- shapiro_batch(dsk_paramnames[-12], mf_paramnames)
 datatable(shapiro_df)
 
 # Calcule de la table DSK vs MF au test t.test
-m <- t.test_batch(dsk_paramnames, mf_paramnames)
+m <- t.test_batch(dsk_paramnames[-12], mf_paramnames)
 datatable(m)
 
 # Calcule de la table du test DSK vs MF pour le test de Wilcoxon
-m <- kwcox_table(dsk_paramnames, mf_paramnames, test='wilcox')
+m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='wilcox')
 datatable(m)
 
 # Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
-m <- kwcox_table(dsk_paramnames, mf_paramnames, test='kruskal')
+m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
 datatable(m)
 
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes

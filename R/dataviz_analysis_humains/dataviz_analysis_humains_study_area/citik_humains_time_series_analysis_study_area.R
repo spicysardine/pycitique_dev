@@ -331,10 +331,10 @@ p <- ggplot(datasubset, aes(date_piqure_saisie))+
  plotsave('ts_histogram_report_date_freq_two_days', plotpath_ts_dens_distro)
 
 p <- ggplot(datasubset, aes(date_piqure_saisie))+
-  geom_histogram(binwidth = 5, alpha=.7, colour='red')+
+  geom_histogram(binwidth = 7, alpha=.6, colour='green')+
   xlab(label = 'Report Date')+
   ylab(label = 'Report Date Count')+
-  ggtitle('Hisotgram of Report Date Frequency (Bin Width = 5 days)')
+  ggtitle('Hisotgram of Report Date Frequency (Bin Width = 7 days)')
   p+plotstyle
   plotsave('ts_histogram_report_date_freq_five_days', plotpath_ts_dens_distro)
 
