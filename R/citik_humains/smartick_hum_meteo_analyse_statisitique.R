@@ -1,27 +1,53 @@
-
 ####################################################################################################
-## Code pour Tableau n°4 – Pour la France entière, selon le 1er quantile, le 2ème quantile
-## (la médiane) et le 3ème quantile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 – April 2020; 995 jours).
-## Analyse des signalements et des données Météo DSK (non plus moyennées mais DSK brutes) 
-## pour la France entière Q1, Q2 (Médiane), Q3 et leurs IC
+## Script destiné à produire des statistiques et des graphiques pour étudier les conditions
+## météorologiques lors des signalements de piqûres dans le cadre de la collecte du programme de 
+## sciences participatives "Citique" (https://www.citique.fr/) à l'aide de l'application  
+## "Signalement tiques" (https://www.citique.fr/signalement-tique/).
+##
 ####################################################################################################
 ## Date : 25/08/2021
 ## Authors : Khaldoune Hilami, Vincent Godard
+##
+##
 ####################################################################################################
-## Code figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements
-## comparés à ceux des mêmes dates, mais pour un semis de
-## lieux aléatoires (France, January 17th 2017 – April 5th 2020, soit 995 jours).
+####################################################################################################
+## Code des scripts produisant les différents résultats de l'article.
+##
+## Code pour Tableau n°3 – Pour la France entière, selon le 1er décile, la moyenne et le 9ème décile:
+## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis  aléatoires (France, January 2017 – April 2020; soit 995 jours).
+## 
+## Code pour Tableau n°4–Pour la France entière, selon le 1er quantile, le 2ème quantile (la médiane)
+## et le 3ème quantile: Paramètres météorologiques associés aux 14657 lieux et dates de signalements
+## comparés à ceux des mêmes dates mais pour un semis de lieux aléatoires (France, January 2017 –
+## April 2020; soit 995 jours).
+##
 ## Code Tableau n°5 – En Île-de-France, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des
-## mêmes dates mais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 17 46 lieux et dates de signalements comparés à ceux des
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
 ## Code Tableau n°6 – En Alsace-Lorraine, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 2 761 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
 ## Code Tableau n°7 – En Rhône-Alpes, selon le 1er décile, la moyenne et le 9ème décile :
-## Paramètres météorologiques associés aux 14 657 lieux et dates de signalements comparés à ceux des 
-## mêmes datesmais pour un semis de lieux aléatoires (France, janvier 2017 - April 2020; 995 jours).
+## Paramètres météorologiques associés aux 1 607 lieux et dates de signalements comparés à ceux des 
+## mêmes dates mais pour un semis de lieux aléatoires (January 2017 - April 2020; 995 jours).
+## 
+## Code Tableau n°8 – Caractéristiques hivernales (octobre à mars), pour la France entière, selon le
+## 1er décile, la moyenne et le 9ème décile des paramètres météorologiques associés aux 1 095 lieux
+## et dates de signalements comparés à ceux des mêmes dates mais pour un semis de lieux aléatoires
+## (France, January 2017 – April 2020, soit 995 jours).
+##
+## Code Figure n°6 – Profils temporels des variables météorologiques associés aux 14 657 lieux
+## et dates de signalements comparés à ceux des mêmes dates, mais pour un semis de lieux aléatoires 
+## (France, April 1st 2017 – April 5th 2020, soit 1100 jours).
+##
+## Code Figure n°7 – Profils météorologiques associés aux 14 657 lieux et dates de signalements
+## comparés à ceux des mêmes dates, mais pour un semis de lieux aléatoires 
+## (France, July 15th 2017 – April 5th 2020, soit 995 jours).
+##
+##
 ####################################################################################################
 
 #_____________________________ Preparation de la donnee  __________________________________________#
