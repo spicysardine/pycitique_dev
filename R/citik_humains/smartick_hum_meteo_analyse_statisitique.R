@@ -744,14 +744,17 @@ datatable(shapiro_df)
 
 # Calcule de la table DSK vs MF au test t.test
 m <- t.test_batch(dsk_paramnames[-12], mf_paramnames)
+m <- t(m)
 datatable(m)
 
 # Calcule de la table du test DSK vs MF pour le test de Wilcoxon
 m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='wilcox')
+m <- t(m)
 datatable(m)
 
 # Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
 m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
+m <- t(m)
 datatable(m)
 
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
