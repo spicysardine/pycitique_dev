@@ -99,7 +99,7 @@ for (tab in tablist){
   
 }
 
-# La BDD SQLite stoque le dates sous format text
+# La BDD SQLite sauvegarde le dates sous format text
 # avant d’utiliser les jeux de donnees on converti 
 # les colonnes date au format approprie
 MFdata$date_iso <- as.Date(MFdata$date_iso)
@@ -260,7 +260,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
           param_dsk <- randomdf[,name]
           # affectation dans une variable intermediaire
           result_dsk <- ic_calculator(param_dsk, calcul)
-          # insertion du vecteru numeric resultant dans la liste
+          # insertion du vecteur numeric resultant dans la liste
           ic_table[[paste(name,'_reporting', sep='')]] <- result_hum
           # insertion du vecteru numeric resultant dans la liste
           ic_table[[paste(name,'_random', sep='')]] <- result_dsk
@@ -292,9 +292,9 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 
 ### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
 # La fonction retourne un objet de type liste contenant les graphiques 
-# des les analyse. Le resultat peut etre ensuite utilise avec 
+# des analyses. Le resultat peut etre ensuite utilise avec 
 # une librairie d’aggregation de graphiaues comme cowplot
-batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
+batch_histogram <- function(hist_dataset, dens_dataset, hist_paramnames, dens_paramnames){
   
     if ( length(hist_paramnames) != length(dens_paramnames) ){
       stop('Les vecteurs de parametres ne sont pas de tailles egales.')
@@ -323,10 +323,7 @@ batch_histogram <- function (hist_dataset, dens_dataset, hist_paramnames, dens_p
       cat(hist_paramnames[i], '|------>', dens_paramnames[i],'\n')
       paramlist[[ hist_paramnames[i] ]] <- c(hist_paramnames[i], dens_paramnames[i])
     }
-    
-    # boucle de fabrication des graphiques scope general
-
-    
+  
     # boucle de fabrication des graphiques scope local
     make_hist_batch <- function(){
       for (param in paramlist )local({
@@ -426,7 +423,6 @@ t.test_batch <- function (dsk_paramnames, mf_paramnames){
     t_matrix[,i] <- round(test_result_vector, digits = 10)
     i=i+1
     
-    
   }
   
   t_table <- as.data.frame(t_matrix)
@@ -497,8 +493,8 @@ plotsave <- function(plot, plotname, extension='png', format='landscape', plotpa
                   height=11.69  #(8.27/11.69 A4)
                   width=8.27
                 }else if (format=='landscape'){
-                  width=23.39 # papier A3 
-                  height=16.54
+                  width=11.69 # papier A3 
+                  height=8.27
                 }
                   
                 ggsave2(filename = plotname,
