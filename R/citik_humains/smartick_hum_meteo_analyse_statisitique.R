@@ -467,8 +467,10 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
     
     if(test=='wilcox'){
       test_result <- wilcox.test(param ~ data_provider, data = kwcoxdata)
+      rnames <- c('wilcox_vs_MF', 'p.value_vs_MF')
     } else if (test=='kruskal'){
       test_result <- kruskal.test(param ~ data_provider, data = kwcoxdata)
+      rnames <- c('kruskal_vs_MF', 'p.value_vs_MF')
     }else{
       print('Aucun nom de test valide fourni. tapez wilcox ou kruskal.')
     }
@@ -483,7 +485,7 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   
   kwcox_table <- as.data.frame(kwcox_matrix)
   names(kwcox_table) <- dsk_paramnames
-  rownames(kwcox_table) <- c('t.test_vs_MF', 'p.value_vs_MF')
+  rownames(kwcox_table) <- rnames
   return(kwcox_table)
   
 }
