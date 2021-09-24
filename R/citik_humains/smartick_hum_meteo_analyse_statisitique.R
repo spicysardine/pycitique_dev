@@ -74,6 +74,7 @@ require(DT)
 # centrale, sans toutefois de versionnement pris en charge par celui-ci
 # le telechargement prealable est une etape obligatoire suite au clonage
 # du projet sur la machine locale. Une connexion a internet est egalement requise
+# pour ceci il est indispensable d’instraller le paquet piggyback
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
@@ -743,19 +744,19 @@ shapiro_df <- shapiro_batch(dsk_paramnames[-12], mf_paramnames)
 datatable(shapiro_df)
 
 # Calcule de la table DSK vs MF au test t.test
-m <- t.test_batch(dsk_paramnames[-12], mf_paramnames)
-m <- t(m)
-datatable(m)
+t <- t.test_batch(dsk_paramnames[-12], mf_paramnames)
+t <- t(t)
+datatable(t)
 
 # Calcule de la table du test DSK vs MF pour le test de Wilcoxon
-m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='wilcox')
-m <- t(m)
-datatable(m)
+w <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='wilcox')
+w <- t(w)
+datatable(w)
 
 # Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
-m <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
-m <- t(m)
-datatable(m)
+k <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
+k <- t(k)
+datatable(k)
 
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
 # ces lignes fabriquent automatiquement tous les graphs de l’article
