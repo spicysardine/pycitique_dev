@@ -78,6 +78,7 @@ require(DT)
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
+
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
 sqlitedb <- dbConnect(sqlitedrv, '../../data/citique.db')
