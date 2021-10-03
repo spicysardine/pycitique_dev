@@ -329,7 +329,7 @@ batch_histogram <- function(hist_dataset, dens_dataset, hist_paramnames, dens_pa
     make_hist <- function(paramdsk, parammf){
       
       p <- ggplot(hist_dataset, aes(hist_dataset[,paramdsk]))+
-        geom_histogram( binwidth = 30, color='green', fill='black', aes(y=..density..), alpha=.55)+
+        geom_histogram( binwidth = 1, color='green', fill='black', aes(y=..density..), alpha=.55)+
         geom_density(data = dens_dataset,
                      color='blue',
                      aes(dens_dataset[,parammf]),
