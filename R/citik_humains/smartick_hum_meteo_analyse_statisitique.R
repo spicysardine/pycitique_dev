@@ -49,7 +49,7 @@
 ##
 ##
 ####################################################################################################
-
+debut = Sys.time()
 #_____________________________ Preparation de la donnee  __________________________________________#
 
 #### 1. Mise en place de l’environnement de travail
@@ -83,6 +83,7 @@ Sys.setenv(GITHUB_TOKEN="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")
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
+print('Generation des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
@@ -326,7 +327,7 @@ batch_histogram <- function(hist_dataset, dens_dataset, hist_paramnames, dens_pa
     
     # boucle de remplissage de la liste de correspondance
     for ( i in 1:length(hist_paramnames) ){
-      cat(hist_paramnames[i], '|------>', dens_paramnames[i],'\n')
+      # cat(hist_paramnames[i], '|------>', dens_paramnames[i],'\n')
       paramlist[[ hist_paramnames[i] ]] <- c(hist_paramnames[i], dens_paramnames[i])
     }
   
@@ -377,7 +378,7 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   }
   # boucle de remplissage de la liste de correspondance
   for (i in 1:11){
-    cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
+    #cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
     paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
   }
   
@@ -423,7 +424,7 @@ t.test_batch <- function (dsk_paramnames, mf_paramnames){
     paramdsk <- param[1]
     parammf <- param[2]
     test_result <- t.test(DSKdata_42avg[,paramdsk], MFdata[,parammf])
-    cat(param[1], '|------>', param[2],'\n')
+    # cat(param[1], '|------>', param[2],'\n')
     test_result_vector <- c(test_result$statistic[[1]], test_result$p.value[[1]],
                             test_result$parameter[[1]], test_result$conf.int[[1]])
     t_matrix[,i] <- round(test_result_vector, digits = 10)
@@ -465,7 +466,7 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
     dskdf <- data.frame(param=DSKdata_42avg[,paramdsk], data_provider='dsk')
     mfdf <- data.frame(param=MFdata[,parammf], data_provider='mf')
     kwcoxdata <- rbind(dskdf,mfdf)
-    cat("____ Objet de donnée pour KW Fabriqué____\n")
+    cat("____ Objet de donnée pour KW Fabriqué____\n\n")
     
     if(test=='wilcox'){
       test_result <- wilcox.test(param ~ data_provider, data = kwcoxdata)
@@ -477,7 +478,7 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
       print('Aucun nom de test valide fourni. tapez wilcox ou kruskal.')
     }
     
-    cat(param[1], '|------>', param[2],'\n')
+    # cat(param[1], '|------>', param[2],'\n')
     test_result_vector <- c(test_result$statistic[[1]],
                             test_result$p.value[[1]])
     kwcox_matrix[,i] <- test_result_vector
@@ -686,7 +687,7 @@ weatherPlotGrid <- function(param, mode){
     
 }
 
-
+fin_prep = Sys.time()
 #__________________________________________ Programme principal ___________________________________#
 
 ### Vecteur de caracteres contenant les parametres meteo a traiter
@@ -825,3 +826,15 @@ plotsave(g, 'idf_plot_grid.pdf', format='portrait', extension='pdf')
 
 f <- weatherPlotGrid('france', mode='region')
 plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
+
+
+
+# Partie benchmrque et temps d’execution
+fin = Sys.time()
+
+temps_prep = fin_prep-debut
+print(temps_prep)
+
+temps_total = fin-debut 
+print(temps_total)
+
