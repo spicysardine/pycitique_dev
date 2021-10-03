@@ -61,7 +61,7 @@ getwd()
 # l’invocation prelalable de ces librairies
 require(RSQLite)
 require(piggyback)
-require(tidyverse)
+require(ggplot2)
 require(cowplot)
 require(DT)
 
@@ -716,24 +716,27 @@ ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
                                        vectornames,
                                        calcul='decile')
 datatable(ic_hiver_long_decile)
+
 # Periode hivernale courte deciles
 ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
                                         DSKdata_winter_short,
                                         vectornames,
                                         calcul='decile')
 datatable(ic_hiver_short_decile)
+
 # Periode hivernale longue quartiles
-ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
+ic_hiver_long_quartile <- ic_table_maker(humdata_winter_long,
                                        DSKdata_winter_long,
                                        vectornames,
                                        calcul='quartile')
-datatable(ic_hiver_long_decile)
+datatable(ic_hiver_long_quartile)
+
 # Periode hivernale courte quartiles
-ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
+ic_hiver_short_quartile <- ic_table_maker(humdata_winter_short,
                                         DSKdata_winter_short,
                                         vectornames,
                                         calcul='quartile')
-datatable(ic_hiver_short_decile)
+datatable(ic_hiver_short_quartile)
 
 ## Vecteurs de caracteres contenant les parametres meteo a comparer un a un
 dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh", 
@@ -819,7 +822,6 @@ plotsave(h, 'humidity_plot_grid.pdf', format='landscape', extension='pdf')
 
 g <- weatherPlotGrid('idf', mode='region')
 plotsave(g, 'idf_plot_grid.pdf', format='portrait', extension='pdf')
-
 
 f <- weatherPlotGrid('france', mode='region')
 plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
