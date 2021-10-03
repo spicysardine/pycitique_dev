@@ -328,8 +328,18 @@ batch_histogram <- function(hist_dataset, dens_dataset, hist_paramnames, dens_pa
     # fonction de fabricatin des graphs individuels
     make_hist <- function(paramdsk, parammf){
       
+      if (paramdsk=='humidity' ){
+        bwidth = 2
+      }else if (paramdsk=='cloudcover'){
+        bwidth = 2
+      }else if(paramdsk=='pressure'){
+        bwidth = 2
+      }else{
+        bwidth = 1
+      }
+      
       p <- ggplot(hist_dataset, aes(hist_dataset[,paramdsk]))+
-        geom_histogram( binwidth = 1, color='green', fill='black', aes(y=..density..), alpha=.55)+
+        geom_histogram( binwidth = bwidth, color='green', fill='black', aes(y=..density..), alpha=.55)+
         geom_density(data = dens_dataset,
                      color='blue',
                      aes(dens_dataset[,parammf]),
