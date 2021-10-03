@@ -1,16 +1,13 @@
-####################################################################################################
+#--------------------------------------------------------------------------------------------------#
 ## Script destiné à produire des statistiques et des graphiques pour étudier les conditions
 ## météorologiques lors des signalements de piqûres dans le cadre de la collecte du programme de 
 ## sciences participatives "Citique" (https://www.citique.fr/) à l'aide de l'application  
 ## "Signalement tiques" (https://www.citique.fr/signalement-tique/).
-##
-####################################################################################################
+##-------------------------------------------------------------------------------------------------#
 ## Date : 25/08/2021
 ## Authors : Khaldoune Hilami, Vincent Godard
-##
-##
-####################################################################################################
-####################################################################################################
+##--------------------------------------------------------------------------------------------------#
+##--------------------------------------------------------------------------------------------------#
 ## Code des scripts produisant les différents résultats de l'article.
 ##
 ## Code pour Tableau n°3 – Pour la France entière, selon le 1er décile, la moyenne et le 9ème décile:
@@ -48,9 +45,10 @@
 ## (France, July 15th 2017 – April 5th 2020, soit 995 jours).
 ##
 ##
-####################################################################################################
-debut = Sys.time()
-#_____________________________ Preparation de la donnee  __________________________________________#
+##-------------------------------------------------------------------------------------------------#
+############################## Preparation de la donnee  ###########################################
+
+start = Sys.time()
 
 #### 1. Mise en place de l’environnement de travail
 setwd('./')
@@ -65,7 +63,7 @@ require(ggplot2)
 require(cowplot)
 require(DT)
 
-#------------------------------ Connexion a la base SQLite-----------------------------------------#
+############################## Connexion a la base SQLite###########################################
 ### 2.3 Methode d’importation depuis la BDD geographique SQLite/SPatialite
 ## /!\ Ne pas commenter ni supprimer /!\
 
@@ -180,7 +178,19 @@ rm(list = c(paste('humdata_winter', 17:19, '_long', sep=''),
 
 print('Fin de la preparation des dataframes uniformises')
 
-#_____________________________________ Definitions des fonctions  _________________________________#
+################################### Definitions des fonctions  ####################################
+
+# fonction de benchmark et calcul des duree de traitement
+benchmark <- function (start, end){
+  
+  duration = end-start
+  duration <- round(duration, 1)
+  unit <- units(duration)
+  cat('Le temps ecoule est: ',duration, ' ', unit, '\n')
+  
+  return(duration)
+  
+}
 
 ### 5. Boostrap pour stabiliser indicateurs et intervalles de confiance du t.test d'une moyenne
 # Cf. médiane/quantile Poinsot, 2005, R pour les statophobes, pp.13-1510
@@ -319,7 +329,7 @@ batch_histogram <- function(hist_dataset, dens_dataset, hist_paramnames, dens_pa
     make_hist <- function(paramdsk, parammf){
       
       p <- ggplot(hist_dataset, aes(hist_dataset[,paramdsk]))+
-        geom_histogram( color='green', fill='black', aes(y=..density..), alpha=.55)+
+        geom_histogram( binwidth = 30, color='green', fill='black', aes(y=..density..), alpha=.55)+
         geom_density(data = dens_dataset,
                      color='blue',
                      aes(dens_dataset[,parammf]),
@@ -368,16 +378,18 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
   # fonction du comparatif du test shapiro dsk vs mf
   shapiro <- function(paramDSK, paramMF){
     
-    shapiroDSK <- shapiro.test(paramDSK) 
+    # La fonction R invisible() supprime la sortie en console, Inutile
+    # puisque le resultat est disponible dans le tableau des resulats
+    shapiroDSK <- shapiro.test(paramDSK)
     shapiroMF <- shapiro.test(paramMF)
     
-    shapiroList <- list()
-    shapiroList[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]],
+    listShapiro <- list()
+    listShapiro[['shapiroDSK']] <- c('shapiro_test'=shapiroDSK$statistic[[1]],
                                                 'p.value'=shapiroDSK$p.value[[1]] )
-    shapiroList[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]],
+    listShapiro[['shapiroMF']] <- c('shapiro_test'=shapiroMF$statistic[[1]],
                                                 'p.value'=shapiroMF$p.value[[1]] )
     
-    return(shapiroList)
+    return(listShapiro)
     
   }
   # boucle de remplissage de la liste de correspondance
@@ -392,7 +404,7 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
     paramdsk <- param[1]
     parammf <- param[2]
     result <- shapiro(DSKdata_42avg[,paramdsk], MFdata[,parammf])
-    print(result)
+    # print(result)
     
     shapiroList[[paramdsk]] <- c(result$shapiroDSK['shapiro_test'], result$shapiroDSK['p.value'])
     shapiroList[[parammf]] <- c(result$shapiroMF['shapiro_test'], result$shapiroMF['p.value'])
@@ -579,14 +591,14 @@ weatherPlotGrid <- function(param, mode){
         # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
         # comme paramètre, donc la fonction s(x) du packet R mgcv
         # pour plus de détail consultez les références d'explication de la méthode additive 
-        geom_smooth(aes(y=reportdata[,param], color='Reports Model'), size=.5)+
+        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), aes(y=reportdata[,param], color='Reports Model'), size=.5)+
         #cette lingne de code établit la ligne verte de la température témoin
         geom_line(data = witnessdata,
                   aes(date_releve, witnessdata[,param], color='Random Witness'),
                   size=.4,
                   alpha=.7)+
         #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
-        geom_smooth(data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
+        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
         geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
         # equinox du printemps
         geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )),
@@ -690,10 +702,11 @@ weatherPlotGrid <- function(param, mode){
     
 }
 
-fin_prep = Sys.time()
+end_prep = Sys.time()
 print('Fin de la preparation des fonctions de calcul')
+benchmark(start, end_prep)
 
-#__________________________________________ Programme principal ___________________________________#
+######################################### Programme principal ######################################
 
 print('Debut du program principal')
 
@@ -835,15 +848,9 @@ f <- weatherPlotGrid('france', mode='region')
 plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
 
 
+end_program = Sys.time()
 print('Fin du programme')
-# Partie benchmrque et temps d’execution
-fin = Sys.time()
+benchmark(start, end_program)
 
-temps_prep = fin_prep-debut
-temps_prep <- round(temps_prep, 1)
-cat('Le temps de preparation est: ',temps_prep, ' ', units(temps_prep))
 
-temps_total = fin-debut
-temps_total <- round(temps_total, 1)
-cat('Le temps total est: ',temps_total, ' ', units(temps_total))
 
