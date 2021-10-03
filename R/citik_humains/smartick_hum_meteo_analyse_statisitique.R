@@ -106,6 +106,8 @@ for (tab in tablist){
   
 }
 
+print('Fin de la generation des objets')
+
 # La BDD SQLite sauvegarde le dates sous format text
 # avant d’utiliser les jeux de donnees on converti 
 # les colonnes date au format approprie
@@ -175,6 +177,8 @@ rm(list = c(paste('humdata_winter', 17:19, '_long', sep=''),
                 paste('humdata_winter', 17:19, '_short', sep=''),
                         paste('DSKdata_winter', 17:19, '_long', sep=''),
                                 paste('DSKdata_winter', 17:19, '_short', sep='') ) )
+
+print('Fin de la preparation des dataframes uniformises')
 
 #_____________________________________ Definitions des fonctions  _________________________________#
 
@@ -462,11 +466,11 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
     parammf <- param[2]
     
     # Preparation de la donnee des tests
-    cat("____ Fabrication des données pour le test KW ____\n")
+    cat("__ Fabrication des données pour le test KW __\n")
     dskdf <- data.frame(param=DSKdata_42avg[,paramdsk], data_provider='dsk')
     mfdf <- data.frame(param=MFdata[,parammf], data_provider='mf')
     kwcoxdata <- rbind(dskdf,mfdf)
-    cat("____ Objet de donnée pour KW Fabriqué____\n\n")
+    cat("__ Objet de donnée pour KW Fabriqué__", paramdsk, "|------>", parammf, "__\n\n")
     
     if(test=='wilcox'){
       test_result <- wilcox.test(param ~ data_provider, data = kwcoxdata)
@@ -478,7 +482,6 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
       print('Aucun nom de test valide fourni. tapez wilcox ou kruskal.')
     }
     
-    # cat(param[1], '|------>', param[2],'\n')
     test_result_vector <- c(test_result$statistic[[1]],
                             test_result$p.value[[1]])
     kwcox_matrix[,i] <- test_result_vector
@@ -688,7 +691,11 @@ weatherPlotGrid <- function(param, mode){
 }
 
 fin_prep = Sys.time()
+print('Fin de la preparation des fonctions de calcul')
+
 #__________________________________________ Programme principal ___________________________________#
+
+print('Debut du program principal')
 
 ### Vecteur de caracteres contenant les parametres meteo a traiter
 vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity",
@@ -828,13 +835,15 @@ f <- weatherPlotGrid('france', mode='region')
 plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
 
 
-
+print('Fin du programme')
 # Partie benchmrque et temps d’execution
 fin = Sys.time()
 
 temps_prep = fin_prep-debut
-print(temps_prep)
+temps_prep <- round(temps_prep, 1)
+cat('Le temps de preparation est: ',temps_prep, ' ', units(temps_prep))
 
-temps_total = fin-debut 
-print(temps_total)
+temps_total = fin-debut
+temps_total <- round(temps_total, 1)
+cat('Le temps total est: ',temps_total, ' ', units(temps_total))
 
