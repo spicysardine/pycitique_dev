@@ -81,7 +81,7 @@ Sys.setenv(GITHUB_TOKEN="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")
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
-print('Generation des objets à partir de la base. Veuillez patienter ...')
+print('Génération des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
@@ -104,7 +104,7 @@ for (tab in tablist){
   
 }
 
-print('Fin de la generation des objets')
+print('Fin de la génération des objets')
 
 # La BDD SQLite sauvegarde le dates sous format text
 # avant d’utiliser les jeux de donnees on converti 
@@ -186,7 +186,7 @@ benchmark <- function (start, end){
   duration = end-start
   duration <- round(duration, 1)
   unit <- units(duration)
-  cat('Le temps ecoule est: ',duration, ' ', unit, '\n')
+  cat('Le temps ecoulé est: ',duration, ' ', unit, '\n')
   
   return(duration)
   
@@ -461,8 +461,8 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
   
   # Liste vide pour accueillir les nom de parametres
   paramlist <- list()
+  # matrice vide pour le stockage des resultats des calculs
   kwcox_matrix <- matrix(nrow=2, ncol = length(dsk_paramnames))
-  
   
   # boucle de remplissage de la liste de correspondance
   for (i in 1:11){
@@ -470,19 +470,21 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
     paramlist[[ dsk_paramnames[i] ]] <- c(dsk_paramnames[i], mf_paramnames[i])
   }
   
+  # i est l’indice matriciel permettant de remplir la matrice par colonne
   i=1
   # boucle de calcul iteratif des tests
+  cat("Fabrication des données pour les tests et remplissage de la matrice de calcul\n")
   for (param in paramlist ){
     
     paramdsk <- param[1]
     parammf <- param[2]
     
     # Preparation de la donnee des tests
-    cat("__ Fabrication des données pour le test KW __\n")
+    # cat("__ Fabrication des données pour le test KW __\n")
     dskdf <- data.frame(param=DSKdata_42avg[,paramdsk], data_provider='dsk')
     mfdf <- data.frame(param=MFdata[,parammf], data_provider='mf')
     kwcoxdata <- rbind(dskdf,mfdf)
-    cat("__ Objet de donnée pour KW Fabriqué__", paramdsk, "|------>", parammf, "__\n\n")
+    # cat("__ Objet de donnée pour KW Fabriqué__", paramdsk, "|------>", parammf, "__\n\n")
     
     if(test=='wilcox'){
       test_result <- wilcox.test(param ~ data_provider, data = kwcoxdata)
@@ -759,6 +761,8 @@ ic_hiver_short_quartile <- ic_table_maker(humdata_winter_short,
                                         calcul='quartile')
 datatable(ic_hiver_short_quartile)
 
+print('Fin des calculs des tableaux d’intervals de confiance')
+
 ## Vecteurs de caracteres contenant les parametres meteo a comparer un a un
 dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh", 
                           "humidity", "dewpoint", "pressure", "windspeed",
@@ -786,6 +790,9 @@ k <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
 k <- t(k)
 datatable(k)
 
+print('Fin des tests statistiques')
+
+print('Début de fabrication des graphiques')
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
 # ces lignes fabriquent automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
