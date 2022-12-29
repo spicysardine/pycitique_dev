@@ -62,7 +62,7 @@ require(piggyback)
 require(ggplot2)
 require(cowplot)
 require(DT)
-
+require(utils)
 ############################## Connexion a la base SQLite###########################################
 ### 2.3 Methode d’importation depuis la BDD geographique SQLite/SPatialite
 ## /!\ Ne pas commenter ni supprimer /!\
@@ -78,9 +78,11 @@ require(DT)
 # Cette ligne d’authentification est necessaire mais provisoir, le temps de basculer
 # le projet en mode publique.
 # Sys.setenv(GITHUB_TOKEN="token_here")
-datapath='../../data'
-pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
-
+datapath='../../data/'
+target='citique.zip'
+pb_download(target, repo = 'spicysardine/pycitique', dest = datapath)
+target=paste0(datapath,target)
+unzip(target, exdir=datapath)
 print('Génération des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
