@@ -77,7 +77,7 @@ require(DT)
 # Authentification avec le compte GitHub accueillant le projet.
 # Cette ligne d’authentification est necessaire mais provisoir, le temps de basculer
 # le projet en mode publique.
-Sys.setenv(GITHUB_TOKEN="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")
+# Sys.setenv(GITHUB_TOKEN="token_here")
 datapath='../../data'
 pb_download('citique.db', repo = 'spicysardine/pycitique', dest = datapath)
 
