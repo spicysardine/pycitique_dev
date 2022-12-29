@@ -524,11 +524,11 @@ kwcox_table <- function (dsk_paramnames, mf_paramnames, test='wilcox'){
 plotsave <- function(plot, plotname, extension='png', format='landscape', plotpath=NULL){
                 
                 if(format=='portrait'){
-                  height=11.69  #(8.27/11.69 A4)
-                  width=8.27
+                  height=16.54  #(8.27/11.69 A4)
+                  width=11.69
                 }else if (format=='landscape'){
-                  width=11.69 # papier A3 
-                  height=8.27
+                  width=16.54 # papier A3 
+                  height=11.69
                 }
                   
                 ggsave2(filename = plotname,
@@ -859,10 +859,10 @@ h <- weatherPlotGrid('humidity', mode='param')
 plotsave(h, 'humidity_plot_grid.pdf', format='landscape', extension='pdf')
 
 g <- weatherPlotGrid('idf', mode='region')
-plotsave(g, 'idf_plot_grid.pdf', format='portrait', extension='pdf')
+plotsave(g, 'idf_plot_grid.pdf', format='landscape', extension='pdf')
 
 f <- weatherPlotGrid('france', mode='region')
-plotsave(f, 'france_plot_grid.pdf', format='portrait', extension='pdf')
+plotsave(f, 'france_plot_grid.pdf', format='landscape', extension='pdf')
 
 
 end_program = Sys.time()
