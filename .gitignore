@@ -1,9 +1,25 @@
 # Fichier de sauvegarde des donnees RStudio
 *.RData
 .RData
+.Rhistory
 
 # Base de donnee SQLite citique
 citique.db
+*.Rhistory
+*.RData
+data/citique.zip
+
+# graph regeneres
+R/citik_humains/dsk_vs_mf_moyennes_france.png
+R/citik_humains/france_plot_grid.pdf
+R/citik_humains/humdata_vs_dsk_random700_al.png
+R/citik_humains/humdata_vs_dsk_random700_france.png
+R/citik_humains/humdata_vs_dsk_random700_idf.png
+R/citik_humains/humdata_vs_dsk_random700_ra.png
+R/citik_humains/humidity_plot_grid.pdf
+R/citik_humains/idf_plot_grid.pdf
+R/citik_humains/temperature_plot_grid.pdf
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
