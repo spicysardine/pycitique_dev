@@ -80,7 +80,7 @@ require(utils)
 # Sys.setenv(GITHUB_TOKEN="token_here")
 datapath='../../data/'
 target='citique.zip'
-#pb_download(file=target, repo = 'spicysardine/pycitique', dest = datapath)
+pb_download(file=target, repo = 'spicysardine/pycitique', dest = datapath)
 target=paste0(datapath,target)
 unzip(target, exdir=datapath)
 print('Génération des objets à partir de la base. Veuillez patienter ...')
