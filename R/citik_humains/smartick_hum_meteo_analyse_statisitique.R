@@ -58,7 +58,7 @@ getwd()
 # le script ne se lancera pas correctement sans
 # l’invocation prelalable de ces librairies
 require(RSQLite)
-require(piggyback)
+# require(piggyback)
 require(ggplot2)
 require(cowplot)
 require(DT)
@@ -80,7 +80,7 @@ require(utils)
 # Sys.setenv(GITHUB_TOKEN="token_here")
 datapath='../../data/'
 target='citique.zip'
-pb_download(target, repo = 'spicysardine/pycitique', dest = datapath)
+#pb_download(file=target, repo = 'spicysardine/pycitique', dest = datapath)
 target=paste0(datapath,target)
 unzip(target, exdir=datapath)
 print('Génération des objets à partir de la base. Veuillez patienter ...')
